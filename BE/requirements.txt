@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+python-multipart
+pillow
+python-dotenv
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt<5
+google-auth
+requests
+cloudinary
+SQLAlchemy
+PyMySQL
+numpy
+torch
+torchvision
+

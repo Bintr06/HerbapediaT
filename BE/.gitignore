@@ -1,0 +1,50 @@
+# ==========================================
+# HerbaPedia Backend - Git Ignore
+# ==========================================
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment & Secrets
+.env
+.env.*
+*.env
+!.env.example
+
+# AI / ML Model large files (>100MB)
+*.h5
+*.hdf5
+*.keras
+*.pth
+*.pt
+*.onnx
+*.tflite
+*.safetensors
+*.bin
+*.pkl
+models/*.h5
+models/*.pth
+models/*.pt
+
+# Testing & Tools
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Editor & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp

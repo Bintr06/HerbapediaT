@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử cá nhân - HerbaPedia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        sage: { 50: '#eef1e6' },
+                        forest: { 900: '#1b3b22' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-sage-50 font-sans text-gray-800 min-h-screen relative flex flex-col selection:bg-yellow-200" style="background-image: linear-gradient(rgba(238, 247, 235, 0.85), rgba(210, 235, 205, 0.9)), url('assets/images/background-forest.jpg'); background-size: cover; background-attachment: fixed; background-position: center;">
+
+    <!-- Background Shadows -->
+    <img src="https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=600&q=80" alt="Shadow" class="fixed -top-10 -left-32 w-[40rem] opacity-[0.05] mix-blend-multiply blur-[2px] pointer-events-none transform -rotate-12 grayscale z-0">
+    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=600&q=80" alt="Shadow" class="fixed -bottom-20 -right-20 w-[45rem] opacity-[0.04] mix-blend-multiply blur-[3px] pointer-events-none transform rotate-12 grayscale z-0">
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="sticky top-0 w-full z-50 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center backdrop-blur-md bg-white/40 border-b border-white/40 shadow-sm mt-2 rounded-full">
+            <a href="index.html" class="flex items-center gap-2 text-forest-900 cursor-pointer hover:opacity-80 transition">
+                <img src="assets/images/logo.png" alt="HerbaPedia Logo" class="w-8 h-8 object-contain">
+                <span class="text-xl font-bold tracking-wide font-sans">Herba<span class="text-yellow-500">Pedia</span></span>
+            </a>
+            <ul class="hidden md:flex gap-8 text-sm font-semibold text-gray-600 items-center nav-links">
+                <li><a href="index.html" class="hover:text-forest-900 transition-colors border-b-2 border-transparent hover:border-yellow-400 pb-1">Trang chủ</a></li>
+                <li><a href="search.html" class="hover:text-forest-900 transition-colors border-b-2 border-transparent hover:border-yellow-400 pb-1">Tra cứu</a></li>
+                <li><a href="history.html" class="hover:text-forest-900 transition-colors border-b-2 border-transparent hover:border-yellow-400 pb-1">Cộng đồng</a></li>
+                
+                <!-- Navbar Auth (Dynamic via JS) -->
+                                <li class="relative group">
+                    <button class="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:shadow-sm transition-all focus:outline-none">
+                        <img src="assets/images/logo.png" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+                        <span class="font-bold text-[#0A2F1D] text-sm">Hi,</span>
+                        <i data-feather="chevron-down" class="w-4 h-4 text-gray-500 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                        <div class="py-1">
+                            <a href="profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="user" class="w-4 h-4 text-gray-500"></i> Hồ sơ cá nhân
+                            </a>
+                            <a href="user-profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="book-open" class="w-4 h-4 text-gray-500"></i> Blog cá nhân
+                            </a>
+                            <a href="personal-history.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="clock" class="w-4 h-4 text-gray-500"></i> Lịch sử cá nhân
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-1">
+                            <button class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                <i data-feather="log-out" class="w-4 h-4"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-6xl mx-auto px-6 flex-1 flex flex-col mt-10 mb-16">
+        
+        <div class="mb-8">
+            <h1 class="font-serif text-3xl md:text-4xl font-bold text-forest-900 mb-2">Lịch sử tra cứu</h1>
+            <p class="font-sans font-light text-gray-500 text-sm">Xem lại các loài thực vật bạn đã quét bằng AI gần đây.</p>
+        </div>
+
+        <div class="bg-white/40 backdrop-blur-xl border border-white/80 shadow-[0_4px_32px_rgba(0,0,0,0.02)] rounded-3xl p-8 min-h-[400px]">
+            <div id="historyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <p id="historyState" class="col-span-full text-center text-gray-500">Đang tải lịch sử...</p>
+            </div>
+            
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 text-center py-6 text-gray-500 text-sm font-light mt-auto">
+        <p>&copy; 2026 HerbaPedia. Phát triển vì sức khỏe cộng đồng.</p>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/personal-history.js"></script>
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>
+
+
