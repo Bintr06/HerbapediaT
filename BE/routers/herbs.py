@@ -7,6 +7,7 @@ import cloudinary
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from cloudinary_service import delete_image, upload_image
@@ -110,6 +111,70 @@ def list_herbs(
             if category_text in [tag.lower() for tag in json.loads(herb.tags_json or "[]")]
         ]
     return [herb_response(herb, db) for herb in herbs]
+
+
+@router.get("/top-recognized")
+def get_top_recognized_herbs(
+    limit: int = Query(default=4, ge=1, le=20),
+    db: Session = Depends(get_db),
+):
+    counts_query = (
+        db.query(
+            PredictionHistory.predicted_class,
+            func.count(PredictionHistory.id).label("total_scans")
+        )
+        .group_by(PredictionHistory.predicted_class)
+        .order_by(func.count(PredictionHistory.id).desc())
+        .all()
+    )
+
+    all_herbs = db.query(Herb).order_by(Herb.id).all()
+    herb_stats = []
+    counted_herb_ids = set()
+
+    for pred_class, count in counts_query:
+        norm_pred = pred_class.strip().lower()
+        matched_herb = next(
+            (h for h in all_herbs if h.id not in counted_herb_ids and (
+                h.slug.lower() == norm_pred
+                or h.dataset_name.lower() == norm_pred
+                or h.name_vi.lower() == norm_pred
+                or norm_pred in h.name_vi.lower()
+            )),
+            None
+        )
+        if matched_herb:
+            counted_herb_ids.add(matched_herb.id)
+            herb_stats.append({
+                "herb": matched_herb,
+                "count": count
+            })
+
+    if len(herb_stats) < limit:
+        for herb in all_herbs:
+            if herb.id not in counted_herb_ids:
+                counted_herb_ids.add(herb.id)
+                herb_stats.append({
+                    "herb": herb,
+                    "count": 0
+                })
+            if len(herb_stats) >= limit:
+                break
+
+    results = []
+    for rank, item in enumerate(herb_stats[:limit], start=1):
+        herb = item["herb"]
+        results.append({
+            "id": herb.id,
+            "slug": herb.slug,
+            "name": herb.name_vi,
+            "scientific": herb.scientific_name,
+            "image": herb.image_url,
+            "recognition_count": item["count"],
+            "rank": rank,
+        })
+
+    return results
 
 
 @router.get("/{slug}")

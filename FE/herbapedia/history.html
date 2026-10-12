@@ -268,23 +268,13 @@
             });
         }
 
-        // Chuyển hướng khi click vào Avatar (nếu không nằm trong thẻ a)
+        // Chuyển hướng khi click vào Avatar hoặc tác giả có data-user-id
         document.body.addEventListener('click', function(e) {
             if (e.target.closest('a')) return;
-            const img = e.target.closest('img[src*="ui-avatars.com"]');
-            if (img && !img.closest('#userProfileModal')) {
-                let author = img.getAttribute('data-author');
-                let avatar = img.getAttribute('data-avatar') || img.src;
-                if(!author) {
-                    try {
-                        const url = new URL(avatar.replace(/&amp;/g, '&'));
-                        const nameParam = url.searchParams.get('name');
-                        author = nameParam ? nameParam.replace(/\+/g, ' ') : 'Chuyên gia HerbaPedia';
-                    } catch(err) {
-                        author = 'Chuyên gia HerbaPedia';
-                    }
-                }
-                window.location.href = `user-profile.html?author=${encodeURIComponent(author)}&avatar=${encodeURIComponent(avatar)}`;
+            const target = e.target.closest('[data-user-id]');
+            if (target) {
+                const uid = target.getAttribute('data-user-id');
+                if (uid) window.location.href = `user-profile.html?userId=${encodeURIComponent(uid)}`;
             }
         });
 

@@ -116,24 +116,31 @@ function communityAuthorAvatar(author) {
 
 function renderCommunityPost(post) {
     const commentComposer = communityToken()
-        ? `<div class="flex items-center gap-2 mt-3">
-                <img src="${communityEscape(communityCurrentUserAvatar)}" alt="Ảnh đại diện của bạn" class="w-8 h-8 rounded-full object-cover shrink-0">
-                <div class="flex-1 flex items-center gap-2 bg-gray-100 rounded-full px-4 py-1.5 focus-within:ring-2 focus-within:ring-[#8CC63F]/30">
-                    <input data-comment-input class="flex-1 bg-transparent border-0 outline-none text-sm py-1" maxlength="2000" placeholder="Viết bình luận...">
-                    <button data-submit-comment type="button" class="text-[#0A2F1D] font-bold text-sm disabled:opacity-40" disabled>Gửi</button>
+        ? `<div class="flex items-start gap-2.5 mt-3 pt-2 border-t border-gray-100">
+                <img src="${communityEscape(communityCurrentUserAvatar)}" alt="Ảnh đại diện của bạn" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5 shadow-sm">
+                <div class="flex-1 flex items-center gap-2 bg-[#F0F2F5] hover:bg-[#E4E6EB]/60 focus-within:bg-[#F0F2F5] focus-within:ring-2 focus-within:ring-[#8CC63F]/30 rounded-[20px] px-3.5 py-1.5 transition-all">
+                    <input data-comment-input class="w-full bg-transparent border-0 outline-none text-[14px] text-gray-900 placeholder-gray-500 py-1" maxlength="2000" placeholder="Viết bình luận công khai...">
+                    <button data-submit-comment type="button" class="text-[#0A2F1D] hover:text-[#8CC63F] p-1 rounded-full transition-colors disabled:opacity-30 disabled:pointer-events-none shrink-0" disabled title="Gửi (Enter)">
+                        <i data-feather="send" class="w-4 h-4"></i>
+                    </button>
                 </div>
             </div>`
-        : '<a href="auth.html" class="block mt-3 text-center text-sm text-gray-500 hover:text-[#0A2F1D] hover:underline">Đăng nhập để viết bình luận</a>';
+        : '<div class="mt-3 text-center py-2 text-xs text-gray-500 bg-gray-50 rounded-xl"><a href="auth.html" class="text-[#0A2F1D] font-bold hover:underline">Đăng nhập</a> để tham gia bình luận.</div>';
     return `
         <article class="community-post bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-5" data-post-id="${post.id}">
             <div class="flex items-center gap-3 mb-3">
-                <a href="user-profile.html?userId=${post.author.id}" class="shrink-0 hover:opacity-80 transition-opacity">
+                <a href="user-profile.html?userId=${post.author.id}" class="shrink-0 hover:opacity-80 transition-opacity" title="Xem blog của ${communityEscape(post.author.display_name)}">
                     <img src="${communityEscape(communityAvatar(post))}" alt="" class="w-10 h-10 rounded-full object-cover">
                 </a>
-                <div>
-                    <a href="user-profile.html?userId=${post.author.id}" class="hover:underline">
-                        <h4 class="font-bold text-[#0A2F1D] text-sm">${communityEscape(post.author.display_name)}</h4>
-                    </a>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-2">
+                        <a href="user-profile.html?userId=${post.author.id}" class="hover:underline" title="Xem blog của ${communityEscape(post.author.display_name)}">
+                            <h4 class="font-bold text-[#0A2F1D] text-sm truncate">${communityEscape(post.author.display_name)}</h4>
+                        </a>
+                        <a href="user-profile.html?userId=${post.author.id}" class="text-[11px] font-semibold text-gray-400 hover:text-[#0A2F1D] shrink-0 transition-colors" title="Xem blog cá nhân">
+                            • Xem blog
+                        </a>
+                    </div>
                     <span class="text-xs text-gray-400">${communityTime(post.created_at)}</span>
                 </div>
             </div>
@@ -141,15 +148,15 @@ function renderCommunityPost(post) {
             <p class="text-gray-700 text-sm whitespace-pre-line mb-4">${communityEscape(post.content)}</p>
             ${post.image_url ? `<img src="${communityEscape(post.image_url)}" alt="${communityEscape(post.title)}" class="w-full max-h-96 object-cover rounded-xl mb-4">` : ''}
             <div class="flex items-center gap-4 text-gray-500 text-sm mb-2 px-1">
-                <span data-like-count>${post.like_count} lượt thích</span>
-                <span data-toggle-comments data-comment-count role="button" tabindex="0" class="cursor-pointer hover:underline">${post.comment_count} bình luận</span>
+                <span data-like-count class="flex items-center gap-1 font-medium"><i data-feather="heart" class="w-3.5 h-3.5 text-red-400"></i> ${post.like_count} lượt thích</span>
+                <span data-toggle-comments data-comment-count role="button" tabindex="0" class="flex items-center gap-1 font-medium cursor-pointer hover:underline"><i data-feather="message-circle" class="w-3.5 h-3.5 text-blue-400"></i> ${post.comment_count} bình luận</span>
             </div>
             <div class="flex gap-2 pt-2 border-t border-gray-100">
-                <button data-like-post class="flex-1 py-2 rounded-lg font-semibold ${post.liked ? 'text-[#0A2F1D] bg-green-50' : 'text-gray-500 hover:bg-gray-50'}">
-                    <i data-feather="thumbs-up" class="inline w-4 h-4"></i> ${post.liked ? 'Đã thích' : 'Thích'}
+                <button data-like-post class="flex-1 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${post.liked ? 'text-red-600 bg-red-50 font-bold' : 'text-gray-500 hover:bg-gray-50'}">
+                    <i data-feather="heart" class="w-4 h-4 ${post.liked ? 'fill-red-600' : ''}"></i> <span>${post.liked ? 'Đã thích' : 'Thích'}</span>
                 </button>
-                <button data-toggle-comments class="flex-1 py-2 rounded-lg text-gray-500 hover:bg-gray-50 font-semibold">
-                    <i data-feather="message-square" class="inline w-4 h-4"></i> Bình luận
+                <button data-toggle-comments class="flex-1 py-2 rounded-lg text-gray-500 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2">
+                    <i data-feather="message-square" class="w-4 h-4"></i> <span>Bình luận</span>
                 </button>
             </div>
             <div data-comments class="hidden mt-3 border-t border-gray-100 pt-3">
@@ -210,18 +217,36 @@ async function toggleCommunityLike(postElement) {
     });
     if (!response.ok) throw new Error('Không thể cập nhật lượt thích.');
     const result = await response.json();
-    postElement.querySelector('[data-like-count]').textContent = `${result.like_count} lượt thích`;
+    const countEl = postElement.querySelector('[data-like-count]');
+    if (countEl) {
+        countEl.innerHTML = `<i data-feather="heart" class="w-3.5 h-3.5 text-red-400"></i> ${result.like_count} lượt thích`;
+    }
     const button = postElement.querySelector('[data-like-post]');
-    button.classList.toggle('text-[#0A2F1D]', result.liked);
-    button.classList.toggle('bg-green-50', result.liked);
-    button.innerHTML = `<i data-feather="thumbs-up" class="inline w-4 h-4"></i> ${result.liked ? 'Đã thích' : 'Thích'}`;
+    if (button) {
+        button.className = `flex-1 py-2 rounded-lg font-semibold flex items-center justify-center gap-2 transition-all ${
+            result.liked ? 'text-red-600 bg-red-50 font-bold' : 'text-gray-500 hover:bg-gray-50'
+        }`;
+        button.innerHTML = `<i data-feather="heart" class="w-4 h-4 ${result.liked ? 'fill-red-600' : ''}"></i> <span>${result.liked ? 'Đã thích' : 'Thích'}</span>`;
+    }
     if (window.feather) feather.replace();
 }
 
-async function loadComments(postElement) {
+async function loadComments(postElement, autoExpandParentId = null) {
     const list = postElement.querySelector('[data-comment-list]');
+
+    // Ghi nhớ các câu trả lời đang mở trước đó
+    const expandedIds = new Set();
+    postElement.querySelectorAll('[data-replies-container]:not(.hidden)').forEach(el => {
+        expandedIds.add(el.dataset.repliesContainer);
+    });
+    if (autoExpandParentId) {
+        expandedIds.add(String(autoExpandParentId));
+    }
+
     list.innerHTML = '<p class="text-center text-xs text-gray-400 py-2">Đang tải bình luận...</p>';
-    const response = await fetch(`${COMMUNITY_API}/community/posts/${postElement.dataset.postId}/comments`);
+    const response = await fetch(`${COMMUNITY_API}/community/posts/${postElement.dataset.postId}/comments`, {
+        headers: communityHeaders()
+    });
     if (!response.ok) throw new Error('Không thể tải bình luận.');
     const comments = await response.json();
     const commentsByParent = new Map();
@@ -232,27 +257,61 @@ async function loadComments(postElement) {
     });
 
     function renderCommentTree(parentId = null, depth = 0) {
-        return (commentsByParent.get(parentId) || []).map((comment) => `
-            <div class="flex items-start gap-2 ${depth ? 'ml-8' : ''}" data-comment-id="${comment.id}">
-                <img src="${communityEscape(communityAuthorAvatar(comment.author))}" alt="" class="w-8 h-8 rounded-full object-cover shrink-0">
-                <div class="min-w-0">
-                    <div class="bg-gray-100 rounded-2xl px-3 py-2">
-                        <strong class="block text-sm text-[#0A2F1D]">${communityEscape(comment.author.display_name)}</strong>
-                        <p class="text-sm text-gray-700 whitespace-pre-line break-words">${communityEscape(comment.content)}</p>
+        return (commentsByParent.get(parentId) || []).map((comment) => {
+            const children = commentsByParent.get(comment.id) || [];
+            const hasChildren = children.length > 0;
+            const isExpanded = expandedIds.has(String(comment.id));
+
+            return `
+            <div class="flex items-start gap-2.5 ${depth ? 'ml-10 mt-2' : 'mt-2.5'}" data-comment-id="${comment.id}">
+                ${comment.author?.id ? `
+                    <a href="user-profile.html?userId=${comment.author.id}" class="shrink-0 hover:opacity-85 transition-opacity" title="Xem blog của ${communityEscape(comment.author.display_name)}">
+                        <img src="${communityEscape(communityAuthorAvatar(comment.author))}" alt="" class="${depth ? 'w-7 h-7' : 'w-8 h-8'} rounded-full object-cover mt-0.5 shadow-sm">
+                    </a>
+                ` : `
+                    <img src="${communityEscape(communityAuthorAvatar(comment.author))}" alt="" class="${depth ? 'w-7 h-7' : 'w-8 h-8'} rounded-full object-cover mt-0.5 shadow-sm shrink-0">
+                `}
+                <div class="min-w-0 flex-1">
+                    <div class="inline-block bg-[#F0F2F5] rounded-[18px] px-3.5 py-2 max-w-full">
+                        ${comment.author?.id ? `
+                            <a href="user-profile.html?userId=${comment.author.id}" class="block text-[13px] font-bold text-gray-900 hover:underline leading-tight" title="Xem blog của ${communityEscape(comment.author.display_name)}">
+                                ${communityEscape(comment.author.display_name)}
+                            </a>
+                        ` : `
+                            <strong class="block text-[13px] font-bold text-gray-900 leading-tight">${communityEscape(comment.author.display_name)}</strong>
+                        `}
+                        <p class="text-[14px] text-gray-800 leading-relaxed whitespace-pre-line break-words mt-0.5">${communityEscape(comment.content)}</p>
                     </div>
-                    <div class="flex items-center gap-3 ml-3 mt-1">
-                        <span class="text-[11px] text-gray-400">${communityTime(comment.created_at)}</span>
-                        <button type="button" data-reply-comment="${comment.id}" class="text-[11px] font-bold text-gray-500 hover:text-[#0A2F1D]">Trả lời</button>
+                    <div class="flex items-center gap-3 ml-3 mt-0.5 text-[12px] font-semibold text-gray-500">
+                        <span class="text-gray-400 font-normal">${communityTime(comment.created_at)}</span>
+                        <button type="button" data-reply-comment="${comment.id}" class="hover:underline text-gray-600 hover:text-[#0A2F1D]">Trả lời</button>
+                        ${comment.can_delete ? `
+                            <button type="button" data-delete-community-comment="${comment.id}" class="hover:underline text-gray-400 hover:text-red-500 transition-colors">Xóa</button>
+                        ` : ''}
                     </div>
+
+                    ${hasChildren ? `
+                        <button type="button" data-toggle-replies="${comment.id}" data-replies-count="${children.length}" class="flex items-center gap-1.5 ml-3 mt-1.5 text-[12px] font-bold text-gray-600 hover:text-[#0A2F1D] hover:underline transition-colors">
+                            <i data-feather="corner-down-right" class="w-3.5 h-3.5 text-gray-500"></i>
+                            <span data-toggle-replies-text>${isExpanded ? 'Ẩn câu trả lời' : `Xem ${children.length} câu trả lời`}</span>
+                        </button>
+                        <div data-replies-container="${comment.id}" class="${isExpanded ? '' : 'hidden'} space-y-2 mt-1">
+                            ${renderCommentTree(comment.id, depth + 1)}
+                        </div>
+                    ` : ''}
                 </div>
-            </div>
-            ${renderCommentTree(comment.id, depth + 1)}`).join('');
+            </div>`;
+        }).join('');
     }
 
     list.innerHTML = comments.length
         ? renderCommentTree()
         : '<p class="text-center text-sm text-gray-400 py-2">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ ý kiến.</p>';
-    postElement.querySelector('[data-comment-count]').textContent = `${comments.length} bình luận`;
+    const commentCountEl = postElement.querySelector('[data-comment-count]');
+    if (commentCountEl) {
+        commentCountEl.innerHTML = `<i data-feather="message-circle" class="w-3.5 h-3.5 text-blue-400"></i> ${comments.length} bình luận`;
+    }
+    if (window.feather) feather.replace();
     const input = postElement.querySelector('[data-comment-input]');
     input?.focus();
 }
@@ -273,7 +332,7 @@ async function submitCommunityComment(postElement, parentCommentId = null, input
         throw new Error('Không thể đăng bình luận.');
     }
     input.value = '';
-    await loadComments(postElement);
+    await loadComments(postElement, parentCommentId);
     if (submitButton) submitButton.disabled = true;
 }
 
@@ -370,12 +429,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const composer = document.createElement('div');
                 composer.dataset.replyComposer = 'true';
                 composer.dataset.parentCommentId = replyButton.dataset.replyComment;
-                composer.className = 'ml-8 mt-2 flex items-center gap-2';
+                composer.className = 'ml-10 mt-2 flex items-center gap-2';
                 composer.innerHTML = `
-                    <input data-reply-input class="flex-1 bg-gray-100 rounded-full px-3 py-2 text-sm outline-none" maxlength="2000" placeholder="Trả lời bình luận...">
-                    <button data-submit-reply type="button" class="text-[#0A2F1D] font-bold text-sm disabled:opacity-40" disabled>Gửi</button>
-                    <button data-cancel-reply type="button" class="text-gray-400 text-sm">Hủy</button>`;
+                    <img src="${communityEscape(communityCurrentUserAvatar)}" alt="" class="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5 shadow-sm">
+                    <div class="flex-1 flex items-center gap-2 bg-[#F0F2F5] hover:bg-[#E4E6EB]/60 focus-within:bg-[#F0F2F5] focus-within:ring-2 focus-within:ring-[#8CC63F]/30 rounded-[20px] px-3.5 py-1.5 transition-all">
+                        <input data-reply-input class="w-full bg-transparent border-0 outline-none text-xs md:text-sm text-gray-900 placeholder-gray-500 py-0.5" maxlength="2000" placeholder="Trả lời bình luận...">
+                        <button data-submit-reply type="button" class="text-[#0A2F1D] hover:text-[#8CC63F] p-1 rounded-full transition-colors disabled:opacity-30 disabled:pointer-events-none shrink-0" disabled title="Gửi (Enter)">
+                            <i data-feather="send" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                    <button data-cancel-reply type="button" class="text-xs text-gray-400 hover:text-gray-600 font-semibold px-1 transition-colors">Hủy</button>`;
                 replyButton.closest('[data-comment-id]').after(composer);
+                if (window.feather) feather.replace();
                 composer.querySelector('[data-reply-input]').focus();
             }
             if (event.target.closest('[data-submit-reply]')) {
@@ -390,6 +455,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
             if (event.target.closest('[data-cancel-reply]')) {
                 event.target.closest('[data-reply-composer]').remove();
+            }
+            const deleteCommentBtn = event.target.closest('[data-delete-community-comment]');
+            if (deleteCommentBtn) {
+                if (!confirm('Bạn có chắc muốn xóa bình luận này?')) return;
+                const commentId = deleteCommentBtn.dataset.deleteCommunityComment;
+                const response = await fetch(`${COMMUNITY_API}/community/comments/${commentId}`, {
+                    method: 'DELETE',
+                    headers: communityHeaders()
+                });
+                if (!response.ok) throw new Error('Không thể xóa bình luận.');
+                await loadComments(post);
+            }
+            const toggleRepliesBtn = event.target.closest('[data-toggle-replies]');
+            if (toggleRepliesBtn) {
+                const commentId = toggleRepliesBtn.dataset.toggleReplies;
+                const repliesContainer = post.querySelector(`[data-replies-container="${commentId}"]`);
+                const textSpan = toggleRepliesBtn.querySelector('[data-toggle-replies-text]');
+                const count = toggleRepliesBtn.dataset.repliesCount || '1';
+                if (repliesContainer) {
+                    const isHidden = repliesContainer.classList.toggle('hidden');
+                    if (textSpan) {
+                        textSpan.textContent = isHidden ? `Xem ${count} câu trả lời` : 'Ẩn câu trả lời';
+                    }
+                }
+                return;
             }
         } catch (error) {
             console.error(error);

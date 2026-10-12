@@ -281,7 +281,7 @@ async function updateNavbarProfile() {
 
     const blogLink = document.querySelector('.nav-links a[href^="user-profile.html"]');
     if (blogLink) {
-        blogLink.href = `user-profile.html?author=${encodeURIComponent(displayName)}&avatar=${encodeURIComponent(avatarUrl)}`;
+        blogLink.href = 'user-profile.html';
     }
 }
 

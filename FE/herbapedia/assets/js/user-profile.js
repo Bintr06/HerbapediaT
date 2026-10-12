@@ -93,6 +93,7 @@ function closeLightbox() {
 document.addEventListener('DOMContentLoaded', async () => {
     setupLightboxEvents();
     setupModalEvents();
+    setupCommentInteractions();
 
     const urlParams = new URLSearchParams(window.location.search);
     const paramUserId = urlParams.get('userId') || urlParams.get('author_id') || urlParams.get('id');
@@ -198,13 +199,8 @@ function renderProfileHeader(profile) {
         emailEl.textContent = profile.username;
     }
     if (roleBadgeEl) {
-        if (profile.role === 'admin') {
-            roleBadgeEl.className = 'inline-flex items-center gap-1.5 bg-yellow-100 text-yellow-800 px-3.5 py-1 rounded-full text-xs font-bold border border-yellow-200';
-            roleBadgeEl.innerHTML = '<i data-feather="shield" class="w-3.5 h-3.5"></i> Quản trị viên';
-        } else {
-            roleBadgeEl.className = 'inline-flex items-center gap-1.5 bg-[#F7F9F5] text-[#0A2F1D] px-3.5 py-1 rounded-full text-xs font-bold border border-[#E8F2DB]';
-            roleBadgeEl.innerHTML = '<i data-feather="check-circle" class="w-3.5 h-3.5 text-[#8CC63F]"></i> Chuyên gia / Thành viên';
-        }
+        roleBadgeEl.className = 'inline-flex items-center gap-1.5 bg-[#F7F9F5] text-[#0A2F1D] px-3.5 py-1 rounded-full text-xs font-bold border border-[#E8F2DB]';
+        roleBadgeEl.innerHTML = '<i data-feather="check-circle" class="w-3.5 h-3.5 text-[#8CC63F]"></i> Thành viên HerbaPedia';
     }
     if (postCountEl) postCountEl.textContent = profile.post_count ?? 0;
     if (likeCountEl) likeCountEl.textContent = profile.total_likes ?? 0;
@@ -288,7 +284,6 @@ function renderSinglePostCard(post) {
                     <div>
                         <div class="flex items-center gap-2">
                             <h4 class="font-bold text-[#0A2F1D] text-sm md:text-base">${blogEscape(author.display_name)}</h4>
-                            ${author.role === 'admin' ? '<span class="text-[10px] font-bold bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full">Admin</span>' : ''}
                         </div>
                         <span class="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
                             <i data-feather="clock" class="w-3 h-3"></i> ${blogTime(post.created_at)}
@@ -361,18 +356,18 @@ function renderSinglePostCard(post) {
 
                 <!-- Form gửi bình luận -->
                 ${blogToken() ? `
-                    <div class="flex items-start gap-2.5 pt-2">
-                        <img src="${blogEscape(getAvatarUrl(currentUser))}" class="w-8 h-8 rounded-full object-cover shrink-0 mt-1">
-                        <div class="flex-1 flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2 focus-within:ring-2 focus-within:ring-[#8CC63F]/30 focus-within:border-[#8CC63F] focus-within:bg-white transition-all">
-                            <input type="text" data-comment-input="${post.id}" placeholder="Viết bình luận của bạn..." class="w-full bg-transparent border-0 outline-none text-sm text-gray-800 placeholder-gray-400">
-                            <button type="button" data-comment-submit="${post.id}" class="text-[#0A2F1D] font-bold text-sm px-2 py-1 rounded-lg hover:bg-green-50 transition-colors disabled:opacity-40" disabled>
-                                Gửi
+                    <div class="flex items-start gap-2.5 pt-2 border-t border-gray-100">
+                        <img src="${blogEscape(getAvatarUrl(currentUser))}" class="w-8 h-8 rounded-full object-cover shrink-0 mt-0.5 shadow-sm">
+                        <div class="flex-1 flex items-center gap-2 bg-[#F0F2F5] hover:bg-[#E4E6EB]/60 focus-within:bg-[#F0F2F5] focus-within:ring-2 focus-within:ring-[#8CC63F]/30 rounded-[20px] px-3.5 py-1.5 transition-all">
+                            <input type="text" data-comment-input="${post.id}" placeholder="Viết bình luận công khai..." class="w-full bg-transparent border-0 outline-none text-[14px] text-gray-900 placeholder-gray-500 py-1">
+                            <button type="button" data-comment-submit="${post.id}" class="text-[#0A2F1D] hover:text-[#8CC63F] p-1 rounded-full transition-colors disabled:opacity-30 disabled:pointer-events-none shrink-0" disabled title="Gửi (Enter)">
+                                <i data-feather="send" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
                 ` : `
-                    <div class="text-center py-2 text-xs text-gray-500">
-                        <a href="auth.html" class="text-[#0A2F1D] font-bold underline hover:text-[#8CC63F]">Đăng nhập</a> để tham gia bình luận.
+                    <div class="text-center py-2 text-xs text-gray-500 bg-gray-50 rounded-xl">
+                        <a href="auth.html" class="text-[#0A2F1D] font-bold hover:underline">Đăng nhập</a> để tham gia bình luận.
                     </div>
                 `}
             </div>
@@ -447,12 +442,12 @@ function attachPostCardEventListeners(container) {
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey && input.value.trim()) {
                 e.preventDefault();
-                submitComment(postId, input);
+                submitComment(postId, input, null, submitBtn);
             }
         });
 
         if (submitBtn) {
-            submitBtn.addEventListener('click', () => submitComment(postId, input));
+            submitBtn.addEventListener('click', () => submitComment(postId, input, null, submitBtn));
         }
     });
 }
@@ -523,10 +518,20 @@ async function toggleCommentsSection(postId) {
     }
 }
 
-async function loadComments(postId) {
+async function loadComments(postId, autoExpandParentId = null) {
     const list = document.querySelector(`[data-comments-list="${postId}"]`);
     if (!list) return;
 
+    const section = document.querySelector(`[data-comments-section="${postId}"]`);
+    const expandedIds = new Set();
+    section?.querySelectorAll('[data-replies-container]:not(.hidden)').forEach(el => {
+        expandedIds.add(el.dataset.repliesContainer);
+    });
+    if (autoExpandParentId) {
+        expandedIds.add(String(autoExpandParentId));
+    }
+
+    list.innerHTML = '<p class="text-center text-xs text-gray-400 py-2">Đang tải bình luận...</p>';
     try {
         const res = await fetch(`${BLOG_API_URL}/community/posts/${postId}/comments`, {
             headers: blogHeaders()
@@ -534,78 +539,110 @@ async function loadComments(postId) {
         if (!res.ok) throw new Error('Không thể tải bình luận.');
         const comments = await res.json();
 
-        if (comments.length === 0) {
-            list.innerHTML = `<p class="text-xs text-gray-400 italic py-1">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>`;
-            return;
-        }
+        const commentsByParent = new Map();
+        comments.forEach((comment) => {
+            const parentId = comment.parent_comment_id || null;
+            if (!commentsByParent.has(parentId)) commentsByParent.set(parentId, []);
+            commentsByParent.get(parentId).push(comment);
+        });
 
-        list.innerHTML = comments.map(c => `
-            <div class="flex items-start gap-2.5 group" data-comment-id="${c.id}">
-                <img src="${blogEscape(getAvatarUrl(c.author))}" class="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5">
-                <div class="flex-1 bg-gray-50 rounded-2xl px-3.5 py-2 text-xs md:text-sm">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="font-bold text-[#0A2F1D]">${blogEscape(c.author.display_name)}</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-[11px] text-gray-400">${blogTime(c.created_at)}</span>
-                            ${c.can_delete ? `
-                                <button type="button" data-delete-comment="${c.id}" data-post-id="${postId}" class="text-gray-400 hover:text-red-500 transition-colors p-0.5 opacity-0 group-hover:opacity-100" title="Xóa bình luận">
-                                    <i data-feather="trash-2" class="w-3 h-3"></i>
-                                </button>
+        function renderCommentTree(parentId = null, depth = 0) {
+            return (commentsByParent.get(parentId) || []).map((comment) => {
+                const children = commentsByParent.get(comment.id) || [];
+                const hasChildren = children.length > 0;
+                const isExpanded = expandedIds.has(String(comment.id));
+
+                return `
+                <div class="flex items-start gap-2.5 ${depth ? 'ml-10 mt-2' : 'mt-2.5'}" data-comment-id="${comment.id}" data-post-id="${postId}">
+                    ${comment.author?.id ? `
+                        <a href="user-profile.html?userId=${comment.author.id}" class="shrink-0 hover:opacity-85 transition-opacity" title="Xem blog của ${blogEscape(comment.author.display_name)}">
+                            <img src="${blogEscape(getAvatarUrl(comment.author))}" alt="" class="${depth ? 'w-7 h-7' : 'w-8 h-8'} rounded-full object-cover mt-0.5 shadow-sm">
+                        </a>
+                    ` : `
+                        <img src="${blogEscape(getAvatarUrl(comment.author))}" alt="" class="${depth ? 'w-7 h-7' : 'w-8 h-8'} rounded-full object-cover mt-0.5 shadow-sm shrink-0">
+                    `}
+                    <div class="min-w-0 flex-1">
+                        <div class="inline-block bg-[#F0F2F5] rounded-[18px] px-3.5 py-2 max-w-full">
+                            ${comment.author?.id ? `
+                                <a href="user-profile.html?userId=${comment.author.id}" class="block text-[13px] font-bold text-gray-900 hover:underline leading-tight" title="Xem blog của ${blogEscape(comment.author.display_name)}">
+                                    ${blogEscape(comment.author.display_name)}
+                                </a>
+                            ` : `
+                                <strong class="block text-[13px] font-bold text-gray-900 leading-tight">${blogEscape(comment.author.display_name)}</strong>
+                            `}
+                            <p class="text-[14px] text-gray-800 leading-relaxed whitespace-pre-line break-words mt-0.5">${blogEscape(comment.content)}</p>
+                        </div>
+                        <div class="flex items-center gap-3 ml-3 mt-0.5 text-[12px] font-semibold text-gray-500">
+                            <span class="text-gray-400 font-normal">${blogTime(comment.created_at)}</span>
+                            <button type="button" data-reply-comment="${comment.id}" data-post-id="${postId}" class="hover:underline text-gray-600 hover:text-[#0A2F1D]">Trả lời</button>
+                            ${comment.can_delete ? `
+                                <button type="button" data-delete-comment="${comment.id}" data-post-id="${postId}" class="hover:underline text-gray-400 hover:text-red-500 transition-colors">Xóa</button>
                             ` : ''}
                         </div>
-                    </div>
-                    <p class="text-gray-700 leading-relaxed whitespace-pre-line">${blogEscape(c.content)}</p>
-                </div>
-            </div>
-        `).join('');
 
+                        ${hasChildren ? `
+                            <button type="button" data-toggle-replies="${comment.id}" data-post-id="${postId}" data-replies-count="${children.length}" class="flex items-center gap-1.5 ml-3 mt-1.5 text-[12px] font-bold text-gray-600 hover:text-[#0A2F1D] hover:underline transition-colors">
+                                <i data-feather="corner-down-right" class="w-3.5 h-3.5 text-gray-500"></i>
+                                <span data-toggle-replies-text>${isExpanded ? 'Ẩn câu trả lời' : `Xem ${children.length} câu trả lời`}</span>
+                            </button>
+                            <div data-replies-container="${comment.id}" class="${isExpanded ? '' : 'hidden'} space-y-2 mt-1">
+                                ${renderCommentTree(comment.id, depth + 1)}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        list.innerHTML = comments.length
+            ? renderCommentTree()
+            : '<p class="text-center text-sm text-gray-400 py-2">Chưa có bình luận nào. Hãy là người đầu tiên chia sẻ ý kiến.</p>';
+
+        const post = blogPosts.find(p => p.id === postId);
+        if (post) post.comment_count = comments.length;
+        const countDisplay = document.querySelector(`[data-comment-count-display="${postId}"]`);
+        if (countDisplay) {
+            countDisplay.innerHTML = `<i data-feather="message-circle" class="w-3.5 h-3.5 text-blue-400"></i> ${comments.length} bình luận`;
+        }
         if (window.feather) window.feather.replace();
 
-        // Gắn sự kiện xóa bình luận
-        list.querySelectorAll('[data-delete-comment]').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const commentId = parseInt(btn.dataset.deleteComment, 10);
-                await deleteComment(commentId, postId);
-            });
-        });
+        const input = document.querySelector(`[data-comment-input="${postId}"]`);
+        input?.focus();
 
     } catch (e) {
         list.innerHTML = `<p class="text-xs text-red-500 py-1">${blogEscape(e.message)}</p>`;
     }
 }
 
-async function submitComment(postId, input) {
+async function submitComment(postId, input, parentCommentId = null, submitButton = null) {
+    if (!blogToken()) {
+        window.location.href = 'auth.html';
+        return;
+    }
     const content = input.value.trim();
     if (!content) return;
     input.disabled = true;
+    if (submitButton) submitButton.disabled = true;
 
     try {
         const res = await fetch(`${BLOG_API_URL}/community/posts/${postId}/comments`, {
             method: 'POST',
             headers: blogHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ content })
+            body: JSON.stringify({ content, parent_comment_id: parentCommentId })
         });
-        if (!res.ok) throw new Error('Không thể gửi bình luận.');
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || 'Không thể gửi bình luận.');
+        }
 
         input.value = '';
         input.dispatchEvent(new Event('input'));
-        await loadComments(postId);
-
-        // Cập nhật comment count
-        const post = blogPosts.find(p => p.id === postId);
-        if (post) {
-            post.comment_count = (post.comment_count || 0) + 1;
-            const countDisplay = document.querySelector(`[data-comment-count-display="${postId}"]`);
-            if (countDisplay) {
-                countDisplay.innerHTML = `<i data-feather="message-circle" class="w-3.5 h-3.5 text-blue-400"></i> ${post.comment_count} bình luận`;
-                if (window.feather) window.feather.replace();
-            }
-        }
+        await loadComments(postId, parentCommentId);
     } catch (e) {
         showBlogToast(e.message, true);
     } finally {
         input.disabled = false;
-        input.focus();
+        if (submitButton) submitButton.disabled = false;
     }
 }
 
@@ -619,19 +656,120 @@ async function deleteComment(commentId, postId) {
         if (!res.ok) throw new Error('Không thể xóa bình luận.');
         showBlogToast('Đã xóa bình luận.');
         await loadComments(postId);
-
-        const post = blogPosts.find(p => p.id === postId);
-        if (post && post.comment_count > 0) {
-            post.comment_count -= 1;
-            const countDisplay = document.querySelector(`[data-comment-count-display="${postId}"]`);
-            if (countDisplay) {
-                countDisplay.innerHTML = `<i data-feather="message-circle" class="w-3.5 h-3.5 text-blue-400"></i> ${post.comment_count} bình luận`;
-                if (window.feather) window.feather.replace();
-            }
-        }
     } catch (e) {
         showBlogToast(e.message, true);
     }
+}
+
+function setupCommentInteractions() {
+    document.addEventListener('click', async (e) => {
+        // Nút Trả lời
+        const replyBtn = e.target.closest('[data-reply-comment]');
+        if (replyBtn) {
+            if (!blogToken()) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            const postId = parseInt(replyBtn.dataset.postId, 10);
+            const commentId = parseInt(replyBtn.dataset.replyComment, 10);
+            const section = document.querySelector(`[data-comments-section="${postId}"]`);
+            section?.querySelector('[data-reply-composer]')?.remove();
+
+            const commentRow = replyBtn.closest('[data-comment-id]');
+            if (!commentRow) return;
+
+            const composer = document.createElement('div');
+            composer.dataset.replyComposer = 'true';
+            composer.dataset.parentCommentId = commentId;
+            composer.dataset.postId = postId;
+            composer.className = 'ml-10 mt-2 flex items-center gap-2';
+            composer.innerHTML = `
+                <img src="${blogEscape(getAvatarUrl(currentUser))}" alt="" class="w-7 h-7 rounded-full object-cover shrink-0 mt-0.5 shadow-sm">
+                <div class="flex-1 flex items-center gap-2 bg-[#F0F2F5] hover:bg-[#E4E6EB]/60 focus-within:bg-[#F0F2F5] focus-within:ring-2 focus-within:ring-[#8CC63F]/30 rounded-[20px] px-3.5 py-1.5 transition-all">
+                    <input data-reply-input class="w-full bg-transparent border-0 outline-none text-xs md:text-sm text-gray-900 placeholder-gray-500 py-0.5" maxlength="2000" placeholder="Trả lời bình luận...">
+                    <button data-submit-reply type="button" class="text-[#0A2F1D] hover:text-[#8CC63F] p-1 rounded-full transition-colors disabled:opacity-30 disabled:pointer-events-none shrink-0" disabled title="Gửi (Enter)">
+                        <i data-feather="send" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+                <button data-cancel-reply type="button" class="text-xs text-gray-400 hover:text-gray-600 font-semibold px-1 transition-colors">Hủy</button>
+            `;
+            commentRow.after(composer);
+            if (window.feather) window.feather.replace();
+            composer.querySelector('[data-reply-input]')?.focus();
+            return;
+        }
+
+        // Nút Hủy Trả lời
+        const cancelReplyBtn = e.target.closest('[data-cancel-reply]');
+        if (cancelReplyBtn) {
+            cancelReplyBtn.closest('[data-reply-composer]')?.remove();
+            return;
+        }
+
+        // Nút Gửi Trả lời
+        const submitReplyBtn = e.target.closest('[data-submit-reply]');
+        if (submitReplyBtn) {
+            const composer = submitReplyBtn.closest('[data-reply-composer]');
+            if (composer) {
+                const postId = parseInt(composer.dataset.postId, 10);
+                const parentId = parseInt(composer.dataset.parentCommentId, 10);
+                const replyInput = composer.querySelector('[data-reply-input]');
+                await submitComment(postId, replyInput, parentId, submitReplyBtn);
+                composer.remove();
+            }
+            return;
+        }
+
+        // Nút Xóa bình luận
+        const deleteCommentBtn = e.target.closest('[data-delete-comment]');
+        if (deleteCommentBtn) {
+            const commentId = parseInt(deleteCommentBtn.dataset.deleteComment, 10);
+            const postId = parseInt(deleteCommentBtn.dataset.postId, 10);
+            await deleteComment(commentId, postId);
+            return;
+        }
+
+        // Nút Xem/Ẩn câu trả lời
+        const toggleRepliesBtn = e.target.closest('[data-toggle-replies]');
+        if (toggleRepliesBtn) {
+            const commentId = toggleRepliesBtn.dataset.toggleReplies;
+            const postId = toggleRepliesBtn.dataset.postId;
+            const section = document.querySelector(`[data-comments-section="${postId}"]`);
+            const repliesContainer = section?.querySelector(`[data-replies-container="${commentId}"]`);
+            const textSpan = toggleRepliesBtn.querySelector('[data-toggle-replies-text]');
+            const count = toggleRepliesBtn.dataset.repliesCount || '1';
+            if (repliesContainer) {
+                const isHidden = repliesContainer.classList.toggle('hidden');
+                if (textSpan) {
+                    textSpan.textContent = isHidden ? `Xem ${count} câu trả lời` : 'Ẩn câu trả lời';
+                }
+            }
+            return;
+        }
+    });
+
+    document.addEventListener('input', (e) => {
+        const replyInput = e.target.closest('[data-reply-input]');
+        if (replyInput) {
+            const composer = replyInput.closest('[data-reply-composer]');
+            const submitBtn = composer?.querySelector('[data-submit-reply]');
+            if (submitBtn) submitBtn.disabled = !replyInput.value.trim();
+        }
+    });
+
+    document.addEventListener('keydown', async (e) => {
+        const replyInput = e.target.closest('[data-reply-input]');
+        if (replyInput && e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const composer = replyInput.closest('[data-reply-composer]');
+            const submitBtn = composer?.querySelector('[data-submit-reply]');
+            if (!composer || !replyInput.value.trim() || submitBtn?.disabled) return;
+            const postId = parseInt(composer.dataset.postId, 10);
+            const parentId = parseInt(composer.dataset.parentCommentId, 10);
+            await submitComment(postId, replyInput, parentId, submitBtn);
+            composer.remove();
+        }
+    });
 }
 
 // Setup Modals & Events

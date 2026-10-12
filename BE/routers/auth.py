@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
 from cloudinary_service import delete_image, upload_image
+from email_service import send_password_reset_otp
 from database import (
     CommunityComment,
     CommunityLike,
@@ -23,6 +24,7 @@ from database import (
     Herb,
     HerbReview,
     Notification,
+    PasswordReset,
     PredictionHistory,
     SessionLocal,
     User,
@@ -37,7 +39,7 @@ security = HTTPBearer(auto_error=False)
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_ID = (os.getenv("GOOGLE_CLIENT_ID") or "").strip().strip('"').strip("'")
 if not JWT_SECRET_KEY:
     raise RuntimeError("JWT_SECRET_KEY must be configured in the environment")
 
@@ -100,6 +102,50 @@ class GoogleCredential(BaseModel):
 class PasswordChange(BaseModel):
     current_password: str = Field(min_length=1, max_length=72)
     new_password: str = Field(min_length=8, max_length=72)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=100)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        value = value.strip().lower()
+        if not value or "@" not in value:
+            raise ValueError("Email không hợp lệ.")
+        return value
+
+
+class VerifyOtpRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=100)
+    otp_code: str = Field(min_length=6, max_length=10)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return value.strip().lower()
+
+    @field_validator("otp_code")
+    @classmethod
+    def normalize_otp(cls, value: str) -> str:
+        return value.strip()
+
+
+class ResetPasswordRequest(BaseModel):
+    email: str = Field(min_length=3, max_length=100)
+    otp_code: str = Field(min_length=6, max_length=10)
+    new_password: str = Field(min_length=8, max_length=72)
+
+    @field_validator("email")
+    @classmethod
+    def normalize_email(cls, value: str) -> str:
+        return value.strip().lower()
+
+    @field_validator("otp_code")
+    @classmethod
+    def normalize_otp(cls, value: str) -> str:
+        return value.strip()
+
 
 
 class AdminUserCreate(BaseModel):
@@ -321,12 +367,22 @@ def login_with_google(
         google_user = id_token.verify_oauth2_token(
             google_credential.credential,
             google_requests.Request(),
-            GOOGLE_CLIENT_ID,
+            audience=GOOGLE_CLIENT_ID,
+            clock_skew_in_seconds=60,
         )
     except ValueError as exc:
+        logger.error(f"[GOOGLE AUTH ERROR] Xác thực Google ID Token thất bại: {exc}", exc_info=True)
+        print(f"[GOOGLE AUTH ERROR] Xác thực Google ID Token thất bại: {exc}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Thông tin Google không hợp lệ hoặc đã hết hạn.",
+            detail=f"Xác thực Google thất bại: {str(exc)}",
+        ) from exc
+    except Exception as exc:
+        logger.error(f"[GOOGLE AUTH ERROR] Lỗi không xác định khi verify Google: {exc}", exc_info=True)
+        print(f"[GOOGLE AUTH ERROR] Lỗi không xác định khi verify Google: {exc}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Lỗi xác thực Google: {str(exc)}",
         ) from exc
 
     email = google_user.get("email")
@@ -494,6 +550,143 @@ def change_password(
     current_user.updated_at = datetime.now(timezone.utc)
     db.commit()
     return {"message": "Đổi mật khẩu thành công."}
+
+
+@router.post("/forgot-password/send-otp")
+def forgot_password_send_otp(
+    payload: ForgotPasswordRequest,
+    db: Session = Depends(get_db),
+):
+    email = payload.email.lower()
+    user = db.query(User).filter(User.username.ilike(email)).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy tài khoản với địa chỉ email này.",
+        )
+    if user.is_active is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.",
+        )
+
+    # Invalidate old unused OTPs for this email
+    db.query(PasswordReset).filter(
+        PasswordReset.email.ilike(email),
+        PasswordReset.is_used == False,
+    ).update({"is_used": True}, synchronize_session=False)
+
+    # Generate 6-digit OTP code
+    otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+    expires_at = now_naive + timedelta(minutes=15)
+
+    reset_entry = PasswordReset(
+        email=email,
+        otp_code=otp_code,
+        expires_at=expires_at,
+        is_used=False,
+        created_at=now_naive,
+    )
+    db.add(reset_entry)
+    db.commit()
+
+    # Attempt sending OTP email via SMTP
+    sent, sent_msg = send_password_reset_otp(
+        to_email=email,
+        otp_code=otp_code,
+        display_name=user.display_name,
+    )
+
+    response = {
+        "message": "Mã xác thực đã được gửi về email của bạn." if sent else "Mã xác thực khôi phục mật khẩu đã được tạo.",
+        "email": email,
+        "email_sent": sent,
+        "expires_in_minutes": 15,
+    }
+    if not sent:
+        response["dev_otp"] = otp_code
+        response["note"] = "Chế độ thử nghiệm (chưa cấu hình SMTP): Mã OTP được cung cấp trực tiếp để kiểm thử."
+
+    return response
+
+
+@router.post("/forgot-password/verify-otp")
+def forgot_password_verify_otp(
+    payload: VerifyOtpRequest,
+    db: Session = Depends(get_db),
+):
+    email = payload.email.lower()
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+    record = (
+        db.query(PasswordReset)
+        .filter(
+            PasswordReset.email.ilike(email),
+            PasswordReset.otp_code == payload.otp_code,
+            PasswordReset.is_used == False,
+            PasswordReset.expires_at >= now_naive,
+        )
+        .order_by(PasswordReset.created_at.desc())
+        .first()
+    )
+    if not record:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mã xác thực OTP không chính xác hoặc đã hết hạn.",
+        )
+    return {"valid": True, "message": "Mã xác thực hợp lệ."}
+
+
+@router.post("/forgot-password/reset-password")
+def forgot_password_reset_password(
+    payload: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+):
+    email = payload.email.lower()
+    now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
+
+    user = db.query(User).filter(User.username.ilike(email)).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Không tìm thấy tài khoản với địa chỉ email này.",
+        )
+    if user.is_active is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.",
+        )
+
+    record = (
+        db.query(PasswordReset)
+        .filter(
+            PasswordReset.email.ilike(email),
+            PasswordReset.otp_code == payload.otp_code,
+            PasswordReset.is_used == False,
+            PasswordReset.expires_at >= now_naive,
+        )
+        .order_by(PasswordReset.created_at.desc())
+        .first()
+    )
+    if not record:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mã xác thực OTP không chính xác hoặc đã hết hạn.",
+        )
+
+    if len(payload.new_password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Mật khẩu mới phải có ít nhất 8 ký tự.",
+        )
+
+    user.hashed_password = hash_password(payload.new_password)
+    user.updated_at = now_naive
+    record.is_used = True
+    db.commit()
+
+    return {"message": "Đặt lại mật khẩu thành công! Bạn có thể đăng nhập bằng mật khẩu mới."}
+
 
 
 def admin_user_response(user: User, db: Session) -> dict:

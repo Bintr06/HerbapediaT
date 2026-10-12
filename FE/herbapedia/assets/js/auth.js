@@ -24,12 +24,27 @@ function activateForm(formId) {
     if (!targetForm) {
         return;
     }
+    const isForgot = formId === 'forgotForm';
+    const authTabs = document.querySelector('.auth-tabs');
+    const forgotHeader = document.getElementById('forgotHeader');
+
+    if (authTabs) {
+        authTabs.classList.toggle('hidden', isForgot);
+    }
+    if (forgotHeader) {
+        forgotHeader.classList.toggle('hidden', !isForgot);
+    }
+
     document.querySelectorAll('.tab-btn').forEach((button) => {
-        button.classList.toggle('active', button.dataset.target === formId);
+        button.classList.toggle('active', !isForgot && button.dataset.target === formId);
     });
     document.querySelectorAll('.auth-form').forEach((form) => {
         form.classList.toggle('active', form.id === formId);
     });
+
+    if (window.feather) {
+        window.feather.replace();
+    }
 }
 
 function setFormError(formType, message) {
@@ -41,6 +56,26 @@ function setFormError(formType, message) {
     activateForm(formId);
     errorElement.textContent = message;
     errorElement.classList.toggle('hidden', !message);
+}
+
+function setForgotError(message) {
+    const errEl = document.getElementById('forgotApiError');
+    const succEl = document.getElementById('forgotApiSuccess');
+    if (succEl) succEl.classList.add('hidden');
+    if (errEl) {
+        errEl.textContent = message;
+        errEl.classList.toggle('hidden', !message);
+    }
+}
+
+function setForgotSuccess(message) {
+    const errEl = document.getElementById('forgotApiError');
+    const succEl = document.getElementById('forgotApiSuccess');
+    if (errEl) errEl.classList.add('hidden');
+    if (succEl) {
+        succEl.textContent = message;
+        succEl.classList.toggle('hidden', !message);
+    }
 }
 
 function clearFormError(formType) {
@@ -232,9 +267,207 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.getElementById('forgotPasswordButton')?.addEventListener('click', () => {
-        setFormError('login', 'Chức năng khôi phục mật khẩu chưa được bật.');
+    let resendTimer = null;
+
+    function startResendCooldown(seconds = 60) {
+        const resendBtn = document.getElementById('btnResendOtp');
+        if (!resendBtn) return;
+        clearInterval(resendTimer);
+        let remaining = seconds;
+        resendBtn.disabled = true;
+        resendBtn.textContent = `Gửi lại mã (${remaining}s)`;
+
+        resendTimer = setInterval(() => {
+            remaining -= 1;
+            if (remaining <= 0) {
+                clearInterval(resendTimer);
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Gửi lại mã';
+            } else {
+                resendBtn.textContent = `Gửi lại mã (${remaining}s)`;
+            }
+        }, 1000);
+    }
+
+    function openForgotPassword() {
+        activateForm('forgotForm');
+        setForgotError('');
+        setForgotSuccess('');
+
+        // Pre-fill email from login form if user already typed it
+        const loginEmail = document.getElementById('loginEmail')?.value.trim();
+        const forgotEmail = document.getElementById('forgotEmail');
+        if (loginEmail && forgotEmail && !forgotEmail.value.trim()) {
+            forgotEmail.value = loginEmail;
+        }
+
+        // Show step 1, hide step 2
+        document.getElementById('forgotStep1')?.classList.remove('hidden');
+        document.getElementById('forgotStep2')?.classList.add('hidden');
+        document.getElementById('devOtpBox')?.classList.add('hidden');
+        forgotEmail?.focus();
+    }
+
+    function backToLogin() {
+        activateForm('loginForm');
+        setForgotError('');
+        setForgotSuccess('');
+        clearFormError('login');
+    }
+
+    async function handleSendOtp(isResend = false) {
+        setForgotError('');
+        setForgotSuccess('');
+
+        const emailInput = document.getElementById('forgotEmail');
+        const email = emailInput?.value.trim().toLowerCase() || '';
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        if (!email || !emailPattern.test(email)) {
+            setForgotError('Vui lòng nhập địa chỉ email hợp lệ.');
+            emailInput?.focus();
+            return;
+        }
+
+        const actionBtn = isResend ? document.getElementById('btnResendOtp') : document.getElementById('btnSendOtp');
+        if (actionBtn && !isResend) {
+            setLoading(actionBtn, true, 'Đang gửi mã...');
+        }
+
+        try {
+            const result = await requestJson('/auth/forgot-password/send-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+
+            // Transition to step 2
+            document.getElementById('forgotStep1')?.classList.add('hidden');
+            document.getElementById('forgotStep2')?.classList.remove('hidden');
+
+            const sentEmailLabel = document.getElementById('sentEmailLabel');
+            if (sentEmailLabel) {
+                sentEmailLabel.textContent = email;
+            }
+
+            // If running in dev mode / without SMTP, show helper dev box
+            const devOtpBox = document.getElementById('devOtpBox');
+            const devOtpValue = document.getElementById('devOtpValue');
+            const otpInput = document.getElementById('forgotOtp');
+            if (result.dev_otp && devOtpBox && devOtpValue) {
+                devOtpValue.textContent = result.dev_otp;
+                devOtpBox.classList.remove('hidden');
+                if (otpInput && !otpInput.value) {
+                    otpInput.value = result.dev_otp;
+                }
+            } else if (devOtpBox) {
+                devOtpBox.classList.add('hidden');
+            }
+
+            startResendCooldown(60);
+            setForgotSuccess(result.message || 'Mã xác thực đã được gửi!');
+            if (otpInput) {
+                otpInput.focus();
+            }
+        } catch (error) {
+            setForgotError(error.message);
+        } finally {
+            if (actionBtn && !isResend) {
+                setLoading(actionBtn, false);
+            }
+        }
+    }
+
+    async function handleResetPassword(event) {
+        event.preventDefault();
+        setForgotError('');
+        setForgotSuccess('');
+
+        const email = document.getElementById('forgotEmail')?.value.trim().toLowerCase();
+        const otpCode = document.getElementById('forgotOtp')?.value.trim();
+        const newPassword = document.getElementById('forgotNewPass')?.value || '';
+        const newPasswordConfirm = document.getElementById('forgotNewPassConfirm')?.value || '';
+
+        if (!email) {
+            setForgotError('Thiếu thông tin email.');
+            return;
+        }
+        if (!otpCode || otpCode.length < 6) {
+            setForgotError('Vui lòng nhập đủ 6 chữ số mã OTP.');
+            document.getElementById('forgotOtp')?.focus();
+            return;
+        }
+        if (newPassword.length < 8) {
+            setForgotError('Mật khẩu mới phải có ít nhất 8 ký tự.');
+            document.getElementById('forgotNewPass')?.focus();
+            return;
+        }
+        if (new TextEncoder().encode(newPassword).length > 72) {
+            setForgotError('Mật khẩu mới không được vượt quá 72 byte.');
+            return;
+        }
+        if (newPassword !== newPasswordConfirm) {
+            setForgotError('Mật khẩu nhập lại không khớp.');
+            document.getElementById('forgotNewPassConfirm')?.focus();
+            return;
+        }
+
+        const submitBtn = document.getElementById('btnResetPass');
+        if (submitBtn) {
+            setLoading(submitBtn, true, 'Đang cập nhật...');
+        }
+
+        try {
+            const result = await requestJson('/auth/forgot-password/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    otp_code: otpCode,
+                    new_password: newPassword
+                })
+            });
+
+            setForgotSuccess(result.message || 'Đặt lại mật khẩu thành công! Đang chuyển về trang đăng nhập...');
+
+            // Automatically switch back to login with pre-filled email
+            setTimeout(() => {
+                backToLogin();
+                const loginEmailInput = document.getElementById('loginEmail');
+                const loginPassInput = document.getElementById('loginPass');
+                if (loginEmailInput) {
+                    loginEmailInput.value = email;
+                }
+                if (loginPassInput) {
+                    loginPassInput.value = '';
+                    loginPassInput.focus();
+                }
+            }, 1800);
+        } catch (error) {
+            setForgotError(error.message);
+        } finally {
+            if (submitBtn) {
+                setLoading(submitBtn, false);
+            }
+        }
+    }
+
+    // Attach forgot password event listeners
+    document.getElementById('forgotPasswordButton')?.addEventListener('click', openForgotPassword);
+    document.getElementById('btnBackToLoginHeader')?.addEventListener('click', backToLogin);
+    document.getElementById('btnCancelForgot')?.addEventListener('click', backToLogin);
+    document.getElementById('btnSendOtp')?.addEventListener('click', () => handleSendOtp(false));
+    document.getElementById('btnResendOtp')?.addEventListener('click', () => handleSendOtp(true));
+
+    document.getElementById('forgotEmail')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSendOtp(false);
+        }
     });
+
+    const forgotForm = document.getElementById('forgotForm');
+    forgotForm?.addEventListener('submit', handleResetPassword);
 
     initializeGoogleSignIn();
 });
