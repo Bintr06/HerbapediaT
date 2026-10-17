@@ -41,6 +41,8 @@ models/*.h5
 models/*.pth
 models/*.pt
 models/*.keras
+!models/best_leaf_model.keras
+!models/mobilenet_leaf_model.keras
 
 # Logs & Temporary Files
 *.log

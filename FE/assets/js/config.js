@@ -82,3 +82,4 @@
     root.API_BASE_URL = HerbaConfig.API_BASE_URL;
 
 })(typeof window !== 'undefined' ? window : this);
+

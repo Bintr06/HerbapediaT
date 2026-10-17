@@ -77,9 +77,9 @@ BE/models/*.h5
 BE/models/*.pth
 BE/models/*.pt
 BE/models/*.keras
-# (Tùy chọn: Nếu muốn commit model < 100MB lên Git hoặc qua Git LFS, bỏ comment các dòng sau):
-# !BE/models/best_leaf_model.keras
-# !BE/models/mobilenet_leaf_model.keras
+# Cho phép 2 file mô hình của dự án (< 100MB) được đẩy lên Git:
+!BE/models/best_leaf_model.keras
+!BE/models/mobilenet_leaf_model.keras
 
 # --- Logs, Temporary & Debug Files ---
 *.log
