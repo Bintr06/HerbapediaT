@@ -55,6 +55,7 @@ class CommunityPost(Base):
     content = Column(Text, nullable=False)
     post_type = Column(String(30), nullable=False, default="general")
     image_url = Column(String(1000), nullable=True)
+    images_json = Column(Text, nullable=True)
     created_at = Column(DateTime, nullable=False)
 
 
@@ -176,13 +177,16 @@ def _seed_herbs():
 
     db = SessionLocal()
     try:
-        if db.query(Herb).count() > 0:
-            return
+        existing_slugs = {h.slug for h in db.query(Herb.slug).all()}
         records = json.loads(seed_path.read_text(encoding="utf-8"))
         now = datetime.now(timezone.utc)
+        added = False
         for record in records:
+            slug = record["id"]
+            if slug in existing_slugs:
+                continue
             herb = Herb(
-                slug=record["id"],
+                slug=slug,
                 dataset_name=record["datasetName"],
                 name_vi=record["name"],
                 scientific_name=record["scientific"],
@@ -279,20 +283,33 @@ def _migrate_herb_table():
             )
 def _migrate_community_tables():
     inspector = inspect(engine)
+    post_columns = {
+        column["name"]
+        for column in inspector.get_columns(CommunityPost.__tablename__)
+    }
+    post_table = CommunityPost.__table__
     comment_columns = {
         column["name"]
         for column in inspector.get_columns(CommunityComment.__tablename__)
     }
     comment_table = CommunityComment.__table__
     preparer = engine.dialect.identifier_preparer
-    quoted_table_name = preparer.quote(comment_table.name)
 
     with engine.begin() as connection:
+        if "images_json" not in post_columns:
+            column = post_table.c.images_json
+            connection.execute(
+                text(
+                    f"ALTER TABLE {preparer.quote(post_table.name)} "
+                    f"ADD COLUMN {preparer.quote(column.name)} "
+                    f"{column.type.compile(dialect=engine.dialect)}"
+                )
+            )
         if "parent_comment_id" not in comment_columns:
             column = comment_table.c.parent_comment_id
             connection.execute(
                 text(
-                    f"ALTER TABLE {quoted_table_name} "
+                    f"ALTER TABLE {preparer.quote(comment_table.name)} "
                     f"ADD COLUMN {preparer.quote(column.name)} "
                     f"{column.type.compile(dialect=engine.dialect)}"
                 )

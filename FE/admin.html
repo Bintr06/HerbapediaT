@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khu vực Quản trị - HerbaPedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        sage: { 50: '#eef1e6', 100: '#e1e7d5', 200: '#c5d2b1' },
+                        forest: { 800: '#132a18', 900: '#1b3b22' },
+                        botanical: { 500: '#8CC63F', 600: '#75ab32' }
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        .admin-input {
+            display: block;
+            width: 100%;
+            margin-top: 0.4rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.65rem 0.9rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: #ffffff;
+        }
+        .admin-input:focus {
+            border-color: #1b3b22;
+            box-shadow: 0 0 0 3px rgba(140, 198, 63, 0.25);
+        }
+        /* Custom scrollbar for data tables */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(238, 241, 230, 0.5);
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c5d2b1;
+            border-radius: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #8CC63F;
+        }
+    </style>
+</head>
+<body class="bg-sage-50 font-sans text-gray-800 min-h-screen relative flex flex-col selection:bg-yellow-200 antialiased overflow-x-hidden">
+
+    <!-- Fixed GPU-composited background layer to prevent scroll jitter -->
+    <div class="fixed inset-0 z-0 pointer-events-none" style="background-image: linear-gradient(rgba(238, 247, 235, 0.88), rgba(210, 235, 205, 0.92)), url('assets/images/background-forest.jpg'); background-size: cover; background-position: center; transform: translateZ(0); will-change: transform;"></div>
+
+    <!-- Ambient Botanical Shadows -->
+    <img src="https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -top-10 -left-32 w-[42rem] opacity-[0.035] pointer-events-none transform -rotate-12 grayscale z-0" style="transform: translateZ(0);">
+    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -bottom-20 -right-20 w-[48rem] opacity-[0.03] pointer-events-none transform rotate-12 grayscale z-0" style="transform: translateZ(0);">
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="sticky top-0 w-full z-40 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center backdrop-blur-md bg-white/85 border border-white/60 shadow-sm mt-2 rounded-full">
+            <a href="index.html" class="flex items-center gap-2.5 text-forest-900 cursor-pointer hover:opacity-85 transition">
+                <img src="assets/images/logo.png" alt="HerbaPedia Logo" class="w-8 h-8 object-contain">
+                <span class="text-xl font-bold tracking-tight font-sans">Herba<span class="text-[#8CC63F]">Pedia</span></span>
+                <span class="hidden sm:inline-flex items-center gap-1 ml-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-forest-900 text-white">
+                    <i data-feather="shield" class="w-3 h-3 text-[#8CC63F]"></i> Admin
+                </span>
+            </a>
+            
+            <ul class="hidden md:flex gap-8 text-sm font-semibold text-gray-600 items-center nav-links">
+                <li><a href="index.html" class="hover:text-forest-900 transition-colors pb-1 border-b-2 border-transparent hover:border-yellow-400">Trang chủ</a></li>
+                <li><a href="search.html" class="hover:text-forest-900 transition-colors pb-1 border-b-2 border-transparent hover:border-yellow-400">Tra cứu</a></li>
+                <li><a href="history.html" class="hover:text-forest-900 transition-colors pb-1 border-b-2 border-transparent hover:border-yellow-400">Cộng đồng</a></li>
+                
+                <li class="relative group">
+                    <button class="flex items-center gap-2 bg-white border border-gray-200 px-3.5 py-1.5 rounded-full hover:shadow-sm transition-all focus:outline-none">
+                        <img src="assets/images/logo.png" id="navbarAvatar" alt="Ảnh đại diện" class="w-7 h-7 rounded-full object-cover">
+                        <span class="font-bold text-forest-900 text-sm" id="navGreeting">Admin</span>
+                        <i data-feather="chevron-down" class="w-4 h-4 text-gray-500 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                        <div class="py-1.5">
+                            <a href="profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-forest-900 hover:font-semibold transition-colors">
+                                <i data-feather="user" class="w-4 h-4 text-gray-500"></i> Hồ sơ cá nhân
+                            </a>
+                            <a href="user-profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-forest-900 hover:font-semibold transition-colors">
+                                <i data-feather="book-open" class="w-4 h-4 text-gray-500"></i> Blog cá nhân
+                            </a>
+                            <a href="personal-history.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-forest-900 hover:font-semibold transition-colors">
+                                <i data-feather="clock" class="w-4 h-4 text-gray-500"></i> Lịch sử cá nhân
+                            </a>
+                            <a href="admin.html" data-admin-link="true" class="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-900 bg-sage-50 font-bold border-l-4 border-forest-900">
+                                <i data-feather="shield" class="w-4 h-4 text-[#8CC63F]"></i> Khu vực Admin
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-1.5">
+                            <button id="adminLogout" type="button" class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors font-semibold">
+                                <i data-feather="log-out" class="w-4 h-4"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="btnMobileMenuToggle" type="button" class="md:hidden p-2 rounded-full text-forest-900 hover:bg-white/80 transition focus:outline-none" aria-label="Menu">
+                <i data-feather="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer / Menu -->
+        <div id="mobileMenu" class="hidden md:hidden max-w-6xl mx-auto px-4 sm:px-6 py-4 mt-2">
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-xl p-5 flex flex-col gap-2.5">
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="home" class="w-4 h-4 text-[#8CC63F]"></i> Trang chủ
+                </a>
+                <a href="search.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="book" class="w-4 h-4 text-[#8CC63F]"></i> Tra cứu từ điển
+                </a>
+                <a href="history.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="users" class="w-4 h-4 text-[#8CC63F]"></i> Cộng đồng
+                </a>
+                <a href="profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="user" class="w-4 h-4 text-[#8CC63F]"></i> Hồ sơ cá nhân
+                </a>
+                <a href="user-profile.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="book-open" class="w-4 h-4 text-[#8CC63F]"></i> Blog cá nhân
+                </a>
+                <a href="personal-history.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="clock" class="w-4 h-4 text-[#8CC63F]"></i> Lịch sử quét
+                </a>
+                <a href="admin.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-forest-900 bg-sage-50">
+                    <i data-feather="shield" class="w-4 h-4 text-[#8CC63F]"></i> Khu vực Admin
+                </a>
+                <div class="border-t border-gray-100 pt-3 mt-1">
+                    <button id="mobileLogoutBtn" type="button" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-sm">
+                        <i data-feather="log-out" class="w-4 h-4"></i> Đăng xuất
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Admin Container -->
+    <main class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex-1 mt-8 mb-16">
+        
+        <!-- Header Banner -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-xs font-bold text-forest-900 mb-3 shadow-sm">
+                    <i data-feather="shield" class="w-3.5 h-3.5 text-[#8CC63F]"></i> BẢNG ĐIỀU KHIỂN HỆ THỐNG
+                </div>
+                <h1 class="font-serif text-3xl md:text-4xl font-bold text-forest-900 tracking-tight">Khu vực Quản trị</h1>
+                <p class="text-sm md:text-base text-gray-600 font-light mt-1.5 max-w-2xl">
+                    Quản lý cơ sở dữ liệu cây thuốc, người dùng, bài viết cộng đồng và cấu hình hệ thống thời gian thực.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 self-start md:self-auto">
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/90 text-emerald-800 px-3.5 py-1.5 text-xs font-bold shadow-sm backdrop-blur">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> FastAPI & AI Sẵn sàng
+                </span>
+            </div>
+        </div>
+
+        <!-- 4 Stat Cards (Interactive Shortcuts) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mb-8">
+            <!-- Stat 1: Cây thuốc -->
+            <div data-tool-target="herb-management" role="button" tabindex="0" class="cursor-pointer bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md hover:border-emerald-300 group focus:outline-none">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="w-11 h-11 rounded-2xl bg-emerald-50 text-forest-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-feather="book-open" class="w-5 h-5 text-emerald-800"></i>
+                    </span>
+                    <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full group-hover:bg-emerald-100 transition">Xem mục</span>
+                </div>
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dữ liệu cây thuốc</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <p id="herbCount" class="text-3xl font-bold text-forest-900">--</p>
+                    <span class="text-xs text-gray-500">loài cây</span>
+                </div>
+            </div>
+
+            <!-- Stat 2: Người dùng -->
+            <div data-tool-target="user-management" role="button" tabindex="0" class="cursor-pointer bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md hover:border-blue-300 group focus:outline-none">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-feather="users" class="w-5 h-5 text-blue-800"></i>
+                    </span>
+                    <span class="text-[11px] font-bold text-blue-800 bg-blue-50 px-2.5 py-0.5 rounded-full group-hover:bg-blue-100 transition">Xem mục</span>
+                </div>
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Người dùng</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <p id="userCount" class="text-3xl font-bold text-forest-900">--</p>
+                    <span class="text-xs text-gray-500">thành viên</span>
+                </div>
+            </div>
+
+            <!-- Stat 3: Bài viết cộng đồng -->
+            <div data-tool-target="community-management" role="button" tabindex="0" class="cursor-pointer bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md hover:border-amber-300 group focus:outline-none">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-feather="message-circle" class="w-5 h-5 text-amber-800"></i>
+                    </span>
+                    <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full group-hover:bg-amber-100 transition">Xem mục</span>
+                </div>
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Bài viết cộng đồng</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <p id="communityPostCount" class="text-3xl font-bold text-forest-900">--</p>
+                    <span class="text-xs text-gray-500">bài đăng</span>
+                </div>
+            </div>
+
+            <!-- Stat 4: Hệ thống -->
+            <div data-tool-target="system-settings" role="button" tabindex="0" class="cursor-pointer bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md hover:border-purple-300 group focus:outline-none">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="w-11 h-11 rounded-2xl bg-purple-50 text-purple-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <i data-feather="shield-check" class="w-5 h-5 text-purple-800"></i>
+                    </span>
+                    <span class="text-[11px] font-bold text-purple-800 bg-purple-50 px-2.5 py-0.5 rounded-full group-hover:bg-purple-100 transition">Hệ thống</span>
+                </div>
+                <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Trạng thái API & AI</p>
+                <div class="flex items-center gap-1.5 mt-2.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-base font-bold text-emerald-800">Hoạt động tốt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khối chọn Công cụ quản trị (Tool Selector Grid) -->
+        <section class="bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 sm:p-7 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-forest-900">Công cụ quản trị</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-0.5">Chọn một phân hệ quản lý bên dưới để bắt đầu thao tác.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-green-50 border border-green-200 px-3.5 py-1 text-xs font-bold text-green-800 self-start sm:self-auto">
+                    <i data-feather="check-circle" class="w-3.5 h-3.5 text-green-600"></i> Đã kết nối API Backend
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Tool 1: Cây thuốc -->
+                <button type="button" data-tool-card="herb-management" class="admin-tool-card text-left rounded-2xl border p-5 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-100/80 flex items-center justify-center text-emerald-900">
+                                <i data-feather="book-open" class="w-5 h-5"></i>
+                            </span>
+                            <span data-active-badge class="text-[11px] font-bold px-2 py-0.5 rounded-full"></span>
+                        </div>
+                        <h3 class="font-bold text-forest-900 text-base">Quản lý cây thuốc</h3>
+                        <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">Thêm mới, sửa hình ảnh Cloudinary, thông tin và cảnh báo an toàn cho 36 loài cây thuốc.</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 text-forest-900 flex items-center gap-1">
+                        Truy cập <i data-feather="arrow-right" class="w-3.5 h-3.5"></i>
+                    </span>
+                </button>
+
+                <!-- Tool 2: Người dùng -->
+                <button type="button" data-tool-card="user-management" class="admin-tool-card text-left rounded-2xl border p-5 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-blue-100/80 flex items-center justify-center text-blue-900">
+                                <i data-feather="users" class="w-5 h-5"></i>
+                            </span>
+                            <span data-active-badge class="text-[11px] font-bold px-2 py-0.5 rounded-full"></span>
+                        </div>
+                        <h3 class="font-bold text-forest-900 text-base">Quản lý người dùng</h3>
+                        <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">Xem danh sách thành viên, cấp quyền Quản trị viên, đổi mật khẩu và khóa tài khoản.</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 text-forest-900 flex items-center gap-1">
+                        Truy cập <i data-feather="arrow-right" class="w-3.5 h-3.5"></i>
+                    </span>
+                </button>
+
+                <!-- Tool 3: Bài viết cộng đồng -->
+                <button type="button" data-tool-card="community-management" class="admin-tool-card text-left rounded-2xl border p-5 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-amber-100/80 flex items-center justify-center text-amber-900">
+                                <i data-feather="message-circle" class="w-5 h-5"></i>
+                            </span>
+                            <span data-active-badge class="text-[11px] font-bold px-2 py-0.5 rounded-full"></span>
+                        </div>
+                        <h3 class="font-bold text-forest-900 text-base">Quản lý cộng đồng</h3>
+                        <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">Theo dõi bài chia sẻ, bài thuốc dân gian, tương tác và gỡ bỏ bài viết vi phạm tiêu chuẩn.</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 text-forest-900 flex items-center gap-1">
+                        Truy cập <i data-feather="arrow-right" class="w-3.5 h-3.5"></i>
+                    </span>
+                </button>
+
+                <!-- Tool 4: Cài đặt hệ thống -->
+                <button type="button" data-tool-card="system-settings" class="admin-tool-card text-left rounded-2xl border p-5 transition-all flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="w-10 h-10 rounded-xl bg-purple-100/80 flex items-center justify-center text-purple-900">
+                                <i data-feather="settings" class="w-5 h-5"></i>
+                            </span>
+                            <span data-active-badge class="text-[11px] font-bold px-2 py-0.5 rounded-full"></span>
+                        </div>
+                        <h3 class="font-bold text-forest-900 text-base">Cài đặt hệ thống</h3>
+                        <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">Kiểm tra kết nối dịch vụ FastAPI, MySQL, Cloudinary CDN và mô hình AI MobileNetV3 (95.6%).</p>
+                    </div>
+                    <span class="text-xs font-bold mt-4 text-forest-900 flex items-center gap-1">
+                        Truy cập <i data-feather="arrow-right" class="w-3.5 h-3.5"></i>
+                    </span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Thanh Tab điều hướng nhanh giữa các mục (Sticky-friendly Tab Bar) -->
+        <div id="adminTabBar" class="mt-8 flex items-center gap-2 overflow-x-auto pb-1 border-b border-gray-200">
+            <button type="button" data-tool-tab="herb-management" class="admin-tab-btn px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all flex items-center gap-2 shrink-0">
+                <i data-feather="book-open" class="w-4 h-4"></i> Cây thuốc (<span id="tabHerbCount">--</span>)
+            </button>
+            <button type="button" data-tool-tab="user-management" class="admin-tab-btn px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all flex items-center gap-2 shrink-0">
+                <i data-feather="users" class="w-4 h-4"></i> Người dùng (<span id="tabUserCount">--</span>)
+            </button>
+            <button type="button" data-tool-tab="community-management" class="admin-tab-btn px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all flex items-center gap-2 shrink-0">
+                <i data-feather="message-circle" class="w-4 h-4"></i> Bài viết cộng đồng (<span id="tabCommunityCount">--</span>)
+            </button>
+            <button type="button" data-tool-tab="system-settings" class="admin-tab-btn px-4 py-2.5 rounded-full text-xs md:text-sm font-bold transition-all flex items-center gap-2 shrink-0">
+                <i data-feather="settings" class="w-4 h-4"></i> Cài đặt hệ thống
+            </button>
+        </div>
+
+        <!-- Section 1: Quản lý cây thuốc -->
+        <section id="herb-management" class="tool-section mt-6 bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 sm:p-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-forest-900">Quản lý dữ liệu cây thuốc</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Dữ liệu bách khoa toàn thư được lưu trực tiếp trong cơ sở dữ liệu.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span id="herbDisplaySummary" class="text-xs font-semibold text-gray-500 hidden sm:inline-block"></span>
+                    <button id="addHerbButton" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-forest-900 px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-forest-800 transition shadow-sm hover:-translate-y-0.5">
+                        <i data-feather="plus" class="w-4 h-4 text-[#8CC63F]"></i> Thêm cây mới
+                    </button>
+                </div>
+            </div>
+
+            <!-- Toolbar filters -->
+            <div class="flex flex-col lg:flex-row gap-3 mb-5">
+                <div class="relative flex-1">
+                    <input id="herbSearchInput" type="search" placeholder="Tìm theo tên tiếng Việt, slug hoặc tên khoa học..." class="w-full rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100 pr-10">
+                    <button id="btnAdminClearHerbSearch" type="button" class="hidden absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <i data-feather="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                
+                <div class="flex flex-wrap sm:flex-nowrap gap-3 items-center">
+                    <select id="herbCategoryFilter" class="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-green-500">
+                        <option value="">Tất cả nhóm công dụng</option>
+                        <option value="thanh nhiệt">Thanh nhiệt</option>
+                        <option value="giải độc">Giải độc</option>
+                        <option value="kháng viêm">Kháng viêm</option>
+                        <option value="an thần">An thần</option>
+                        <option value="tiêu hóa">Tiêu hóa</option>
+                        <option value="cầm máu">Cầm máu</option>
+                    </select>
+
+                    <button id="btnAdminFilterAiOnly" type="button" class="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-xs sm:text-sm font-semibold text-gray-700 hover:border-forest-900 transition flex items-center gap-1.5 whitespace-nowrap">
+                        <i data-feather="cpu" class="w-3.5 h-3.5 text-emerald-600"></i>
+                        <span>20 loài AI nhận diện</span>
+                    </button>
+                </div>
+            </div>
+
+            <p id="herbManagementStatus" class="hidden mb-4 rounded-2xl px-4 py-3 text-sm"></p>
+            
+            <!-- Herb list grid -->
+            <div id="herbManagementList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Herb cards populated dynamically by admin.js -->
+            </div>
+        </section>
+
+        <!-- Section 2: Quản lý người dùng -->
+        <section id="user-management" class="tool-section mt-6 hidden bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 sm:p-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-forest-900">Quản lý người dùng & phân quyền</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Danh sách tài khoản hệ thống, cấp quyền Quản trị viên và khóa/mở khóa tài khoản.</p>
+                </div>
+                <button id="addUserButton" type="button" class="inline-flex items-center justify-center gap-2 rounded-full bg-forest-900 px-5 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-forest-800 transition shadow-sm hover:-translate-y-0.5">
+                    <i data-feather="user-plus" class="w-4 h-4 text-[#8CC63F]"></i> Thêm người dùng
+                </button>
+            </div>
+
+            <!-- Toolbar filters -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                <input id="userSearchInput" type="search" placeholder="Tìm theo tên đăng nhập, họ tên, số điện thoại..." class="flex-1 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100">
+                <select id="userRoleFilter" class="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-green-500">
+                    <option value="">Tất cả vai trò</option>
+                    <option value="admin">Quản trị viên (Admin)</option>
+                    <option value="user">Người dùng (User)</option>
+                </select>
+                <select id="userStatusFilter" class="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-green-500">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="blocked">Đã bị khóa</option>
+                </select>
+            </div>
+
+            <p id="userManagementStatus" class="hidden mb-4 rounded-2xl px-4 py-3 text-sm"></p>
+
+            <div id="userManagementList" class="custom-scrollbar overflow-x-auto rounded-2xl border border-gray-200 bg-white/70 shadow-sm">
+                <!-- User table rendered dynamically by JS -->
+            </div>
+        </section>
+
+        <!-- Section 3: Quản lý bài viết cộng đồng -->
+        <section id="community-management" class="tool-section mt-6 hidden bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 sm:p-8 shadow-sm">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="font-serif text-2xl font-bold text-forest-900">Kiểm duyệt bài viết cộng đồng</h2>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Kiểm duyệt các bài chia sẻ, bài thuốc và gỡ bỏ nội dung không phù hợp.</p>
+                </div>
+                <a href="history.html" class="inline-flex items-center justify-center gap-2 rounded-full border border-forest-900 px-5 py-2.5 text-xs sm:text-sm font-bold text-forest-900 hover:bg-forest-900 hover:text-white transition shadow-sm">
+                    <i data-feather="external-link" class="w-4 h-4"></i> Xem trên Cộng đồng
+                </a>
+            </div>
+
+            <!-- Toolbar filters -->
+            <div class="flex flex-col sm:flex-row gap-3 mb-5">
+                <input id="communitySearchInput" type="search" placeholder="Tìm theo tiêu đề bài viết hoặc tên tác giả..." class="flex-1 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-4 focus:ring-green-100">
+                <select id="communityTypeFilter" class="rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-green-500">
+                    <option value="">Tất cả loại bài</option>
+                    <option value="general">Chia sẻ chung</option>
+                    <option value="remedy">Bài thuốc</option>
+                </select>
+            </div>
+
+            <p id="communityManagementStatus" class="hidden mb-4 rounded-2xl px-4 py-3 text-sm"></p>
+
+            <div id="communityManagementList" class="custom-scrollbar overflow-x-auto rounded-2xl border border-gray-200 bg-white/70 shadow-sm">
+                <!-- Community posts table rendered dynamically by JS -->
+            </div>
+        </section>
+
+        <!-- Section 4: Cài đặt & Trạng thái hệ thống -->
+        <section id="system-settings" class="tool-section mt-6 hidden bg-white/85 backdrop-blur-xl border border-white/70 rounded-3xl p-5 sm:p-8 shadow-sm">
+            <div class="mb-6">
+                <h2 class="font-serif text-2xl font-bold text-forest-900">Cài đặt & Trạng thái hệ thống</h2>
+                <p class="text-xs sm:text-sm text-gray-500 mt-1">Thông số hoạt động và kiểm tra kết nối các phân hệ dịch vụ.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card 1: Dịch vụ & Kết nối -->
+                <div class="rounded-2xl border border-gray-200 bg-white/95 p-6 shadow-sm">
+                    <h3 class="font-bold text-forest-900 text-base mb-4 flex items-center gap-2">
+                        <i data-feather="server" class="w-4 h-4 text-forest-900"></i> Trạng thái dịch vụ kết nối
+                    </h3>
+                    <ul class="space-y-3.5 text-sm">
+                        <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                            <div>
+                                <span class="font-semibold text-gray-700 block">FastAPI Backend Server</span>
+                                <span class="text-xs text-gray-400">REST API & Authentication</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span id="adminServerHost">Connected</span>
+                            </span>
+                        </li>
+                        <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                            <div>
+                                <span class="font-semibold text-gray-700 block">Cơ sở dữ liệu Database</span>
+                                <span class="text-xs text-gray-400">Lưu trữ cây thuốc, users, posts</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Đã kết nối
+                            </span>
+                        </li>
+                        <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                            <div>
+                                <span class="font-semibold text-gray-700 block">Cloudinary Media CDN</span>
+                                <span class="text-xs text-gray-400">Lưu trữ & phục vụ hình ảnh</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Hoạt động tốt
+                            </span>
+                        </li>
+                        <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                            <div>
+                                <span class="font-semibold text-gray-700 block">Mô hình nhận diện AI</span>
+                                <span class="text-xs text-gray-400">Transfer Learning & CNN</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-blue-800 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                                MobileNetV3 (95.6%) & CNN (88.4%)
+                            </span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <div>
+                                <span class="font-semibold text-gray-700 block">Camera IoT Thiết bị</span>
+                                <span class="text-xs text-gray-400">Raspberry Pi Streaming Camera</span>
+                            </div>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Sẵn sàng
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Ứng dụng & Hành động -->
+                <div class="rounded-2xl border border-gray-200 bg-white/95 p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-forest-900 text-base mb-4 flex items-center gap-2">
+                            <i data-feather="info" class="w-4 h-4 text-forest-900"></i> Thông tin nền tảng HerbaPedia
+                        </h3>
+                        <ul class="space-y-3.5 text-sm">
+                            <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-gray-600">Phiên bản nền tảng</span>
+                                <span class="font-semibold text-forest-900 bg-sage-50 px-2.5 py-0.5 rounded-full text-xs">v2.0.0 Pro Botanical</span>
+                            </li>
+                            <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-gray-600">Môi trường vận hành</span>
+                                <span class="font-semibold text-gray-800">Production Ready</span>
+                            </li>
+                            <li class="flex items-center justify-between pb-3 border-b border-gray-100">
+                                <span class="text-gray-600">Kiến trúc AI</span>
+                                <span class="font-semibold text-gray-800">Dual Model Pipeline</span>
+                            </li>
+                            <li class="flex items-center justify-between">
+                                <span class="text-gray-600">Tài liệu API Swagger</span>
+                                <a id="adminSwaggerLink" href="http://127.0.0.1:8000/docs" target="_blank" class="text-xs font-bold text-forest-900 hover:text-emerald-700 inline-flex items-center gap-1">
+                                    Xem Swagger Docs <i data-feather="external-link" class="w-3.5 h-3.5"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="pt-5 mt-5 border-t border-gray-100 flex flex-col sm:flex-row items-center gap-3">
+                        <button type="button" id="btnReloadAdminData" class="w-full rounded-full bg-forest-900 text-white font-bold text-xs sm:text-sm py-2.5 px-4 hover:bg-forest-800 transition flex items-center justify-center gap-2 shadow-sm">
+                            <i data-feather="refresh-cw" class="w-4 h-4 text-[#8CC63F]"></i> Làm mới toàn bộ dữ liệu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Comprehensive Botanical Footer -->
+    <footer class="relative z-10 bg-white/80 backdrop-blur-md border-t border-gray-200/80 mt-auto pt-12 pb-8">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-10 text-left">
+            <div class="md:col-span-1">
+                <div class="flex items-center gap-2 text-forest-900 mb-3">
+                    <img src="assets/images/logo.png" alt="HerbaPedia Logo" class="w-7 h-7 object-contain">
+                    <span class="text-lg font-bold font-sans">Herba<span class="text-[#8CC63F]">Pedia</span></span>
+                </div>
+                <p class="text-xs text-gray-500 leading-relaxed font-light">
+                    Hệ thống nhận diện cây dược liệu thông minh ứng dụng Trí tuệ Nhân tạo và IoT vì sức khỏe cộng đồng.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Khám phá</h4>
+                <ul class="text-xs space-y-2 text-gray-600">
+                    <li><a href="index.html" class="hover:text-[#8CC63F] transition">Trang chủ nhận diện</a></li>
+                    <li><a href="search.html" class="hover:text-[#8CC63F] transition">Từ điển 20+ dược liệu</a></li>
+                    <li><a href="history.html" class="hover:text-[#8CC63F] transition">Cộng đồng & Thảo luận</a></li>
+                    <li><a href="personal-history.html" class="hover:text-[#8CC63F] transition">Lịch sử quét của tôi</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Công nghệ Lõi</h4>
+                <ul class="text-xs space-y-2 text-gray-600">
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> MobileNetV3 Transfer Learning (95.6%)</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> Custom CNN Deep Network (88.4%)</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> FastAPI High Performance BE</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Thông Tin Nền Tảng</h4>
+                <p class="text-xs text-gray-600 font-semibold">HerbaPedia Botanical AI</p>
+                <p class="text-xs text-gray-500 font-light mt-0.5">Hệ sinh thái tra cứu & nhận diện dược liệu số</p>
+                <div class="mt-3 text-[11px] text-gray-400">
+                    <span>Phiên bản v2.0 • 2026</span>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 font-light">
+            <p>&copy; 2026 HerbaPedia. Phát triển vì sức khỏe cộng đồng & giáo dục thảo dược.</p>
+            <p class="mt-2 sm:mt-0">Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script>
+        if (typeof feather !== 'undefined') feather.replace();
+
+        // Mobile drawer toggle
+        const btnMobileMenuToggle = document.getElementById('btnMobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (btnMobileMenuToggle && mobileMenu) {
+            btnMobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Mobile logout button
+        document.getElementById('mobileLogoutBtn')?.addEventListener('click', () => {
+            if (typeof logoutUser === 'function') {
+                logoutUser();
+            } else {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('isLoggedIn');
+                window.location.replace('auth.html');
+            }
+        });
+
+        // Desktop logout button
+        document.getElementById('adminLogout')?.addEventListener('click', () => {
+            if (typeof logoutUser === 'function') {
+                logoutUser();
+            } else {
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('isLoggedIn');
+                window.location.replace('auth.html');
+            }
+        });
+    </script>
+</body>
+</html>

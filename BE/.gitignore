@@ -1,25 +1,32 @@
-# ==========================================
+# ==============================================================
 # HerbaPedia Backend - Git Ignore
-# ==========================================
+# ==============================================================
 
-# Virtual environment
+# Virtual Environment
 venv/
 .venv/
 env/
 
-# Python cache
+# Python Cache & Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# Environment & Secrets
+# Environment Variables & Secrets
 .env
 .env.*
 *.env
 !.env.example
 
-# AI / ML Model large files (>100MB)
+# Databases
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+
+# AI / Deep Learning Model Weights (>100MB)
 *.h5
 *.hdf5
 *.keras
@@ -33,18 +40,24 @@ __pycache__/
 models/*.h5
 models/*.pth
 models/*.pt
+models/*.keras
 
-# Testing & Tools
+# Logs & Temporary Files
+*.log
+logs/
+*.tmp
+temp/
+tmp/
+.cache/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
 .coverage
 htmlcov/
 
-# Editor & OS
+# Editor & OS Files
 .vscode/
 .idea/
 .DS_Store
 Thumbs.db
-*.log
-*.tmp
+desktop.ini

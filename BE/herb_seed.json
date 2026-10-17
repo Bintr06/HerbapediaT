@@ -869,5 +869,57 @@
       "Cách dùng: rửa sạch, dùng tươi hoặc pha trà loãng từ nguyên liệu khô đạt chuẩn.",
       "Liều: không có liều tự dùng chung; hỏi bác sĩ khi mang thai, sắp phẫu thuật hoặc dùng thuốc chống đông."
     ]
+  },
+  {
+    "id": "pepper",
+    "datasetName": "Pepper",
+    "name": "Hồ tiêu (Tiêu)",
+    "scientific": "Piper nigrum L.",
+    "image": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=900&q=80",
+    "tags": [
+      "tiêu hóa",
+      "kháng viêm"
+    ],
+    "usage": "Gia vị cay ấm kích thích tiêu hóa và làm ấm tỳ vị.",
+    "parts": "Quả (hạt tiêu đen, tiêu sọ)",
+    "identification": "Dây leo thân gỗ, lá hình trái xoan, quả mọc thành chuỗi dài đổi màu từ xanh sang đỏ.",
+    "remedies": [
+      "Dùng làm gia vị món ăn hàng ngày lượng vừa phải."
+    ],
+    "safety": "Người bị viêm loét dạ dày tá tràng nên hạn chế dùng lượng lớn.",
+    "habitat": "Vùng nhiệt đới ẩm, trồng nhiều tại các tỉnh Tây Nguyên và Nam Bộ.",
+    "preparation": "Phơi khô quả làm tiêu đen hoặc ngâm xát vỏ làm tiêu sọ; xay nhỏ khi dùng.",
+    "caution": "Tránh hít trực tiếp bột tiêu vì gây hắt hơi và kích ứng mạnh niêm mạc mũi.",
+    "usageDetails": [
+      "Dạng dùng: quả khô nghiền thành bột gia vị.",
+      "Cách dùng: thêm vào thức ăn sau khi nấu để giữ hương thơm và dược tính.",
+      "Liều: dùng 1-3g mỗi ngày như gia vị thực phẩm."
+    ]
+  },
+  {
+    "id": "rose",
+    "datasetName": "Rose",
+    "name": "Hoa hồng",
+    "scientific": "Rosa chinensis Jacq.",
+    "image": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=900&q=80",
+    "tags": [
+      "làm đẹp",
+      "thanh nhiệt"
+    ],
+    "usage": "Cánh hoa dùng làm trà thanh nhiệt, dưỡng nhan và làm dịu tinh thần.",
+    "parts": "Nụ hoa, cánh hoa tươi hoặc sấy khô",
+    "identification": "Cây bụi có gai nhọn, hoa nhiều cánh màu đỏ, hồng hoặc vàng, mùi thơm dịu.",
+    "remedies": [
+      "Trà nụ hoa hồng sấy khô hãm nước nóng uống thư giãn."
+    ],
+    "safety": "Chỉ dùng hoa trồng hữu cơ làm trà, không dùng hoa cắm cành có phun thuốc bảo vệ thực vật.",
+    "habitat": "Trồng rộng rãi làm cảnh và lấy hoa ở các vùng khí hậu mát mẻ.",
+    "preparation": "Thu hái nụ hoa hé nở vào sáng sớm, rửa nhẹ và sấy lạnh hoặc phơi trong bóng râm.",
+    "caution": "Phụ nữ có thai nên tham khảo ý kiến chuyên môn trước khi uống trà hoa hồng thường xuyên.",
+    "usageDetails": [
+      "Dạng dùng: nụ hoa khô pha trà hoặc nước hoa hồng chưng cất dưỡng da.",
+      "Cách dùng: hãm 3-5 nụ hoa khô với 200ml nước nóng 85°C trong 5 phút.",
+      "Liều: dùng 1-2 tách trà mỗi ngày."
+    ]
   }
 ]

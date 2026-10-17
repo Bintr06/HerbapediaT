@@ -15,8 +15,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
-from cloudinary_service import delete_image, upload_image
-from email_service import send_password_reset_otp
+from services.cloudinary_service import delete_image, upload_image
+from services.email_service import send_password_reset_otp
 from database import (
     CommunityComment,
     CommunityLike,
@@ -295,6 +295,30 @@ def get_current_user(
     if db_user.username.lower() in configured_admins and db_user.role != "admin":
         db_user.role = "admin"
         db.commit()
+    return db_user
+
+
+def get_optional_user(
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
+    db: Session = Depends(get_db),
+) -> User | None:
+    if credentials is None or credentials.scheme.lower() != "bearer":
+        return None
+    try:
+        payload = jwt.decode(
+            credentials.credentials,
+            JWT_SECRET_KEY,
+            algorithms=[JWT_ALGORITHM],
+        )
+        username = payload.get("sub")
+        if not isinstance(username, str) or not username:
+            return None
+    except JWTError:
+        return None
+
+    db_user = db.query(User).filter(User.username == username).first()
+    if db_user is None or getattr(db_user, "is_active", True) is False:
+        return None
     return db_user
 
 

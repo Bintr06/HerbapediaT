@@ -1,6 +1,6 @@
-# ==========================================
-# HerbaPedia - Git Ignore Configuration
-# ==========================================
+# ==============================================================
+# HerbaPedia - Comprehensive Git Ignore
+# ==============================================================
 
 # --- Python Virtual Environments ---
 venv/
@@ -11,12 +11,12 @@ env.bak/
 venv.bak/
 BE/venv/
 BE/.venv/
-*/venv/
-*/.venv/
+**/venv/
+**/.venv/
 
-# --- Python Cache & Bytecode ---
+# --- Python Bytecode & Cache ---
 __pycache__/
-*/__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -37,7 +37,7 @@ wheels/
 .installed.cfg
 *.egg
 
-# --- Environment Variables & Secrets ---
+# --- Environment Variables & Sensitive Secrets ---
 .env
 .env.*
 *.env
@@ -46,8 +46,15 @@ FE/.env
 !.env.example
 !BE/.env.example
 
-# --- AI & Machine Learning Large Model Binaries (>100MB) ---
-# Tải qua link Google Drive/HuggingFace thay vì push trực tiếp lên git
+# --- Local Databases & SQLite ---
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+
+# --- AI & Deep Learning Model Binaries (>100MB Git limit) ---
+# Quy tắc chuẩn: Không commit model nặng trực tiếp lên Git
 *.h5
 *.hdf5
 *.keras
@@ -65,38 +72,16 @@ FE/.env
 models/*.h5
 models/*.pth
 models/*.pt
+models/*.keras
 BE/models/*.h5
 BE/models/*.pth
 BE/models/*.pt
+BE/models/*.keras
+# (Tùy chọn: Nếu muốn commit model < 100MB lên Git hoặc qua Git LFS, bỏ comment các dòng sau):
+# !BE/models/best_leaf_model.keras
+# !BE/models/mobilenet_leaf_model.keras
 
-# --- Node / Frontend Packages (nếu có dùng sau này) ---
-node_modules/
-*/node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# --- IDE & Editor Settings ---
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-*.sublime-project
-*.sublime-workspace
-
-# --- Operating System Files ---
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-[Dd]esktop.ini
-
-# --- Logs, Caches & Temporary Files ---
+# --- Logs, Temporary & Debug Files ---
 *.log
 logs/
 *.tmp
@@ -110,3 +95,29 @@ temp/
 .coverage
 htmlcov/
 
+# --- Operating System Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Dd]esktop.ini
+
+# --- IDE & Text Editor Configuration ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# --- Frontend & Node Packages (nếu có dùng build tools) ---
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*

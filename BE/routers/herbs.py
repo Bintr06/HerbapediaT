@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from cloudinary_service import delete_image, upload_image
+from services.cloudinary_service import delete_image, upload_image
 from database import Herb, HerbRemedy, HerbReview, HerbUsage, PredictionHistory, SessionLocal, User
 from routers.auth import get_admin_user, get_current_user
 
@@ -185,6 +185,18 @@ def get_herb(slug: str, db: Session = Depends(get_db)):
     return herb_response(herb, db)
 
 
+def _sanitize_review_author(user: User | None) -> str:
+    if not user:
+        return "Người dùng"
+    name = (user.display_name or "").strip()
+    if not name or "@" in name:
+        base = name if "@" in name else (user.username or "")
+        name = base.split("@")[0].strip() if "@" in base else base
+    if not name:
+        name = f"Thành viên #{user.id}"
+    return name
+
+
 def _review_response(review: HerbReview, db: Session) -> dict:
     user = db.query(User).filter(User.id == review.user_id).first()
     return {
@@ -193,7 +205,7 @@ def _review_response(review: HerbReview, db: Session) -> dict:
         "content": review.content,
         "created_at": review.created_at,
         "author": {
-            "display_name": (user.display_name or user.username) if user else "Người dùng",
+            "display_name": _sanitize_review_author(user),
             "avatar_url": user.avatar_url if user else None,
         },
     }

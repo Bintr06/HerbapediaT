@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Từ điển & Tra cứu Dược liệu - HerbaPedia</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        sage: { 50: '#eef1e6', 100: '#e1e7d5', 200: '#c5d2b1' },
+                        forest: { 800: '#132a18', 900: '#1b3b22' },
+                        botanical: { 500: '#8CC63F', 600: '#75ab32' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .tag-pill {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+            color: #4b5563;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            white-space: nowrap;
+        }
+        .tag-pill:hover {
+            border-color: #8CC63F;
+            color: #1b3b22;
+        }
+        .tag-pill.active {
+            background-color: #1b3b22;
+            border-color: #1b3b22;
+            color: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-sage-50 font-sans text-gray-800 min-h-screen relative flex flex-col selection:bg-yellow-200 antialiased overflow-x-hidden">
+
+    <!-- Fixed GPU-composited background layer -->
+    <div class="fixed inset-0 z-0 pointer-events-none" style="background-image: linear-gradient(rgba(238, 247, 235, 0.88), rgba(210, 235, 205, 0.92)), url('assets/images/background-forest.jpg'); background-size: cover; background-position: center; transform: translateZ(0); will-change: transform;"></div>
+
+    <!-- Background Shadow Silhouettes -->
+    <img src="https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -top-10 -left-32 w-[42rem] opacity-[0.035] pointer-events-none transform -rotate-12 grayscale z-0" style="transform: translateZ(0);">
+    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -bottom-20 -right-20 w-[48rem] opacity-[0.03] pointer-events-none transform rotate-12 grayscale z-0" style="transform: translateZ(0);">
+
+    <!-- Header / Navbar -->
+    <header id="navbar" class="sticky top-0 w-full z-40 transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center backdrop-blur-md bg-white/85 border border-white/60 shadow-sm mt-2 rounded-full">
+            <a href="index.html" class="flex items-center gap-2.5 text-[#0A2F1D] cursor-pointer hover:opacity-85 transition">
+                <img src="assets/images/logo.png" alt="HerbaPedia Logo" class="w-8 h-8 object-contain">
+                <span class="text-xl font-bold tracking-tight font-sans">Herba<span class="text-[#8CC63F]">Pedia</span></span>
+            </a>
+            <ul class="hidden md:flex gap-8 text-sm font-semibold text-gray-600 items-center nav-links">
+                <li><a href="index.html" class="hover:text-[#0A2F1D] transition-colors pb-1 border-b-2 border-transparent hover:border-yellow-400">Trang chủ</a></li>
+                <li><a href="search.html" class="text-forest-900 transition-colors pb-1 border-b-2 border-yellow-400">Tra cứu</a></li>
+                <li><a href="history.html" class="hover:text-[#0A2F1D] transition-colors pb-1 border-b-2 border-transparent hover:border-yellow-400">Cộng đồng</a></li>
+                <li class="relative group">
+                    <button class="flex items-center gap-2 bg-white border border-gray-200 px-3 py-1.5 rounded-full hover:shadow-sm transition-all focus:outline-none">
+                        <img src="assets/images/logo.png" alt="Avatar" class="w-7 h-7 rounded-full object-cover">
+                        <span class="font-bold text-[#0A2F1D] text-sm">Hi,</span>
+                        <i data-feather="chevron-down" class="w-4 h-4 text-gray-500 group-hover:rotate-180 transition-transform"></i>
+                    </button>
+                    <!-- Dropdown Menu -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 transform origin-top-right scale-95 group-hover:scale-100">
+                        <div class="py-1">
+                            <a href="profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="user" class="w-4 h-4 text-gray-500"></i> Hồ sơ cá nhân
+                            </a>
+                            <a href="user-profile.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="book-open" class="w-4 h-4 text-gray-500"></i> Blog cá nhân
+                            </a>
+                            <a href="personal-history.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-[#eef1e6] hover:text-[#1b3b22] hover:font-semibold transition-colors">
+                                <i data-feather="clock" class="w-4 h-4 text-gray-500"></i> Lịch sử cá nhân
+                            </a>
+                        </div>
+                        <div class="border-t border-gray-100 py-1">
+                            <button class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
+                                <i data-feather="log-out" class="w-4 h-4"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Mobile Hamburger Button -->
+            <button id="btnMobileMenuToggle" type="button" class="md:hidden p-2 rounded-full text-forest-900 hover:bg-white/80 transition" aria-label="Menu">
+                <i data-feather="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Drawer / Menu -->
+        <div id="mobileMenu" class="hidden md:hidden max-w-6xl mx-auto px-6 py-4 mt-2">
+            <div class="bg-white/95 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-xl p-5 flex flex-col gap-3">
+                <a href="index.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="home" class="w-4 h-4 text-[#8CC63F]"></i> Trang chủ
+                </a>
+                <a href="search.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-forest-900 bg-sage-50">
+                    <i data-feather="book" class="w-4 h-4 text-[#8CC63F]"></i> Tra cứu từ điển
+                </a>
+                <a href="history.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="users" class="w-4 h-4 text-[#8CC63F]"></i> Cộng đồng
+                </a>
+                <a href="personal-history.html" class="flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold text-gray-700 hover:bg-gray-50">
+                    <i data-feather="clock" class="w-4 h-4 text-[#8CC63F]"></i> Lịch sử nhận diện
+                </a>
+                <div class="border-t border-gray-100 pt-3 mt-1">
+                    <a href="auth.html" id="mobileAuthLink" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-forest-900 text-white font-bold text-sm">
+                        <i data-feather="log-in" class="w-4 h-4"></i> Đăng nhập / Tài khoản
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex-1 flex flex-col mt-8 sm:mt-12 mb-16">
+        
+        <!-- Hero Header -->
+        <div class="w-full flex flex-col items-center text-center mb-8">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-green-200 shadow-sm text-xs font-bold text-forest-900 mb-3 backdrop-blur-sm">
+                <span class="w-2 h-2 rounded-full bg-[#8CC63F]"></span>
+                <span>Bách Khoa Toàn Thư Thảo Mộc Số</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-forest-900 mb-3 font-serif tracking-tight">
+                Từ điển Dược liệu Thảo mộc
+            </h1>
+            <p class="font-sans font-light text-gray-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+                Khám phá kho tàng 36+ cây thuốc và dược liệu dân gian. Tra cứu chính xác tên khoa học, hoạt chất, bộ phận dùng và cẩm nang bài thuốc y học cổ truyền.
+            </p>
+
+            <!-- Quick Metrics Counter -->
+            <div class="flex items-center justify-center gap-4 sm:gap-8 mt-5 text-xs text-gray-500 font-semibold">
+                <div class="flex items-center gap-1.5 bg-white/70 px-3 py-1.5 rounded-full border border-gray-200/60 shadow-sm">
+                    <i data-feather="database" class="w-3.5 h-3.5 text-[#8CC63F]"></i>
+                    <span id="statTotalHerbs">36 Dược liệu chuẩn hóa</span>
+                </div>
+                <div class="flex items-center gap-1.5 bg-white/70 px-3 py-1.5 rounded-full border border-gray-200/60 shadow-sm">
+                    <i data-feather="cpu" class="w-3.5 h-3.5 text-blue-500"></i>
+                    <span>20 Loài AI hỗ trợ nhận diện</span>
+                </div>
+                <div class="hidden sm:flex items-center gap-1.5 bg-white/70 px-3 py-1.5 rounded-full border border-gray-200/60 shadow-sm">
+                    <i data-feather="book-open" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>100+ Bài thuốc & Sơ chế</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Bar & Controls -->
+        <div class="w-full max-w-3xl mx-auto flex flex-col items-center mb-8">
+            <div class="relative w-full group">
+                <i data-feather="search" class="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#8CC63F] transition-colors"></i>
+                <input type="text" id="searchInput" placeholder="Tìm theo tên cây, tên khoa học, vị thuốc, công dụng (nhấn / để tìm)..." 
+                       class="w-full pl-12 pr-12 py-3.5 sm:py-4 rounded-full border border-gray-200 bg-white/95 text-gray-800 outline-none focus:border-[#8CC63F] focus:ring-4 focus:ring-[#8CC63F]/15 shadow-sm transition-all text-sm sm:text-base placeholder-gray-400">
+                <button id="btnClearSearchInput" type="button" class="hidden absolute right-4 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 items-center justify-center transition-colors text-xs" title="Xóa tìm kiếm">
+                    <i data-feather="x" class="w-3.5 h-3.5"></i>
+                </button>
+            </div>
+            
+            <!-- Category Filter Pills (Scrollable) -->
+            <div class="w-full overflow-x-auto hide-scrollbar py-3 mt-3">
+                <div class="flex items-center justify-start md:justify-center gap-2.5 w-max mx-auto px-2">
+                    <button class="tag-pill active" data-filter="all">Tất cả</button>
+                    <button class="tag-pill" data-filter="thanh nhiệt">Thanh nhiệt giải độc</button>
+                    <button class="tag-pill" data-filter="kháng viêm">Kháng viêm & Vi trùng</button>
+                    <button class="tag-pill" data-filter="tiêu hóa">Tiêu hóa & Dạ dày</button>
+                    <button class="tag-pill" data-filter="an thần">An thần & Giấc ngủ</button>
+                    <button class="tag-pill" data-filter="cầm máu">Cầm máu & Làm lành</button>
+                    <button class="tag-pill" data-filter="làm đẹp">Làm đẹp & Da</button>
+                </div>
+            </div>
+
+            <!-- Toolbar Controls: AI Filter & Sort -->
+            <div class="w-full flex flex-wrap items-center justify-between gap-3 mt-2 text-xs text-gray-600 px-2">
+                <!-- AI-Supported Toggle Button -->
+                <button type="button" id="btnFilterAiOnly" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 transition-all font-semibold shadow-sm">
+                    <i data-feather="cpu" class="w-3.5 h-3.5 text-gray-400"></i>
+                    <span id="aiFilterLabel">Chỉ hiện 20 loài AI nhận diện</span>
+                </button>
+
+                <!-- Sort & Results count -->
+                <div class="flex items-center gap-3">
+                    <span id="resultsSummary" class="text-xs text-gray-500 font-medium">Đang tải dược liệu...</span>
+                    <select id="sortSelector" class="bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-xs text-gray-700 outline-none focus:border-[#8CC63F] shadow-sm font-medium cursor-pointer">
+                        <option value="name_asc">Tên cây (A &rarr; Z)</option>
+                        <option value="name_desc">Tên cây (Z &rarr; A)</option>
+                        <option value="scientific_asc">Tên khoa học</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Herb Cards Grid -->
+        <div id="resultsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Skeleton Slices -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
+                <div class="h-44 bg-gray-200 rounded-xl mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-100 rounded w-1/2 mb-4"></div>
+                <div class="h-3 bg-gray-100 rounded w-full mb-1"></div>
+                <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
+                <div class="h-44 bg-gray-200 rounded-xl mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-100 rounded w-1/2 mb-4"></div>
+                <div class="h-3 bg-gray-100 rounded w-full mb-1"></div>
+                <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
+                <div class="h-44 bg-gray-200 rounded-xl mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-100 rounded w-1/2 mb-4"></div>
+                <div class="h-3 bg-gray-100 rounded w-full mb-1"></div>
+                <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
+                <div class="h-44 bg-gray-200 rounded-xl mb-3"></div>
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-3 bg-gray-100 rounded w-1/2 mb-4"></div>
+                <div class="h-3 bg-gray-100 rounded w-full mb-1"></div>
+                <div class="h-3 bg-gray-100 rounded w-2/3"></div>
+            </div>
+        </div>
+
+        <!-- Clear Search Bottom Bar -->
+        <div class="flex justify-center items-center mt-8">
+            <button id="clearSearch" type="button" class="hidden px-6 py-2 rounded-full border border-gray-300 bg-white text-forest-900 font-bold text-xs hover:bg-gray-50 transition-all shadow-sm">
+                ✕ Xóa bộ lọc tìm kiếm
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Comprehensive Botanical Footer -->
+    <footer class="relative z-10 bg-white/80 backdrop-blur-md border-t border-gray-200/80 mt-auto pt-12 pb-8">
+        <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-10 text-left">
+            <!-- Col 1: About -->
+            <div>
+                <div class="flex items-center gap-2 text-forest-900 mb-3">
+                    <img src="assets/images/logo.png" alt="HerbaPedia Logo" class="w-7 h-7 object-contain">
+                    <span class="text-lg font-bold font-sans">Herba<span class="text-[#8CC63F]">Pedia</span></span>
+                </div>
+                <p class="text-xs text-gray-500 leading-relaxed font-light">
+                    Hệ thống nhận diện cây dược liệu thông minh ứng dụng Trí tuệ Nhân tạo và IoT vì sức khỏe cộng đồng.
+                </p>
+                <div class="mt-2.5 text-[11px] text-gray-400">
+                    <span>Phiên bản v2.0 • 2026</span>
+                </div>
+                <div class="flex items-center gap-3 mt-4 text-gray-400">
+                    <a href="#" class="hover:text-forest-900 transition"><i data-feather="github" class="w-4 h-4"></i></a>
+                    <a href="#" class="hover:text-forest-900 transition"><i data-feather="globe" class="w-4 h-4"></i></a>
+                    <a href="#" class="hover:text-forest-900 transition"><i data-feather="mail" class="w-4 h-4"></i></a>
+                </div>
+            </div>
+
+            <!-- Col 2: Navigation -->
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Khám phá</h4>
+                <ul class="text-xs space-y-2 text-gray-600">
+                    <li><a href="index.html" class="hover:text-[#8CC63F] transition">Trang chủ nhận diện</a></li>
+                    <li><a href="search.html" class="hover:text-[#8CC63F] transition">Từ điển 20+ dược liệu</a></li>
+                    <li><a href="history.html" class="hover:text-[#8CC63F] transition">Cộng đồng & Thảo luận</a></li>
+                    <li><a href="personal-history.html" class="hover:text-[#8CC63F] transition">Lịch sử quét của tôi</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Technology Stack -->
+            <div>
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Công nghệ Lõi</h4>
+                <ul class="text-xs space-y-2 text-gray-600">
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> MobileNetV3 Transfer Learning</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> Custom CNN Deep Network</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> FastAPI High Performance BE</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> Raspberry Pi Embedded Camera</li>
+                </ul>
+            </div>
+
+            <!-- Col 4: Donate / Ủng hộ dự án -->
+            <div id="footerDonate">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3 flex items-center gap-1.5">
+                    <i data-feather="heart" class="w-3.5 h-3.5 text-rose-500 fill-rose-500"></i>
+                    <span>Ủng Hộ Dự Án</span>
+                </h4>
+                <p class="text-xs text-gray-500 leading-relaxed font-light mb-3">
+                    Đồng hành cùng chúng tôi duy trì máy chủ & phát triển AI vì cộng đồng.
+                </p>
+                <div class="flex items-center gap-3">
+                    <img src="assets/images/donate-qr.jpg" onerror="this.src='images/donate-qr.jpg'" alt="QR Donate MB Bank" class="w-16 h-16 rounded-xl border border-gray-200 shadow-xs object-contain cursor-pointer hover:scale-105 transition-transform shrink-0 bg-white p-1" id="btnZoomQrFooter" title="Bấm để phóng to">
+                    <div class="text-xs text-gray-600 space-y-0.5 min-w-0">
+                        <div class="font-bold text-forest-900 text-xs">MB Bank</div>
+                        <div class="font-semibold text-gray-700 text-[11px] uppercase">TRAN MANH QUYNH</div>
+                        <div class="flex items-center gap-1.5 text-[11px] pt-0.5">
+                            <span class="font-mono font-bold text-forest-900">525220082006</span>
+                            <button type="button" id="btnCopyStkFooter" class="px-1.5 py-0.5 rounded bg-gray-100 hover:bg-[#8CC63F] hover:text-white text-[10px] font-bold text-gray-600 transition" title="Sao chép STK">
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto px-6 border-t border-gray-100 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 font-light">
+            <p>&copy; 2026 HerbaPedia. Phát triển vì sức khỏe cộng đồng & giáo dục thảo dược.</p>
+            <p class="mt-2 sm:mt-0">Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/data/herbs.js"></script>
+    <script src="assets/js/search.js"></script>
+    <script>
+        if (typeof feather !== 'undefined') feather.replace();
+        const btnMobileMenuToggle = document.getElementById('btnMobileMenuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (btnMobileMenuToggle && mobileMenu) {
+            btnMobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>
