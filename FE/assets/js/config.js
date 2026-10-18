@@ -36,8 +36,8 @@
     // 3. Khai báo endpoint
     const LOCAL_API_URL = 'http://127.0.0.1:8000';
     
-    // Đổi link này thành link backend trên Render / Railway / VPS khi bạn deploy backend
-    const PRODUCTION_API_URL = 'https://herbapedia-api.onrender.com';
+    // Backend production trên Railway (Singapore edge server)
+    const PRODUCTION_API_URL = 'https://herbapedia-production.up.railway.app';
 
     // Lựa chọn API URL phù hợp
     const rawApiUrl = savedApiUrl || (isLocalhost ? LOCAL_API_URL : PRODUCTION_API_URL);
