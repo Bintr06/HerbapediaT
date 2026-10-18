@@ -101,6 +101,28 @@
 
                 <!-- Info Cards Area -->
                 <div class="flex flex-col gap-4">
+                    <!-- Cảnh báo độ tin cậy thấp hơn ngưỡng cài đặt -->
+                    <div id="lowConfidenceAlert" class="hidden rounded-xl border border-amber-300 bg-amber-50/95 p-4 flex items-start gap-3.5 shadow-xs transition-all">
+                        <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5 text-amber-600">
+                            <i data-feather="alert-triangle" class="w-4 h-4 stroke-[2.5]"></i>
+                        </div>
+                        <div class="text-xs flex-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-bold text-amber-900 text-sm">Cảnh báo: Độ tin cậy thấp</span>
+                                <span id="alertThresholdBadge" class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900">Ngưỡng: 35%</span>
+                            </div>
+                            <p class="text-amber-800 mt-1 leading-relaxed">
+                                AI nhận diện đạt độ tin cậy <span id="alertCurrentConf" class="font-bold">--%</span>, thấp hơn ngưỡng tối thiểu hiển thị (<span id="alertThresholdText">35%</span>). Ảnh có thể bị mờ, rung tay, lóa sáng hoặc phiến lá chưa rõ nét.
+                            </p>
+                            <div class="mt-2.5 flex items-center gap-2">
+                                <a href="index.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold text-[11px] shadow-xs transition-colors">
+                                    <i data-feather="camera" class="w-3.5 h-3.5"></i> Chụp / tải ảnh lại
+                                </a>
+                                <span class="text-[11px] text-amber-700/80">hoặc xem các khả năng khác bên dưới.</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Thẻ 1 -->
                     <div class=" rounded-xl border border-gray-100 shadow-[0_2px_10px_-3px_rgba(0,0,0,0.02)] border-l-4 border-l-[#8CC63F] p-4 w-full">
                         <div class="flex items-center gap-1.5 text-gray-400 mb-1">
@@ -211,14 +233,44 @@
                 modelText.innerText = modelName;
             }
 
+            const savedMinConf = Number.parseFloat(localStorage.getItem('minConfidence') || '35');
+            const confidenceValue = Number.parseFloat(prediction.confidence);
+
             const confidenceElements = document.querySelectorAll('[data-confidence]');
             confidenceElements.forEach((element) => {
                 element.innerText = prediction.confidence || '0%';
             });
-            const confidenceValue = Number.parseFloat(prediction.confidence);
             const confidenceBar = document.querySelector('[data-confidence-bar]');
             if (confidenceBar && Number.isFinite(confidenceValue)) {
                 confidenceBar.style.width = `${Math.min(100, Math.max(0, confidenceValue))}%`;
+            }
+
+            // Kiểm tra ngưỡng độ tin cậy tối thiểu hiển thị
+            const lowConfAlert = document.getElementById('lowConfidenceAlert');
+            const alertThresholdBadge = document.getElementById('alertThresholdBadge');
+            const alertThresholdText = document.getElementById('alertThresholdText');
+            const alertCurrentConf = document.getElementById('alertCurrentConf');
+
+            if (Number.isFinite(confidenceValue) && Number.isFinite(savedMinConf)) {
+                const isBelowThreshold = confidenceValue < savedMinConf;
+                if (isBelowThreshold) {
+                    if (lowConfAlert) {
+                        lowConfAlert.classList.remove('hidden');
+                        if (alertThresholdBadge) alertThresholdBadge.innerText = `Ngưỡng: ${savedMinConf}%`;
+                        if (alertThresholdText) alertThresholdText.innerText = `${savedMinConf}%`;
+                        if (alertCurrentConf) alertCurrentConf.innerText = `${confidenceValue}%`;
+                    }
+                    confidenceElements.forEach((el) => {
+                        el.classList.remove('text-[#8CC63F]');
+                        el.classList.add('text-amber-600');
+                    });
+                    if (confidenceBar) {
+                        confidenceBar.classList.remove('bg-[#8CC63F]');
+                        confidenceBar.classList.add('bg-amber-500');
+                    }
+                } else {
+                    if (lowConfAlert) lowConfAlert.classList.add('hidden');
+                }
             }
 
             // Hiển thị top candidates nếu có
