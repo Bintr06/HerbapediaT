@@ -14,38 +14,38 @@
     // 1. Kiểm tra URL tùy chỉnh được lưu trong localStorage (cho phép đổi nhanh khi test)
     const savedApiUrl = (function () {
         try {
-            return typeof localStorage !== 'undefined' ? localStorage.getItem('HERBAPEDIA_API_URL') : null;
+            if (typeof localStorage === 'undefined') return null;
+            const url = localStorage.getItem('HERBAPEDIA_API_URL');
+            // Tự động xóa các URL cũ của Render hoặc localhost trên thiết bị di động
+            if (url && (url.includes('onrender.com') || url.includes('127.0.0.1') || url.includes('localhost'))) {
+                localStorage.removeItem('HERBAPEDIA_API_URL');
+                return null;
+            }
+            return url;
         } catch (e) {
             return null;
         }
     })();
 
-    // 2. Nhận diện có đang chạy ở localhost / máy dev hay không
+    // 2. Nhận diện môi trường và cờ ép dùng local backend (?api=local)
     const hostname = typeof window !== 'undefined' && window.location ? window.location.hostname : '';
-    const protocol = typeof window !== 'undefined' && window.location ? window.location.protocol : '';
-    const isLocalhost = Boolean(
-        hostname === 'localhost' ||
-        hostname === '127.0.0.1' ||
-        hostname.startsWith('192.168.') ||
-        hostname.startsWith('10.') ||
-        hostname.endsWith('.local') ||
-        hostname === '' ||
-        protocol === 'file:'
-    );
+    const hasLocalParam = typeof window !== 'undefined' && window.location && window.location.search.includes('api=local');
 
     // 3. Khai báo endpoint
     const LOCAL_API_URL = 'http://127.0.0.1:8000';
-    
-    // Backend production trên Railway (Singapore edge server)
+    // Backend production trên Railway (Singapore edge server, phản hồi ~0.3s)
     const PRODUCTION_API_URL = 'https://herbapedia-production.up.railway.app';
 
-    // Lựa chọn API URL phù hợp
-    const rawApiUrl = savedApiUrl || (isLocalhost ? LOCAL_API_URL : PRODUCTION_API_URL);
+    // Mặc định luôn dùng Railway Backend để đảm bảo camera, AI và database hoạt động 100% trên cả điện thoại và máy tính.
+    // Nếu lập trình viên muốn kết nối backend local: chỉ cần thêm ?api=local vào URL hoặc gọi HerbaConfig.setApiUrl(...)
+    const rawApiUrl = savedApiUrl || (hasLocalParam ? LOCAL_API_URL : PRODUCTION_API_URL);
     const cleanApiUrl = rawApiUrl.replace(/\/+$/, '');
 
     const HerbaConfig = {
         API_BASE_URL: cleanApiUrl,
-        isLocalhost: isLocalhost,
+        PRODUCTION_API_URL: PRODUCTION_API_URL,
+        LOCAL_API_URL: LOCAL_API_URL,
+        isLocalhost: (hostname === 'localhost' || hostname === '127.0.0.1'),
 
         /**
          * Tạo URL đầy đủ cho một endpoint API

@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyFilters(false);
 
     // Đồng thời gọi API backend để lấy dữ liệu mới nhất nếu có
-    const herbsApiUrl = (window.HerbaConfig ? window.HerbaConfig.apiUrl('/herbs') : 'http://127.0.0.1:8000/herbs');
+    const herbsApiUrl = (window.HerbaConfig ? window.HerbaConfig.apiUrl('/herbs') : 'https://herbapedia-production.up.railway.app/herbs');
     fetch(herbsApiUrl)
         .then((response) => (response.ok ? response.json() : Promise.reject(new Error('Backend offline'))))
         .then((data) => {

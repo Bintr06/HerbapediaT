@@ -1,4 +1,4 @@
-const API_BASE_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+const API_BASE_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
 const GOOGLE_CLIENT_ID = '289763049496-ql91n06vqdqmsdp1j02j27na4kg31p4c.apps.googleusercontent.com';
 
 function setAuthenticatedUser(token, username, displayName = username, role = 'user') {

@@ -147,7 +147,7 @@ function addNotificationToNavbar() {
 
 async function loadNavbarNotifications() {
     if (!hasAuthenticatedSession() || !document.querySelector('[data-notification-bell]')) return;
-    const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+    const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
     const response = await fetch(`${apiBase}/community/notifications`, {
         headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
     });
@@ -176,7 +176,7 @@ function initializeNavbarNotifications() {
         document.addEventListener('click', async (event) => {
             const notification = event.target.closest('[data-notification-id]');
             if (!notification) return;
-            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
             await fetch(`${apiBase}/community/notifications/read`, {
                 method: 'POST',
                 headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
@@ -269,7 +269,7 @@ async function updateNavbarProfile() {
 
     if (token) {
         try {
-            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
             const response = await fetch(`${apiBase}/auth/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });

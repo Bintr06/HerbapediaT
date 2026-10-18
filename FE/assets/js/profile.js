@@ -1,4 +1,4 @@
-const PROFILE_API_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+const PROFILE_API_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
 
 function clearProfileSession() {
     localStorage.removeItem('accessToken');

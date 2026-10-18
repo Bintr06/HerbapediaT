@@ -6,7 +6,7 @@
  * Quản trị Hệ thống (Trạng thái FastAPI, MySQL, Cloudinary, AI Models)
  */
 
-const ADMIN_API = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+const ADMIN_API = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
 
 // 20 Class thực tế được huấn luyện trong mô hình AI (MobileNetV3 / Custom CNN)
 const AI_RECOGNIZED_CLASSES = new Set([

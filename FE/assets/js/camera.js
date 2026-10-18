@@ -29,7 +29,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedUploadFile = null;
     let localStream = null;
     let isCameraStreaming = false;
-    const API_BASE_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
+
+    function getApiBaseUrl() {
+        return (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+    }
+    const API_BASE_URL = getApiBaseUrl();
+
+    // Chuyển DataURL thành Blob an toàn tương thích 100% với iOS Safari & Android
+    function dataURLtoBlob(dataurl) {
+        const arr = dataurl.split(',');
+        const mime = (arr[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new Blob([u8arr], { type: mime });
+    }
 
     // Toast thông báo chuyên nghiệp
     function showCameraToast(message, isError = false) {
@@ -152,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('selectedModel', selectedModel);
         updateModelButtons();
         // Báo cho backend nạp trước mô hình ngầm vào RAM để quét tức thì (<0.3s)
-        fetch(`${API_BASE_URL}/models/select`, {
+        fetch(`${getApiBaseUrl()}/models/select`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ model_id: modelId })
@@ -707,13 +724,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 canvas.height = h;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(videoElement, 0, 0, w, h);
-                const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+                const base64Data = canvas.toDataURL('image/jpeg', 0.82);
                 try {
                     localStorage.setItem('lastCapturedImage', base64Data);
                 } catch (e) {
                     console.warn('LocalStorage full:', e);
                 }
-                capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+
+                // ĐÓNG BĂNG CAMERA TỨC THÌ:
+                // Tạm dừng video và hiển thị khung hình tĩnh vừa chụp để camera không di chuyển nữa
+                try {
+                    videoElement.pause();
+                } catch (e) {}
+                videoElement.style.display = 'none';
+                if (imagePreview) {
+                    imagePreview.src = base64Data;
+                    imagePreview.style.display = 'block';
+                }
+
+                // Chuyển DataURL thành Blob an toàn 100% cho mọi trình duyệt di động (iOS Safari & Android Chrome)
+                capturedBlob = dataURLtoBlob(base64Data);
             } else {
                 // Chụp từ Raspberry Pi qua /capture
                 const captureRes = await fetch(`${rpiCameraBase}/capture`, { signal: AbortSignal.timeout(4000) });
@@ -726,6 +756,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     reader.readAsDataURL(capturedBlob);
                 });
                 localStorage.setItem('lastCapturedImage', base64Data);
+                // Đóng băng khung hình Raspberry Pi hiển thị ảnh snapshot
+                if (imagePreview) {
+                    imagePreview.src = base64Data;
+                }
             }
 
             // Gửi ảnh đến Backend /predict
@@ -746,7 +780,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let predRes;
             try {
-                predRes = await fetch(`${API_BASE_URL}/predict`, {
+                const targetUrl = `${getApiBaseUrl()}/predict`;
+                predRes = await fetch(targetUrl, {
                     method: 'POST',
                     headers: headers,
                     body: formData
@@ -770,7 +805,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Lỗi khi quét từ camera:', err);
-            alert(err.message || 'Lỗi chụp ảnh từ camera.');
+            // Khôi phục lại camera trực tiếp nếu có lỗi để người dùng chụp lại
+            if (cameraSource === 'webcam') {
+                if (imagePreview) imagePreview.style.display = 'none';
+                if (videoElement) {
+                    videoElement.style.display = 'block';
+                    try {
+                        videoElement.play();
+                    } catch (e) {}
+                }
+            } else if (cameraSource === 'rpi') {
+                if (imagePreview) {
+                    imagePreview.src = `${rpiCameraBase}/video_feed?t=${Date.now()}`;
+                }
+            }
             if (btnCameraScan) {
                 btnCameraScan.disabled = false;
                 btnCameraScan.innerHTML = '<i data-feather="camera" class="w-4 h-4"></i> Bắt đầu quét';
@@ -778,6 +826,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (scanLine) scanLine.style.display = 'none';
             if (loadingStatus) loadingStatus.style.display = 'none';
+
+            let errText = err.message || 'Lỗi chụp ảnh từ camera.';
+            if (errText.toLowerCase().includes('load failed') || errText.toLowerCase().includes('failed to fetch')) {
+                errText = 'Không thể kết nối đến máy chủ AI (Load failed). Vui lòng thử tải lại trang web hoặc kiểm tra kết nối mạng.';
+            }
+            alert(errText);
         }
     }
 
@@ -820,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 formData.append('file', optimizedFile, optimizedFile.name);
                 formData.append('model_name', selectedModel);
 
-                const response = await fetch(`${API_BASE_URL}/predict`, {
+                const response = await fetch(`${getApiBaseUrl()}/predict`, {
                     method: 'POST',
                     headers: headers,
                     body: formData
@@ -834,7 +888,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'result.html';
             } catch (error) {
                 clearTimeout(slowTimer);
-                alert(error.message);
+                let errText = error.message || 'Lỗi quét ảnh.';
+                if (errText.toLowerCase().includes('load failed') || errText.toLowerCase().includes('failed to fetch')) {
+                    errText = 'Không thể kết nối đến máy chủ AI (Load failed). Vui lòng kiểm tra lại mạng hoặc thử lại.';
+                }
+                alert(errText);
                 btnUploadStartScan.disabled = false;
                 btnUploadStartScan.innerHTML = '<i data-feather="search" class="w-4 h-4"></i> Bắt đầu quét ảnh';
                 if (typeof feather !== 'undefined') feather.replace();
@@ -851,7 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         try {
-            const response = await fetch(`${API_BASE_URL}/herbs/top-recognized?limit=4`, {
+            const response = await fetch(`${getApiBaseUrl()}/herbs/top-recognized?limit=4`, {
                 signal: AbortSignal.timeout(3000)
             });
             if (!response.ok) {
