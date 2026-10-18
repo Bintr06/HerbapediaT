@@ -79,8 +79,9 @@ def save_prediction_history_background(
 async def lifespan(_app: FastAPI):
     del _app
     init_db()
-    # Tải trước mô hình vào RAM ngay khi khởi động
-    await run_in_threadpool(warmup_models)
+    # Chạy nạp mô hình ở chế độ ngầm để server mở cổng ngay lập tức (<0.1s), tránh Render Port Scan Timeout
+    import asyncio
+    asyncio.create_task(run_in_threadpool(warmup_models))
     yield
 
 

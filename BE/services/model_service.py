@@ -262,12 +262,15 @@ def load_model_instance(model_id: str):
 
 
 def warmup_models():
-    for model_id in MODEL_CONFIGS:
-        try:
-            cfg = MODEL_CONFIGS[model_id]
+    # Chỉ làm nóng mô hình đang kích hoạt để tiết kiệm RAM (512MB Render) và khởi động tức thì
+    active_id = get_active_model_id()
+    try:
+        cfg = MODEL_CONFIGS.get(active_id)
+        if cfg:
             model_path = MODELS_DIR / cfg["filename"]
             if model_path.exists():
-                model = load_model_instance(model_id)
+                logger.info(f"Đang nạp trước mô hình mặc định: {cfg['name']}...")
+                model = load_model_instance(active_id)
                 dummy = np.zeros((1, *cfg["input_size"], 3), dtype=np.float32)
                 try:
                     import torch
@@ -275,9 +278,9 @@ def warmup_models():
                         _ = model(dummy, training=False)
                 except Exception:
                     _ = model(dummy, training=False)
-                logger.info(f"Làm nóng mô hình {model_id} thành công!")
-        except Exception as exc:
-            logger.warning(f"Không thể làm nóng mô hình {model_id}: {exc}")
+                logger.info(f"Mô hình {active_id} ({cfg['name']}) đã sẵn sàng phục vụ dự đoán!")
+    except Exception as exc:
+        logger.warning(f"Không thể làm nóng mô hình {active_id}: {exc}")
 
 
 def preprocess_image(image: Image.Image, target_size: tuple[int, int], rescale: float) -> np.ndarray:
