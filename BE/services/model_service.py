@@ -1,14 +1,32 @@
+import gc
 import logging
 import os
+import threading
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-from PIL import Image
+# Khóa số luồng đa luồng của BLAS/OpenMP/PyTorch về 1 luồng
+# Điều này cực kỳ quan trọng trên Render Linux: ngăn chặn việc tự động tạo 4-16 luồng ngầm gây tràn 512MB RAM
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["TORCH_NUM_THREADS"] = "1"
 
 # Đặt backend cho Keras sang torch trước khi nạp thư viện Keras
 os.environ.setdefault("KERAS_BACKEND", "torch")
 import keras  # noqa: E402
+import numpy as np  # noqa: E402
+from PIL import Image  # noqa: E402
+
+# Giới hạn PyTorch chạy 1 luồng trên CPU để tiết kiệm ~100MB RAM bộ đệm luồng
+try:
+    import torch
+    torch.set_num_threads(1)
+    torch.set_num_interop_threads(1)
+except Exception:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -181,8 +199,6 @@ MODEL_CONFIGS: dict[str, dict[str, Any]] = {
     },
 }
 
-import threading
-
 _active_model_id = os.getenv("DEFAULT_MODEL", "mobilenet_v3")
 _loaded_models: dict[str, Any] = {}
 _model_lock = threading.Lock()
@@ -234,6 +250,12 @@ def load_model_instance(model_id: str):
         if model_id in _loaded_models:
             return _loaded_models[model_id]
 
+        # Tối ưu RAM cho Render Free (512MB limit):
+        # Giải phóng mô hình cũ trước khi nạp mô hình mới để không bao giờ có 2 mô hình cùng trong RAM
+        if _loaded_models:
+            _loaded_models.clear()
+            gc.collect()
+
         cfg = MODEL_CONFIGS[model_id]
         model_path = MODELS_DIR / cfg["filename"]
         if not model_path.exists():
@@ -264,6 +286,8 @@ def load_model_instance(model_id: str):
                 pass
 
         _loaded_models[model_id] = model
+        # Dọn dẹp các đối tượng giải nén tạm thời từ tệp .keras
+        gc.collect()
         logger.info(f"Nạp thành công mô hình {cfg['name']}!")
         return model
 
@@ -281,10 +305,12 @@ def warmup_models():
                 dummy = np.zeros((1, *cfg["input_size"], 3), dtype=np.float32)
                 try:
                     import torch
-                    with torch.no_grad():
+                    with torch.inference_mode():
                         _ = model(dummy, training=False)
                 except Exception:
                     _ = model(dummy, training=False)
+                del dummy
+                gc.collect()
                 logger.info(f"Mô hình {active_id} ({cfg['name']}) đã sẵn sàng phục vụ dự đoán!")
     except Exception as exc:
         logger.warning(f"Không thể làm nóng mô hình {active_id}: {exc}")
@@ -310,7 +336,7 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
 
     try:
         import torch
-        with torch.no_grad():
+        with torch.inference_mode():
             preds = model(x, training=False)
             if hasattr(preds, "detach"):
                 preds = preds.detach().cpu().numpy()
@@ -325,6 +351,9 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
                 preds = preds.numpy()
         except Exception:
             preds = model.predict(x, verbose=0)
+    finally:
+        del x
+        gc.collect()
 
     probs = preds[0] if len(preds.shape) > 1 else preds
     top_indices = np.argsort(probs)[::-1][:5]

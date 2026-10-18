@@ -2,6 +2,16 @@ import io
 import logging
 import os
 import threading
+
+# Giới hạn số luồng tính toán để tối ưu bộ nhớ RAM dưới 350MB trên Render
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["TORCH_NUM_THREADS"] = "1"
+os.environ.setdefault("KERAS_BACKEND", "torch")
+
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Optional
@@ -89,8 +99,12 @@ async def lifespan(_app: FastAPI):
     # 2. Nạp sẵn mô hình vào RAM ngay sau khi khởi động, giúp người dùng quét ảnh tức thì trong ~0.5s
     def _bg_warmup():
         try:
+            import time
+            time.sleep(1.5)  # Chờ 1.5s để Uvicorn và Database hoàn tất khởi động trước khi nạp AI
             logger.info("Background Warmup: Bắt đầu nạp trước mô hình AI vào RAM...")
             warmup_models()
+            import gc
+            gc.collect()
             logger.info("Background Warmup: Mô hình AI đã sẵn sàng phục vụ nhận diện tức thì (<0.5s)!")
         except Exception as exc:
             logger.warning(f"Background Warmup thất bại: {exc}")
@@ -204,6 +218,11 @@ async def predict_leaf(
             status_code=500,
             detail=f"Lỗi khi nhận diện ảnh: {str(exc)}",
         ) from exc
+    finally:
+        try:
+            image.close()
+        except Exception:
+            pass
 
     # Đưa tác vụ upload Cloudinary và lưu lịch sử vào BackgroundTasks (không bắt người dùng đợi)
     if current_user is not None:
