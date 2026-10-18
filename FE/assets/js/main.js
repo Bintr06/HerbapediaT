@@ -197,10 +197,26 @@ document.addEventListener('DOMContentLoaded', initializeNavbarNotifications);
 function updateLoggedOutNavbar() {
     if (hasAuthenticatedSession()) return;
 
+    // 1. Ẩn menu tài khoản & chuông thông báo trên Desktop
     document.querySelectorAll('.nav-links > li.relative.group').forEach((accountItem) => {
         accountItem.remove();
     });
     document.querySelector('[data-notification-bell]')?.closest('li')?.remove();
+
+    // 2. Ẩn Lịch sử nhận diện cá nhân trên Mobile Menu khi chưa đăng nhập
+    document.querySelectorAll('#mobileMenu a[href*="personal-history.html"], [data-mobile-history]').forEach((el) => {
+        el.style.display = 'none';
+        el.classList.add('hidden');
+    });
+
+    // 3. Đặt nút Mobile Menu thành Đăng nhập
+    const mobileAuth = document.getElementById('mobileAuthLink');
+    if (mobileAuth) {
+        mobileAuth.href = 'auth.html';
+        mobileAuth.innerHTML = '<i data-feather="log-in" class="w-4 h-4"></i> Đăng nhập / Đăng ký';
+        document.getElementById('mobileLogoutBtn')?.remove();
+        if (window.feather) window.feather.replace();
+    }
 
     const nav = document.querySelector('.nav-links');
     if (!nav || nav.querySelector('[data-login-link]')) return;
@@ -292,9 +308,33 @@ async function updateNavbarProfile() {
         if (token) {
             mobileAuth.href = 'profile.html';
             mobileAuth.innerHTML = '<i data-feather="user" class="w-4 h-4"></i> Hồ sơ của tôi';
+
+            // Hiện link Lịch sử nhận diện cá nhân khi đã đăng nhập
+            document.querySelectorAll('#mobileMenu a[href*="personal-history.html"], [data-mobile-history]').forEach((el) => {
+                el.style.display = 'flex';
+                el.classList.remove('hidden');
+            });
+
+            // Thêm nút Đăng xuất trên Mobile Drawer
+            if (!document.getElementById('mobileLogoutBtn')) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.id = 'mobileLogoutBtn';
+                logoutBtn.dataset.action = 'logout';
+                logoutBtn.type = 'button';
+                logoutBtn.className = 'flex items-center justify-center gap-2 w-full py-2.5 mt-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition-colors cursor-pointer';
+                logoutBtn.innerHTML = '<i data-feather="log-out" class="w-4 h-4"></i> Đăng xuất';
+                mobileAuth.parentElement.appendChild(logoutBtn);
+            }
         } else {
             mobileAuth.href = 'auth.html';
             mobileAuth.innerHTML = '<i data-feather="log-in" class="w-4 h-4"></i> Đăng nhập / Đăng ký';
+
+            // Ẩn link Lịch sử nhận diện cá nhân khi chưa đăng nhập
+            document.querySelectorAll('#mobileMenu a[href*="personal-history.html"], [data-mobile-history]').forEach((el) => {
+                el.style.display = 'none';
+                el.classList.add('hidden');
+            });
+            document.getElementById('mobileLogoutBtn')?.remove();
         }
         if (window.feather) window.feather.replace();
     }
