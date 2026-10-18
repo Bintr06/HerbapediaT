@@ -851,8 +851,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetUrl = `detail.html?id=${encodeURIComponent(herb.slug || herb.id)}`;
 
                 return `
-                    <a href="${targetUrl}" class="w-[75vw] md:w-auto shrink-0 snap-center bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm hover:-translate-y-1.5 hover:shadow-lg transition-all duration-300 flex flex-col group cursor-pointer block overflow-hidden">
-                        <div class="relative h-48 w-full overflow-hidden bg-gray-100">
+                    <a href="${targetUrl}" class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-xs hover:-translate-y-1.5 hover:shadow-md transition-all duration-300 flex flex-col group cursor-pointer block overflow-hidden active:scale-98">
+                        <div class="relative h-40 sm:h-48 w-full overflow-hidden bg-gray-100">
                             <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(herb.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='${defaultFallbackImg}';">
                             <span class="absolute top-3 left-3 ${badgeClass} text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">Top ${rank}</span>
                         </div>

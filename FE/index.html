@@ -140,18 +140,18 @@
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex-1 flex flex-col items-center mt-8 sm:mt-12 mb-16">
+    <main class="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 flex-1 flex flex-col items-center mt-4 sm:mt-12 mb-12 sm:mb-16">
         
         <!-- Hero Header -->
-        <div class="text-center mb-8 max-w-2xl mx-auto">
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-green-200 shadow-sm text-xs font-bold text-forest-900 mb-4 backdrop-blur-sm">
+        <div class="text-center mb-5 sm:mb-8 max-w-2xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/80 border border-green-200 shadow-xs text-[11px] sm:text-xs font-bold text-forest-900 mb-3 sm:mb-4 backdrop-blur-sm">
                 <span class="w-2 h-2 rounded-full bg-[#8CC63F] animate-pulse"></span>
                 <span>Hệ Thống Trí Tuệ Nhân Tạo & Dược Liệu Số</span>
             </div>
-            <h1 class="font-serif text-3xl sm:text-5xl md:text-5xl font-bold text-forest-900 mb-3 tracking-tight leading-tight">
+            <h1 class="font-serif text-2xl sm:text-4xl md:text-5xl font-bold text-forest-900 mb-2 sm:mb-3 tracking-tight leading-tight">
                 Bạn đang nhìn thấy<br/>cây gì nhỉ?
             </h1>
-            <p class="font-sans font-light text-gray-600 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
+            <p class="font-sans font-light text-gray-600 text-xs sm:text-base max-w-lg mx-auto leading-relaxed">
                 Chụp ảnh hoặc tải lên một chiếc lá để tra cứu tức thì tên khoa học, hoạt chất dược liệu và bài thuốc y học cổ truyền.
             </p>
         </div>
@@ -160,7 +160,7 @@
         <div class="w-full flex flex-col items-center scanner-container">
             
             <!-- Camera Frame (Glassmorphism + Drag & Drop) -->
-            <div id="cameraFrame" class="relative w-full max-w-2xl aspect-[4/3] sm:aspect-[16/9] rounded-3xl backdrop-blur-xl bg-gradient-to-br from-white/95 via-white/75 to-green-50/50 border-2 border-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.06)] flex flex-col items-center justify-center transition-all duration-300 group overflow-hidden cursor-pointer" title="Nhấn để tải ảnh hoặc mở camera">
+            <div id="cameraFrame" class="relative w-full max-w-2xl aspect-[4/3] sm:aspect-[16/9] min-h-[220px] rounded-2xl sm:rounded-3xl backdrop-blur-xl bg-gradient-to-br from-white/95 via-white/75 to-green-50/50 border-2 border-white/80 shadow-[0_12px_40px_rgba(0,0,0,0.06)] flex flex-col items-center justify-center transition-all duration-300 group overflow-hidden cursor-pointer" title="Nhấn để tải ảnh hoặc mở camera">
                 
                 <!-- Viewfinder corners -->
                 <div class="viewfinder-tl transition-all duration-500 group-hover:scale-110 group-hover:border-white z-20 pointer-events-none"></div>
@@ -169,17 +169,17 @@
                 <div class="viewfinder-br transition-all duration-500 group-hover:scale-110 group-hover:border-white z-20 pointer-events-none"></div>
 
                 <!-- Reset / Clear Preview Button -->
-                <button id="btnClearPreview" type="button" class="hidden absolute top-4 right-4 z-40 w-9 h-9 rounded-full bg-black/60 hover:bg-black/85 text-white items-center justify-center transition-all backdrop-blur-sm shadow-md" title="Xóa ảnh / Đổi ảnh khác">
+                <button id="btnClearPreview" type="button" class="hidden absolute top-3 right-3 sm:top-4 sm:right-4 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-black/85 text-white items-center justify-center transition-all backdrop-blur-sm shadow-md" title="Xóa ảnh / Đổi ảnh khác">
                     <i data-feather="x" class="w-4 h-4"></i>
                 </button>
 
                 <!-- Initial Idle Message Inside Frame -->
-                <div id="frameMessage" class="flex flex-col items-center opacity-70 transition-opacity duration-300 group-hover:opacity-100 z-10 px-6 text-center select-none pointer-events-none">
-                    <div class="w-16 h-16 rounded-2xl bg-forest-900/5 flex items-center justify-center mb-3">
-                        <i data-feather="camera" class="w-8 h-8 text-forest-900 stroke-[1.5]"></i>
+                <div id="frameMessage" class="flex flex-col items-center opacity-70 transition-opacity duration-300 group-hover:opacity-100 z-10 px-4 sm:px-6 text-center select-none pointer-events-none">
+                    <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-forest-900/5 flex items-center justify-center mb-2.5 sm:mb-3">
+                        <i data-feather="camera" class="w-7 h-7 sm:w-8 sm:h-8 text-forest-900 stroke-[1.5]"></i>
                     </div>
-                    <p class="text-forest-900 font-bold text-base tracking-wide">Khung hình nhận diện cây</p>
-                    <p class="text-gray-500 font-light text-xs sm:text-sm mt-1 max-w-xs">
+                    <p class="text-forest-900 font-bold text-sm sm:text-base tracking-wide">Khung hình nhận diện cây</p>
+                    <p class="text-gray-500 font-light text-[11px] sm:text-sm mt-1 max-w-xs">
                         Kéo & thả ảnh vào đây, hoặc nhấn nút bên dưới để mở camera
                     </p>
                 </div>
@@ -195,57 +195,57 @@
             </div>
 
             <!-- Model Selector Bar -->
-            <div class="mt-6 flex flex-wrap items-center justify-center gap-2.5 bg-white/85 backdrop-blur-md px-4 py-2.5 rounded-full border border-gray-200/80 shadow-sm z-20">
-                <div class="flex items-center gap-1.5 text-forest-900 font-bold text-xs">
-                    <i data-feather="cpu" class="w-4 h-4 text-[#8CC63F]"></i>
-                    <span>Mô hình AI:</span>
+            <div class="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 bg-white/90 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full border border-gray-200/80 shadow-xs z-20 max-w-full">
+                <div class="flex items-center gap-1.5 text-forest-900 font-bold text-xs shrink-0">
+                    <i data-feather="cpu" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8CC63F]"></i>
+                    <span class="hidden sm:inline">Mô hình AI:</span>
                 </div>
-                <div class="inline-flex p-1 bg-gray-100/90 rounded-full text-xs font-semibold" id="modelSelectorGroup">
-                    <button type="button" id="btnModelMobilenet" class="px-4 py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-sm flex items-center gap-1.5">
+                <div class="inline-flex p-0.5 sm:p-1 bg-gray-100/90 rounded-full text-xs font-semibold" id="modelSelectorGroup">
+                    <button type="button" id="btnModelMobilenet" class="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-xs flex items-center gap-1.5 text-[11px] sm:text-xs">
                         <span>MobileNetV3</span>
-                        <span class="text-[10px] px-1.5 py-0.2 bg-[#8CC63F] text-white rounded-full font-bold">95.6%</span>
+                        <span class="text-[9px] sm:text-[10px] px-1.5 py-0.2 bg-[#8CC63F] text-white rounded-full font-bold">95.6%</span>
                     </button>
-                    <button type="button" id="btnModelCustomCnn" class="px-4 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5">
+                    <button type="button" id="btnModelCustomCnn" class="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5 text-[11px] sm:text-xs">
                         <span>Custom CNN</span>
-                        <span class="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">88.4%</span>
+                        <span class="text-[9px] sm:text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">88.4%</span>
                     </button>
                 </div>
             </div>
 
             <!-- Quick Sample Leaf Chips (Dùng thử ảnh mẫu nhanh) -->
-            <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-gray-500 z-10">
-                <span class="font-medium text-gray-400">Thử ảnh mẫu nhanh:</span>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="assets/images/nhadam.jpg" data-sample-name="Lô hội (Nha đam)">
+            <div class="mt-3.5 sm:mt-4 flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-gray-500 z-10 px-2">
+                <span class="font-medium text-gray-400 w-full sm:w-auto text-center sm:text-left mb-0.5 sm:mb-0">Thử ảnh mẫu nhanh:</span>
+                <button type="button" class="sample-chip px-2.5 sm:px-3 py-1 bg-white/80 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-xs active:scale-95" data-sample-url="assets/images/nhadam.jpg" data-sample-name="Lô hội (Nha đam)">
                     🌱 Nha đam
                 </button>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="assets/images/Bacha.jpg" data-sample-name="Bạc hà">
+                <button type="button" class="sample-chip px-2.5 sm:px-3 py-1 bg-white/80 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-xs active:scale-95" data-sample-url="assets/images/Bacha.jpg" data-sample-name="Bạc hà">
                     🌿 Bạc hà
                 </button>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="assets/images/Betel.jpg" data-sample-name="Trầu không">
+                <button type="button" class="sample-chip px-2.5 sm:px-3 py-1 bg-white/80 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-xs active:scale-95" data-sample-url="assets/images/Betel.jpg" data-sample-name="Trầu không">
                     🍃 Trầu không
                 </button>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="assets/images/coffe.jpg" data-sample-name="Cà phê">
+                <button type="button" class="sample-chip px-2.5 sm:px-3 py-1 bg-white/80 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-xs active:scale-95" data-sample-url="assets/images/coffe.jpg" data-sample-name="Cà phê">
                     ☕ Cà phê
                 </button>
             </div>
 
             <!-- Actions (Buttons) -->
-            <div class="flex flex-col sm:flex-row gap-3.5 mt-8 w-full sm:w-auto action-buttons items-center">
-                <button id="btnOpenCamera" class="flex items-center justify-center gap-2 px-8 py-3.5 bg-forest-900 text-white rounded-full font-semibold text-sm transition-all duration-300 hover:bg-[#132a18] hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto">
+            <div class="flex flex-row flex-wrap sm:flex-nowrap gap-2 sm:gap-3.5 mt-6 sm:mt-8 w-full max-w-md sm:max-w-none sm:w-auto action-buttons items-center justify-center px-2">
+                <button id="btnOpenCamera" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-forest-900 text-white rounded-full font-semibold text-xs sm:text-sm transition-all duration-300 hover:bg-[#132a18] shadow-md hover:shadow-lg active:scale-95 min-w-[130px]">
                     <i data-feather="video" class="w-4 h-4 stroke-[2.5]"></i> Mở camera
                 </button>
-                <button id="btnCameraScan" class="hidden items-center justify-center gap-2 px-8 py-3.5 bg-[#8CC63F] text-white rounded-full font-semibold text-sm shadow-md hover:bg-green-600 hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto">
+                <button id="btnCameraScan" class="hidden flex-1 sm:flex-initial items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-[#8CC63F] text-white rounded-full font-semibold text-xs sm:text-sm shadow-md hover:bg-green-600 hover:shadow-lg transition-all active:scale-95 min-w-[140px]">
                     <i data-feather="camera" class="w-4 h-4"></i> Bắt đầu quét
                 </button>
-                <button id="btnUploadImage" class="flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-gray-700 rounded-full font-semibold text-sm shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:text-forest-900 w-full sm:w-auto">
+                <button id="btnUploadImage" class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-white text-gray-700 rounded-full font-semibold text-xs sm:text-sm shadow-xs border border-gray-200 transition-all duration-300 hover:shadow-md hover:text-forest-900 active:scale-95 min-w-[130px]">
                     <i data-feather="upload" class="w-4 h-4 stroke-[2.5]"></i> Tải ảnh lên
                 </button>
                 <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                <button id="btnUploadStartScan" class="hidden items-center justify-center gap-2 px-8 py-3.5 bg-[#8CC63F] text-white rounded-full font-semibold text-sm shadow-md hover:bg-green-600 hover:shadow-lg hover:-translate-y-0.5 transition-all w-full sm:w-auto">
+                <button id="btnUploadStartScan" class="hidden flex-1 sm:flex-initial items-center justify-center gap-2 px-6 sm:px-8 py-3 sm:py-3.5 bg-[#8CC63F] text-white rounded-full font-semibold text-xs sm:text-sm shadow-md hover:bg-green-600 hover:shadow-lg transition-all active:scale-95 min-w-[140px]">
                     <i data-feather="search" class="w-4 h-4"></i> Bắt đầu quét ảnh
                 </button>
-                <button id="btnOpenSettings" class="flex items-center justify-center gap-2 w-12 h-12 bg-white text-gray-700 rounded-full font-semibold text-sm shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 hover:text-[#0A2F1D] shrink-0" title="Cài đặt Camera & Nguồn dữ liệu">
-                    <i data-feather="settings" class="w-5 h-5"></i>
+                <button id="btnOpenSettings" class="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 bg-white text-gray-700 rounded-full font-semibold text-sm shadow-xs border border-gray-200 transition-all duration-300 hover:shadow-md hover:text-[#0A2F1D] shrink-0 active:scale-90" title="Cài đặt Camera & Nguồn dữ liệu">
+                    <i data-feather="settings" class="w-4 h-4 sm:w-5 sm:h-5"></i>
                 </button>
             </div>
             
@@ -259,70 +259,70 @@
         </div>
 
         <!-- Metric Counter / Key Highlights Section -->
-        <section class="w-full mt-20 pt-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-forest-900 font-serif">20+</div>
-                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Cây dược liệu chuẩn hóa</div>
-                    <div class="text-[11px] text-gray-400 font-light mt-0.5">Dữ liệu thực vật Việt Nam</div>
+        <section class="w-full mt-10 sm:mt-20 pt-4 sm:pt-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-6">
+                <div class="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/80 p-3.5 sm:p-5 shadow-xs text-center hover:-translate-y-1 transition-all">
+                    <div class="text-2xl sm:text-4xl font-extrabold text-forest-900 font-serif">20+</div>
+                    <div class="text-[11px] sm:text-sm font-semibold text-gray-700 mt-1">Dược liệu chuẩn hóa</div>
+                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-light mt-0.5">Thực vật Việt Nam</div>
                 </div>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">95.6%</div>
-                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Độ chính xác nhận diện</div>
-                    <div class="text-[11px] text-gray-400 font-light mt-0.5">MobileNetV3 (Top-3 đạt 99.3%)</div>
+                <div class="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/80 p-3.5 sm:p-5 shadow-xs text-center hover:-translate-y-1 transition-all">
+                    <div class="text-2xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">95.6%</div>
+                    <div class="text-[11px] sm:text-sm font-semibold text-gray-700 mt-1">Độ chính xác AI</div>
+                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-light mt-0.5">MobileNetV3 (Top-3 99.3%)</div>
                 </div>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-forest-900 font-serif">&lt; 80ms</div>
-                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Tốc độ suy luận</div>
-                    <div class="text-[11px] text-gray-400 font-light mt-0.5">Tối ưu hóa đa luồng FastAPI</div>
+                <div class="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/80 p-3.5 sm:p-5 shadow-xs text-center hover:-translate-y-1 transition-all">
+                    <div class="text-2xl sm:text-4xl font-extrabold text-forest-900 font-serif">&lt; 80ms</div>
+                    <div class="text-[11px] sm:text-sm font-semibold text-gray-700 mt-1">Tốc độ suy luận</div>
+                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-light mt-0.5">Tối ưu đa luồng FastAPI</div>
                 </div>
-                <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">IoT</div>
-                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Tích hợp phần cứng</div>
-                    <div class="text-[11px] text-gray-400 font-light mt-0.5">Raspberry Pi + WebRTC</div>
+                <div class="bg-white/80 backdrop-blur-md rounded-xl sm:rounded-2xl border border-white/80 p-3.5 sm:p-5 shadow-xs text-center hover:-translate-y-1 transition-all">
+                    <div class="text-2xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">IoT</div>
+                    <div class="text-[11px] sm:text-sm font-semibold text-gray-700 mt-1">Trạm quan sát thực địa</div>
+                    <div class="text-[10px] sm:text-[11px] text-gray-400 font-light mt-0.5">Raspberry Pi + WebRTC</div>
                 </div>
             </div>
         </section>
 
         <!-- How It Works Section (Quy trình 3 bước) -->
-        <section class="w-full mt-20 text-center">
-            <span class="text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-green-100/70 px-3 py-1 rounded-full">Cách thức vận hành</span>
-            <h2 class="font-serif text-3xl font-bold text-forest-900 mt-2">Nhận diện cây chỉ trong 3 bước</h2>
-            <p class="text-gray-500 mt-1 text-sm max-w-md mx-auto">Trải nghiệm tra cứu cây thuốc trực quan, hiện đại và chuẩn xác.</p>
+        <section class="w-full mt-12 sm:mt-20 text-center">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-green-100/70 px-3 py-1 rounded-full">Cách thức vận hành</span>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-forest-900 mt-2">Nhận diện cây chỉ trong 3 bước</h2>
+            <p class="text-gray-500 mt-1 text-xs sm:text-sm max-w-md mx-auto">Trải nghiệm tra cứu cây thuốc trực quan, hiện đại và chuẩn xác.</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10 text-left">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 mt-6 sm:mt-10 text-left">
                 <!-- Step 1 -->
-                <div class="bg-white/85 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col relative group">
-                    <div class="w-12 h-12 rounded-2xl bg-green-50 text-[#8CC63F] flex items-center justify-center font-bold text-lg mb-5 group-hover:scale-110 transition-transform">
-                        <i data-feather="camera" class="w-6 h-6"></i>
+                <div class="bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col relative group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-green-50 text-[#8CC63F] flex items-center justify-center font-bold text-base sm:text-lg mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
+                        <i data-feather="camera" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 uppercase">Bước 01</span>
-                    <h3 class="text-lg font-bold text-forest-900 mt-1 mb-2">Chụp hoặc Tải ảnh lá</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed font-light">
-                        Sử dụng webcam thiết bị, camera nhúng Raspberry Pi thực địa hoặc kéo thả bức ảnh chiếc lá bạn muốn tìm hiểu.
+                    <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase">Bước 01</span>
+                    <h3 class="text-base sm:text-lg font-bold text-forest-900 mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">Chụp hoặc Tải ảnh lá</h3>
+                    <p class="text-xs sm:text-sm text-gray-500 leading-relaxed font-light">
+                        Sử dụng camera điện thoại, webcam thiết bị hoặc chọn một trong các ảnh lá mẫu để bắt đầu.
                     </p>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-white/85 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col relative group">
-                    <div class="w-12 h-12 rounded-2xl bg-yellow-50 text-yellow-600 flex items-center justify-center font-bold text-lg mb-5 group-hover:scale-110 transition-transform">
-                        <i data-feather="cpu" class="w-6 h-6"></i>
+                <div class="bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col relative group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-yellow-50 text-yellow-600 flex items-center justify-center font-bold text-base sm:text-lg mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
+                        <i data-feather="cpu" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 uppercase">Bước 02</span>
-                    <h3 class="text-lg font-bold text-forest-900 mt-1 mb-2">AI Phân tích Hình thái</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed font-light">
-                        Mô hình mạng nơ-ron Deep Learning tự động trích xuất viền lá, gân lá và đặc tính sinh học để so khớp dữ liệu.
+                    <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase">Bước 02</span>
+                    <h3 class="text-base sm:text-lg font-bold text-forest-900 mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">AI Phân tích Hình thái</h3>
+                    <p class="text-xs sm:text-sm text-gray-500 leading-relaxed font-light">
+                        Mạng nơ-ron Deep Learning tự động trích xuất viền lá, gân lá và đặc tính sinh học để so khớp dữ liệu.
                     </p>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-white/85 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col relative group">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg mb-5 group-hover:scale-110 transition-transform">
-                        <i data-feather="book-open" class="w-6 h-6"></i>
+                <div class="bg-white/85 backdrop-blur-md rounded-xl sm:rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-xs hover:shadow-md transition-all flex flex-col relative group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-base sm:text-lg mb-3 sm:mb-5 group-hover:scale-110 transition-transform">
+                        <i data-feather="book-open" class="w-5 h-5 sm:w-6 sm:h-6"></i>
                     </div>
-                    <span class="text-xs font-bold text-gray-400 uppercase">Bước 03</span>
-                    <h3 class="text-lg font-bold text-forest-900 mt-1 mb-2">Khám phá Dược tính</h3>
-                    <p class="text-sm text-gray-500 leading-relaxed font-light">
+                    <span class="text-[10px] sm:text-xs font-bold text-gray-400 uppercase">Bước 03</span>
+                    <h3 class="text-base sm:text-lg font-bold text-forest-900 mt-0.5 sm:mt-1 mb-1.5 sm:mb-2">Khám phá Dược tính</h3>
+                    <p class="text-xs sm:text-sm text-gray-500 leading-relaxed font-light">
                         Nhận ngay tên khoa học, độ tin cậy nhận diện, thành phần hóa học, tính vị quy kinh và các bài thuốc y học dân gian.
                     </p>
                 </div>
@@ -330,12 +330,12 @@
         </section>
 
         <!-- Top Recognized Herbs Section -->
-        <section class="w-full mt-24 py-6 text-center relative z-20">
-            <div class="flex flex-col sm:flex-row items-center justify-between mb-8 text-left">
+        <section class="w-full mt-12 sm:mt-20 py-2 sm:py-6 text-center relative z-20">
+            <div class="flex flex-col sm:flex-row items-center justify-between mb-6 sm:mb-8 text-left">
                 <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-green-100/70 px-3 py-1 rounded-full">Phổ biến</span>
-                    <h2 class="font-serif text-3xl font-bold text-forest-900 mt-2">Dược liệu được nhận diện nhiều nhất</h2>
-                    <p class="text-gray-500 mt-1 text-sm">Những loại cây thuốc được cộng đồng quan tâm và tìm kiếm thường xuyên.</p>
+                    <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-green-100/70 px-3 py-1 rounded-full">Phổ biến</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl font-bold text-forest-900 mt-2">Dược liệu được nhận diện nhiều nhất</h2>
+                    <p class="text-gray-500 mt-1 text-xs sm:text-sm">Những loại cây thuốc được cộng đồng quan tâm và tìm kiếm thường xuyên.</p>
                 </div>
                 <a href="search.html" class="hidden sm:inline-flex items-center gap-2 text-sm font-bold text-[#8CC63F] hover:text-forest-900 transition mt-4 sm:mt-0">
                     <span>Xem tất cả dược liệu</span>
@@ -344,113 +344,60 @@
             </div>
 
             <!-- Carousel / Grid Container -->
-            <div id="topRecognizedContainer" class="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto snap-x snap-mandatory pb-6 hide-scroll text-left">
+            <div id="topRecognizedContainer" class="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory pb-4 hide-scroll text-left">
                 <!-- Skeleton Slices -->
-                <div class="w-[75vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
-                    <div class="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                <div class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-xs p-4 animate-pulse">
+                    <div class="h-40 sm:h-48 bg-gray-200 rounded-xl mb-3 sm:mb-4"></div>
                     <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
                     <div class="h-4 bg-gray-100 rounded w-1/3 mt-auto"></div>
                 </div>
-                <div class="w-[75vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
-                    <div class="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                <div class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-xs p-4 animate-pulse">
+                    <div class="h-40 sm:h-48 bg-gray-200 rounded-xl mb-3 sm:mb-4"></div>
                     <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
                     <div class="h-4 bg-gray-100 rounded w-1/3 mt-auto"></div>
                 </div>
-                <div class="w-[75vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
-                    <div class="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                <div class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-xs p-4 animate-pulse">
+                    <div class="h-40 sm:h-48 bg-gray-200 rounded-xl mb-3 sm:mb-4"></div>
                     <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
                     <div class="h-4 bg-gray-100 rounded w-1/3 mt-auto"></div>
                 </div>
-                <div class="w-[75vw] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-sm p-4 animate-pulse">
-                    <div class="h-48 bg-gray-200 rounded-xl mb-4"></div>
+                <div class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white rounded-2xl border border-gray-100 shadow-xs p-4 animate-pulse">
+                    <div class="h-40 sm:h-48 bg-gray-200 rounded-xl mb-3 sm:mb-4"></div>
                     <div class="h-5 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                    <div class="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
                     <div class="h-4 bg-gray-100 rounded w-1/3 mt-auto"></div>
                 </div>
             </div>
 
             <div class="mt-4 sm:hidden">
-                <a href="search.html" class="px-6 py-2.5 rounded-full border border-[#8CC63F] text-[#8CC63F] font-bold text-sm hover:bg-[#8CC63F] hover:text-white transition-all shadow-sm inline-block">
-                    Xem toàn bộ từ điển
+                <a href="search.html" class="w-full text-center px-6 py-2.5 rounded-full border border-[#8CC63F] text-[#8CC63F] font-bold text-xs hover:bg-[#8CC63F] hover:text-white transition-all shadow-xs inline-block">
+                    Xem toàn bộ từ điển cây thuốc
                 </a>
             </div>
         </section>
 
-        <!-- Core Features Grid (Hệ sinh thái HerbaPedia) -->
-        <section class="w-full mt-24 text-center">
-            <span class="text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-green-100/70 px-3 py-1 rounded-full">Tính năng nổi bật</span>
-            <h2 class="font-serif text-3xl font-bold text-forest-900 mt-2">Hệ sinh thái thông minh của HerbaPedia</h2>
-            <p class="text-gray-500 mt-1 text-sm max-w-md mx-auto">Giải pháp số hóa toàn diện kết hợp giữa Trí tuệ Nhân tạo và Y học Dược liệu.</p>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-10 text-left">
-                <!-- Feature 1 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col group">
-                    <div class="w-12 h-12 rounded-xl bg-forest-900/5 text-forest-900 flex items-center justify-center mb-4 group-hover:bg-[#8CC63F] group-hover:text-white transition-colors">
-                        <i data-feather="layers" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="font-bold text-forest-900 text-base mb-1.5">Kiến trúc AI Đa mô hình</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed font-light">
-                        So sánh đối chứng trực quan giữa MobileNetV3 (Fine-tuning) đạt 94.4% và Custom CNN huấn luyện từ đầu.
-                    </p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col group">
-                    <div class="w-12 h-12 rounded-xl bg-forest-900/5 text-forest-900 flex items-center justify-center mb-4 group-hover:bg-[#8CC63F] group-hover:text-white transition-colors">
-                        <i data-feather="book" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="font-bold text-forest-900 text-base mb-1.5">Bách khoa Dược liệu số</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed font-light">
-                        Tra cứu chi tiết tên khoa học, tính vị quy kinh, hoạt chất sinh học, phương pháp sơ chế và cảnh báo an toàn.
-                    </p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col group">
-                    <div class="w-12 h-12 rounded-xl bg-forest-900/5 text-forest-900 flex items-center justify-center mb-4 group-hover:bg-[#8CC63F] group-hover:text-white transition-colors">
-                        <i data-feather="wifi" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="font-bold text-forest-900 text-base mb-1.5">Trạm Giám sát IoT</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed font-light">
-                        Kết nối trực tiếp camera Raspberry Pi thực địa qua giao thức luồng HTTP/MJPEG cho các trạm quan trắc tự động.
-                    </p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="bg-white/90 backdrop-blur-md rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all flex flex-col group">
-                    <div class="w-12 h-12 rounded-xl bg-forest-900/5 text-forest-900 flex items-center justify-center mb-4 group-hover:bg-[#8CC63F] group-hover:text-white transition-colors">
-                        <i data-feather="message-circle" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="font-bold text-forest-900 text-base mb-1.5">Cộng đồng & Nhật ký</h3>
-                    <p class="text-xs text-gray-500 leading-relaxed font-light">
-                        Tự động lưu lịch sử nhận diện lên đám mây, chia sẻ phát hiện cây thuốc và tương tác cùng các chuyên gia.
-                    </p>
-                </div>
-            </div>
-        </section>
-
         <!-- Mission & Community CTA Showcase Card -->
-        <section class="w-full mt-24 bg-gradient-to-r from-forest-900 via-[#132a18] to-[#0A2F1D] rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden">
+        <section class="w-full mt-10 sm:mt-20 bg-gradient-to-r from-forest-900 via-[#132a18] to-[#0A2F1D] rounded-2xl sm:rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden">
             <!-- Decorative leaf watermark -->
             <div class="absolute -right-12 -bottom-12 w-64 h-64 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
-            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-6">
                 <div class="text-left max-w-xl">
-                    <span class="text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-white/10 px-3 py-1 rounded-full">Sứ mệnh Nền tảng</span>
-                    <h3 class="font-serif text-2xl sm:text-3xl font-bold mt-3 leading-snug">
+                    <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#8CC63F] bg-white/10 px-3 py-1 rounded-full">Sứ mệnh Nền tảng</span>
+                    <h3 class="font-serif text-xl sm:text-3xl font-bold mt-2.5 sm:mt-3 leading-snug">
                         Số Hóa & Bảo Tồn Kho Tàng Cây Thuốc Việt Nam
                     </h3>
                     <p class="text-white/80 text-xs sm:text-sm mt-2 font-light leading-relaxed">
                         Nền tảng kết nối Trí tuệ Nhân tạo và Y học Cổ truyền nhằm bảo tồn, nhận diện và chia sẻ kho tàng dược liệu bản địa vì sức khỏe cộng đồng.
                     </p>
                 </div>
-                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto shrink-0">
-                    <a href="search.html" class="px-6 py-3 bg-[#8CC63F] hover:bg-green-600 text-white font-bold rounded-full text-xs text-center transition-all shadow-md">
+                <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 w-full md:w-auto shrink-0">
+                    <a href="search.html" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-[#8CC63F] hover:bg-green-600 text-white font-bold rounded-full text-xs text-center transition-all shadow-md active:scale-95">
                         Khám phá Từ điển Cây
                     </a>
-                    <a href="history.html" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full text-xs text-center transition-all border border-white/20">
+                    <a href="history.html" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-full text-xs text-center transition-all border border-white/20 active:scale-95">
                         Tham gia Cộng đồng
                     </a>
                 </div>
@@ -460,7 +407,7 @@
     </main>
 
     <!-- Comprehensive Botanical Footer -->
-    <footer class="relative z-10 bg-white/80 backdrop-blur-md border-t border-gray-200/80 mt-auto pt-12 pb-8">
+    <footer class="relative z-10 bg-white/80 backdrop-blur-md border-t border-gray-200/80 mt-auto pt-8 sm:pt-12 pb-6 sm:pb-8">
         <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8 mb-10 text-left">
             <!-- Col 1: About -->
             <div>
