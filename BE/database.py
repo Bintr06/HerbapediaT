@@ -9,12 +9,18 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+is_cloud = bool(
+    os.getenv("RENDER")
+    or any(k.startswith("RAILWAY_") for k in os.environ)
+    or os.getenv("PORT")
+)
+
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     os.getenv("MYSQL_URL")
     or (
         "sqlite:///./herbapedia.db"
-        if (os.getenv("RENDER") or os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_STATIC_URL"))
+        if is_cloud
         else "mysql+pymysql://root:123456@localhost:3306/herbapedia_db"
     ),
 )
