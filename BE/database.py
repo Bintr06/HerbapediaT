@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime, timezone
 
@@ -5,11 +6,12 @@ from dotenv import load_dotenv
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text, UniqueConstraint, create_engine, inspect, text
 from sqlalchemy.orm import declarative_base, sessionmaker
 
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://root:123456@localhost:3306/herbapedia_db",
+    "sqlite:///./herbapedia.db" if os.getenv("RENDER") else "mysql+pymysql://root:123456@localhost:3306/herbapedia_db",
 )
 
 # Chuẩn hóa tiền tố PostgreSQL nếu dùng Render / Supabase / Railway
@@ -168,11 +170,25 @@ class PasswordReset(Base):
 
 
 def init_db():
-    Base.metadata.create_all(bind=engine)
-    _migrate_users_table()
-    _migrate_community_tables()
-    _migrate_herb_table()
-    _seed_herbs()
+    global engine, SessionLocal
+    try:
+        Base.metadata.create_all(bind=engine)
+        _migrate_users_table()
+        _migrate_community_tables()
+        _migrate_herb_table()
+        _seed_herbs()
+    except Exception as exc:
+        logger.warning(f"Khong the ket noi co so du lieu chinh ({DATABASE_URL}): {exc}")
+        if not str(DATABASE_URL).startswith("sqlite"):
+            logger.info("Dang tu dong chuyen sang SQLite du phong (sqlite:///./herbapedia.db)...")
+            try:
+                engine = create_engine("sqlite:///./herbapedia.db", connect_args={"check_same_thread": False})
+                SessionLocal.configure(bind=engine)
+                Base.metadata.create_all(bind=engine)
+                _seed_herbs()
+                logger.info("Da khoi tao thanh cong SQLite du phong!")
+            except Exception as e:
+                logger.error(f"Loi khoi tao SQLite du phong: {e}")
 
 
 def _seed_herbs():

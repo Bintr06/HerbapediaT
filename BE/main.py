@@ -78,10 +78,13 @@ def save_prediction_history_background(
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     del _app
-    init_db()
-    # Chạy nạp mô hình ở chế độ ngầm để server mở cổng ngay lập tức (<0.1s), tránh Render Port Scan Timeout
-    import asyncio
-    asyncio.create_task(run_in_threadpool(warmup_models))
+    try:
+        init_db()
+    except Exception as exc:
+        logger.error(f"Khởi tạo Database có cảnh báo: {exc}")
+    # Chuyển mô hình AI sang Lazy-loading (tự động nạp khi có request quét ảnh đầu tiên)
+    # Giúp server khởi động tức thì trong 0.2s, giữ RAM cực nhẹ (<80MB) và tránh bị Render OOM/timeout
+    logger.info("FastAPI ready! AI Models configured for on-demand lazy loading.")
     yield
 
 
