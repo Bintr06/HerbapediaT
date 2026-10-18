@@ -1,6 +1,7 @@
 import io
 import logging
 import os
+import threading
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from typing import Optional
@@ -82,9 +83,20 @@ async def lifespan(_app: FastAPI):
         init_db()
     except Exception as exc:
         logger.error(f"Khởi tạo Database có cảnh báo: {exc}")
-    # Chuyển mô hình AI sang Lazy-loading (tự động nạp khi có request quét ảnh đầu tiên)
-    # Giúp server khởi động tức thì trong 0.2s, giữ RAM cực nhẹ (<80MB) và tránh bị Render OOM/timeout
-    logger.info("FastAPI ready! AI Models configured for on-demand lazy loading.")
+
+    # Làm nóng mô hình AI trong luồng ngầm (Background Thread)
+    # 1. Giúp Uvicorn mở port 10000 tức thì trong 0.2s, vượt qua kiểm tra Port Scan của Render 100%
+    # 2. Nạp sẵn mô hình vào RAM ngay sau khi khởi động, giúp người dùng quét ảnh tức thì trong ~0.5s
+    def _bg_warmup():
+        try:
+            logger.info("Background Warmup: Bắt đầu nạp trước mô hình AI vào RAM...")
+            warmup_models()
+            logger.info("Background Warmup: Mô hình AI đã sẵn sàng phục vụ nhận diện tức thì (<0.5s)!")
+        except Exception as exc:
+            logger.warning(f"Background Warmup thất bại: {exc}")
+
+    threading.Thread(target=_bg_warmup, daemon=True, name="AIModelWarmup").start()
+    logger.info("FastAPI ready! Port open immediately, AI warmup running in background.")
     yield
 
 

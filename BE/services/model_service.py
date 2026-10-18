@@ -181,8 +181,11 @@ MODEL_CONFIGS: dict[str, dict[str, Any]] = {
     },
 }
 
+import threading
+
 _active_model_id = os.getenv("DEFAULT_MODEL", "mobilenet_v3")
 _loaded_models: dict[str, Any] = {}
+_model_lock = threading.Lock()
 
 
 def get_available_models() -> list[dict[str, Any]]:
@@ -227,38 +230,42 @@ def load_model_instance(model_id: str):
     if model_id in _loaded_models:
         return _loaded_models[model_id]
 
-    cfg = MODEL_CONFIGS[model_id]
-    model_path = MODELS_DIR / cfg["filename"]
-    if not model_path.exists():
-        raise FileNotFoundError(f"Không tìm thấy file mô hình tại {model_path}")
+    with _model_lock:
+        if model_id in _loaded_models:
+            return _loaded_models[model_id]
 
-    logger.info(f"Đang nạp mô hình {cfg['name']} từ {model_path}...")
-    model = keras.saving.load_model(str(model_path))
-    
-    # Tự động đồng bộ kích thước input_shape từ mô hình thực tế
-    try:
-        in_shape = getattr(model, "input_shape", None)
-        if in_shape and len(in_shape) >= 3 and in_shape[1] and in_shape[2]:
-            cfg["input_size"] = (int(in_shape[1]), int(in_shape[2]))
-            logger.info(f"Đã nhận diện kích thước đầu vào {cfg['name']}: {cfg['input_size']}")
-        has_internal_rescaling = any(
-            "rescaling" in getattr(layer, "name", "").lower() or "rescale" in getattr(layer, "name", "").lower()
-            for layer in getattr(model, "layers", [])
-        )
-        if has_internal_rescaling:
-            cfg["rescale"] = 1.0
-            logger.info(f"Mô hình {cfg['name']} đã có tầng Rescaling nội bộ -> rescale = 1.0")
-    except Exception as e:
-        logger.warning(f"Không thể đọc tự động cấu hình mô hình: {e}")
-    if hasattr(model, "eval"):
+        cfg = MODEL_CONFIGS[model_id]
+        model_path = MODELS_DIR / cfg["filename"]
+        if not model_path.exists():
+            raise FileNotFoundError(f"Không tìm thấy file mô hình tại {model_path}")
+
+        logger.info(f"Đang nạp mô hình {cfg['name']} từ {model_path}...")
+        model = keras.saving.load_model(str(model_path))
+        
+        # Tự động đồng bộ kích thước input_shape từ mô hình thực tế
         try:
-            model.eval()
-        except Exception:
-            pass
+            in_shape = getattr(model, "input_shape", None)
+            if in_shape and len(in_shape) >= 3 and in_shape[1] and in_shape[2]:
+                cfg["input_size"] = (int(in_shape[1]), int(in_shape[2]))
+                logger.info(f"Đã nhận diện kích thước đầu vào {cfg['name']}: {cfg['input_size']}")
+            has_internal_rescaling = any(
+                "rescaling" in getattr(layer, "name", "").lower() or "rescale" in getattr(layer, "name", "").lower()
+                for layer in getattr(model, "layers", [])
+            )
+            if has_internal_rescaling:
+                cfg["rescale"] = 1.0
+                logger.info(f"Mô hình {cfg['name']} đã có tầng Rescaling nội bộ -> rescale = 1.0")
+        except Exception as e:
+            logger.warning(f"Không thể đọc tự động cấu hình mô hình: {e}")
+        if hasattr(model, "eval"):
+            try:
+                model.eval()
+            except Exception:
+                pass
 
-    _loaded_models[model_id] = model
-    logger.info(f"Nạp thành công mô hình {cfg['name']}!")
-    return model
+        _loaded_models[model_id] = model
+        logger.info(f"Nạp thành công mô hình {cfg['name']}!")
+        return model
 
 
 def warmup_models():

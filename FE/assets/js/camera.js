@@ -690,11 +690,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const headers = {};
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            const predRes = await fetch(`${API_BASE_URL}/predict`, {
-                method: 'POST',
-                headers: headers,
-                body: formData
-            });
+            let slowTimer = setTimeout(() => {
+                if (loadingStatus) {
+                    loadingStatus.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin text-[#8CC63F]"></i> Đang kích hoạt cụm AI đám mây (lần đầu có thể mất thêm vài giây)...';
+                    if (typeof feather !== 'undefined') feather.replace();
+                }
+            }, 3500);
+
+            let predRes;
+            try {
+                predRes = await fetch(`${API_BASE_URL}/predict`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: formData
+                });
+            } finally {
+                clearTimeout(slowTimer);
+            }
 
             if (!predRes.ok) {
                 const errRes = await predRes.json().catch(() => ({}));
@@ -704,12 +716,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const predictionData = await predRes.json();
             localStorage.setItem('lastPrediction', JSON.stringify(predictionData));
 
-            // Hiệu ứng quét 1s trước khi sang trang kết quả
+            // Chuyển trang kết quả tức thì
             setTimeout(() => {
                 if (scanLine) scanLine.style.display = 'none';
                 if (loadingStatus) loadingStatus.style.display = 'none';
                 window.location.href = 'result.html';
-            }, 1000);
+            }, 300);
 
         } catch (err) {
             console.error('Lỗi khi quét từ camera:', err);
@@ -750,6 +762,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof feather !== 'undefined') feather.replace();
             }
 
+            let slowTimer = setTimeout(() => {
+                if (loadingStatus) {
+                    loadingStatus.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin text-[#8CC63F]"></i> Đang kích hoạt cụm AI đám mây (lần đầu có thể mất thêm vài giây)...';
+                    if (typeof feather !== 'undefined') feather.replace();
+                }
+            }, 3500);
+
             try {
                 const optimizedFile = await optimizeImageFile(selectedUploadFile);
                 const formData = new FormData();
@@ -761,6 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: headers,
                     body: formData
                 });
+                clearTimeout(slowTimer);
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok) {
                     throw new Error(result.detail || 'Không thể nhận diện ảnh.');
@@ -768,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('lastPrediction', JSON.stringify(result));
                 window.location.href = 'result.html';
             } catch (error) {
+                clearTimeout(slowTimer);
                 alert(error.message);
                 btnUploadStartScan.disabled = false;
                 btnUploadStartScan.innerHTML = '<i data-feather="search" class="w-4 h-4"></i> Bắt đầu quét ảnh';
