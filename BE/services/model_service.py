@@ -5,28 +5,11 @@ import threading
 from pathlib import Path
 from typing import Any
 
-# Khóa số luồng đa luồng của BLAS/OpenMP/PyTorch về 1 luồng
-# Điều này cực kỳ quan trọng trên Render Linux: ngăn chặn việc tự động tạo 4-16 luồng ngầm gây tràn 512MB RAM
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
-os.environ["NUMEXPR_NUM_THREADS"] = "1"
-os.environ["TORCH_NUM_THREADS"] = "1"
-
 # Đặt backend cho Keras sang torch trước khi nạp thư viện Keras
 os.environ.setdefault("KERAS_BACKEND", "torch")
 import keras  # noqa: E402
 import numpy as np  # noqa: E402
 from PIL import Image  # noqa: E402
-
-# Giới hạn PyTorch chạy 1 luồng trên CPU để tiết kiệm ~100MB RAM bộ đệm luồng
-try:
-    import torch
-    torch.set_num_threads(1)
-    torch.set_num_interop_threads(1)
-except Exception:
-    pass
 
 logger = logging.getLogger(__name__)
 
@@ -250,9 +233,9 @@ def load_model_instance(model_id: str):
         if model_id in _loaded_models:
             return _loaded_models[model_id]
 
-        # Tối ưu RAM cho Render Free (512MB limit):
-        # Giải phóng mô hình cũ trước khi nạp mô hình mới để không bao giờ có 2 mô hình cùng trong RAM
-        if _loaded_models:
+        # Nếu chạy trên Render (bị giới hạn 512MB RAM), giải phóng mô hình cũ trước khi nạp mô hình mới
+        # Nếu chạy trên Railway / Server mạnh, giữ cả 2 mô hình trong RAM để chuyển đổi tức thì (0ms)!
+        if os.getenv("RENDER") and _loaded_models:
             _loaded_models.clear()
             gc.collect()
 

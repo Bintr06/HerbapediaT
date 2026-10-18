@@ -3,13 +3,7 @@ import logging
 import os
 import threading
 
-# Giới hạn số luồng tính toán để tối ưu bộ nhớ RAM dưới 350MB trên Render
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
-os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
-os.environ["NUMEXPR_NUM_THREADS"] = "1"
-os.environ["TORCH_NUM_THREADS"] = "1"
+# Đặt backend cho Keras sang torch trước khi nạp thư viện Keras
 os.environ.setdefault("KERAS_BACKEND", "torch")
 
 from contextlib import asynccontextmanager
@@ -100,8 +94,6 @@ async def lifespan(_app: FastAPI):
     # 2. Nạp sẵn mô hình vào RAM ngay sau khi khởi động, giúp người dùng quét ảnh tức thì trong ~0.5s
     def _bg_warmup():
         try:
-            import time
-            time.sleep(1.5)  # Chờ 1.5s để Uvicorn và Database hoàn tất khởi động trước khi nạp AI
             logger.info("Background Warmup: Bắt đầu nạp trước mô hình AI vào RAM...")
             warmup_models()
             import gc
