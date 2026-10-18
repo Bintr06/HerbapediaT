@@ -305,11 +305,14 @@ def warmup_models():
                 dummy = np.zeros((1, *cfg["input_size"], 3), dtype=np.float32)
                 try:
                     import torch
+                    dummy_tensor = torch.from_numpy(dummy)
                     with torch.inference_mode():
-                        _ = model(dummy, training=False)
+                        _ = model(dummy_tensor, training=False)
                 except Exception:
                     _ = model(dummy, training=False)
                 del dummy
+                if "dummy_tensor" in locals():
+                    del dummy_tensor
                 gc.collect()
                 logger.info(f"Mô hình {active_id} ({cfg['name']}) đã sẵn sàng phục vụ dự đoán!")
     except Exception as exc:
@@ -336,8 +339,9 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
 
     try:
         import torch
+        x_tensor = torch.from_numpy(x)
         with torch.inference_mode():
-            preds = model(x, training=False)
+            preds = model(x_tensor, training=False)
             if hasattr(preds, "detach"):
                 preds = preds.detach().cpu().numpy()
             elif hasattr(preds, "numpy"):
@@ -353,6 +357,8 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
             preds = model.predict(x, verbose=0)
     finally:
         del x
+        if "x_tensor" in locals():
+            del x_tensor
         gc.collect()
 
     probs = preds[0] if len(preds.shape) > 1 else preds

@@ -182,7 +182,6 @@ async def predict_leaf(
     file: UploadFile = File(...),
     model_name: Optional[str] = Form(None),
     current_user: Optional[User] = Depends(auth.get_optional_user),
-    db: Session = Depends(herbs.get_db),
 ):
     if file.content_type not in {"image/jpeg", "image/png", "image/webp"}:
         raise HTTPException(

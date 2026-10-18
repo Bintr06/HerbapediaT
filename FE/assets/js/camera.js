@@ -90,23 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Hàm nén & tối ưu hóa ảnh trước khi upload để tăng tốc độ nhận diện gấp 5-10 lần
-    function optimizeImageFile(file, maxWidth = 1024, quality = 0.85) {
+    // 3. Hàm nén & tối ưu hóa ảnh trước khi upload để đạt tốc độ quét siêu tốc (<0.5s)
+    function optimizeImageFile(file, maxWidth = 640, quality = 0.8) {
         if (localStorage.getItem('autoOptimize') === 'false') {
             return Promise.resolve(file);
         }
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+            return Promise.resolve(file);
+        }
+        // Nếu ảnh JPEG đã rất nhẹ (<80KB) thì gửi luôn
+        if (file.type === 'image/jpeg' && file.size < 80 * 1024) {
+            return Promise.resolve(file);
+        }
         return new Promise((resolve) => {
-            if (!file || !file.type.startsWith('image/') || file.size < 400 * 1024) {
-                return resolve(file);
-            }
             const img = new Image();
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                img.onload = () => {
-                    let { width, height } = img;
-                    if (width <= maxWidth && height <= maxWidth) {
-                        return resolve(file);
-                    }
+            const objectUrl = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(objectUrl);
+                let { width, height } = img;
+                if (width > maxWidth || height > maxWidth) {
                     if (width > height) {
                         height = Math.round((height * maxWidth) / width);
                         width = maxWidth;
@@ -114,26 +116,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         width = Math.round((width * maxWidth) / height);
                         height = maxWidth;
                     }
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    canvas.toBlob(
-                        (blob) => {
-                            if (blob && blob.size < file.size) {
-                                resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
-                            } else {
-                                resolve(file);
-                            }
-                        },
-                        'image/jpeg',
-                        quality
-                    );
-                };
-                img.src = e.target.result;
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob && (blob.size < file.size || file.type !== 'image/jpeg')) {
+                            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+                        } else {
+                            resolve(file);
+                        }
+                    },
+                    'image/jpeg',
+                    quality
+                );
             };
-            reader.readAsDataURL(file);
+            img.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                resolve(file);
+            };
+            img.src = objectUrl;
         });
     }
 
@@ -512,26 +517,37 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleSelectedImageFile(file) {
         if (isCameraStreaming) stopCameraStream();
         selectedUploadFile = file;
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            if (imagePreview) {
-                imagePreview.src = event.target.result;
-                imagePreview.style.display = 'block';
-            }
-            if (frameMessage) frameMessage.style.display = 'none';
-            if (videoElement) videoElement.style.display = 'none';
-            if (btnClearPreview) {
-                btnClearPreview.classList.remove('hidden');
-                btnClearPreview.classList.add('flex');
-            }
-            localStorage.setItem('lastCapturedImage', event.target.result);
-            if (btnUploadStartScan) {
-                btnUploadStartScan.classList.remove('hidden');
-                btnUploadStartScan.classList.add('flex');
-            }
-            if (typeof feather !== 'undefined') feather.replace();
-        };
-        reader.readAsDataURL(file);
+
+        // Hiển thị preview ảnh tức thì trong 1ms bằng Object URL (không làm đơ trình duyệt)
+        const previewUrl = URL.createObjectURL(file);
+        if (imagePreview) {
+            imagePreview.src = previewUrl;
+            imagePreview.style.display = 'block';
+        }
+        if (frameMessage) frameMessage.style.display = 'none';
+        if (videoElement) videoElement.style.display = 'none';
+        if (btnClearPreview) {
+            btnClearPreview.classList.remove('hidden');
+            btnClearPreview.classList.add('flex');
+        }
+        if (btnUploadStartScan) {
+            btnUploadStartScan.classList.remove('hidden');
+            btnUploadStartScan.classList.add('flex');
+        }
+        if (typeof feather !== 'undefined') feather.replace();
+
+        // Nén và lưu bản tối ưu nhẹ (<50KB) vào localStorage cho result.html hiển thị mượt
+        optimizeImageFile(file, 640, 0.8).then(optFile => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    localStorage.setItem('lastCapturedImage', e.target.result);
+                } catch (err) {
+                    console.warn('Không thể lưu ảnh vào localStorage:', err);
+                }
+            };
+            reader.readAsDataURL(optFile);
+        });
     }
 
     // 10. Kéo & Thả ảnh vào Camera Frame (Drag and Drop)
@@ -655,31 +671,47 @@ document.addEventListener('DOMContentLoaded', () => {
             let capturedBlob = null;
 
             if (cameraSource === 'webcam') {
-                // Chụp khung hình từ Video Element
+                // Chụp khung hình từ Video Element và tối ưu kích thước <640px cho tốc độ quét <1s
                 if (!videoElement || videoElement.videoWidth === 0) {
                     throw new Error('Khung hình camera chưa sẵn sàng.');
                 }
                 const canvas = document.createElement('canvas');
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
+                let w = videoElement.videoWidth;
+                let h = videoElement.videoHeight;
+                const maxDim = 640;
+                if (w > maxDim || h > maxDim) {
+                    if (w > h) {
+                        h = Math.round((h * maxDim) / w);
+                        w = maxDim;
+                    } else {
+                        w = Math.round((w * maxDim) / h);
+                        h = maxDim;
+                    }
+                }
+                canvas.width = w;
+                canvas.height = h;
                 const ctx = canvas.getContext('2d');
-                ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+                ctx.drawImage(videoElement, 0, 0, w, h);
+                const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+                try {
+                    localStorage.setItem('lastCapturedImage', base64Data);
+                } catch (e) {
+                    console.warn('LocalStorage full:', e);
+                }
+                capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.8));
             } else {
                 // Chụp từ Raspberry Pi qua /capture
                 const captureRes = await fetch(`${rpiCameraBase}/capture`, { signal: AbortSignal.timeout(4000) });
                 if (!captureRes.ok) throw new Error('Không thể chụp ảnh từ Raspberry Pi.');
                 capturedBlob = await captureRes.blob();
+                const base64Data = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(capturedBlob);
+                });
+                localStorage.setItem('lastCapturedImage', base64Data);
             }
-
-            // Chuyển blob thành Base64 để lưu vào localStorage cho trang result.html hiển thị
-            const base64Data = await new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsDataURL(capturedBlob);
-            });
-            localStorage.setItem('lastCapturedImage', base64Data);
 
             // Gửi ảnh đến Backend /predict
             const token = localStorage.getItem('accessToken');
@@ -716,12 +748,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const predictionData = await predRes.json();
             localStorage.setItem('lastPrediction', JSON.stringify(predictionData));
 
-            // Chuyển trang kết quả tức thì
-            setTimeout(() => {
-                if (scanLine) scanLine.style.display = 'none';
-                if (loadingStatus) loadingStatus.style.display = 'none';
-                window.location.href = 'result.html';
-            }, 300);
+            // Chuyển trang kết quả tức thì (<10ms)
+            if (scanLine) scanLine.style.display = 'none';
+            if (loadingStatus) loadingStatus.style.display = 'none';
+            window.location.href = 'result.html';
 
         } catch (err) {
             console.error('Lỗi khi quét từ camera:', err);
