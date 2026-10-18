@@ -11,12 +11,19 @@ load_dotenv()
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "sqlite:///./herbapedia.db" if os.getenv("RENDER") else "mysql+pymysql://root:123456@localhost:3306/herbapedia_db",
+    os.getenv("MYSQL_URL")
+    or (
+        "sqlite:///./herbapedia.db"
+        if (os.getenv("RENDER") or os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RAILWAY_STATIC_URL"))
+        else "mysql+pymysql://root:123456@localhost:3306/herbapedia_db"
+    ),
 )
 
-# Chuẩn hóa tiền tố PostgreSQL nếu dùng Render / Supabase / Railway
+# Chuẩn hóa tiền tố SQLAlchemy nếu dùng Render / Railway / Supabase
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+elif DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+pymysql://", 1)
 
 # Hỗ trợ đa dạng: SQLite, MySQL, PostgreSQL
 if DATABASE_URL.startswith("sqlite"):

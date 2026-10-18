@@ -129,7 +129,7 @@ allowed_origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"^https?:\/\/.*(vercel\.app|localhost|127\.0\.0\.1|herbapedia\.io)(:\d+)?$",
+    allow_origin_regex=r"^https?:\/\/.*(vercel\.app|railway\.app|up\.railway\.app|localhost|127\.0\.0\.1|herbapedia\.io)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
