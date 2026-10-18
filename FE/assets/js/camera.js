@@ -147,6 +147,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnModelMobilenet = document.getElementById('btnModelMobilenet');
     const btnModelCustomCnn = document.getElementById('btnModelCustomCnn');
 
+    function selectModelBackend(modelId) {
+        selectedModel = modelId;
+        localStorage.setItem('selectedModel', selectedModel);
+        updateModelButtons();
+        // Báo cho backend nạp trước mô hình ngầm vào RAM để quét tức thì (<0.3s)
+        fetch(`${API_BASE_URL}/models/select`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model_id: modelId })
+        }).catch(() => {});
+    }
+
     function updateModelButtons() {
         if (btnModelMobilenet && btnModelCustomCnn) {
             if (selectedModel === 'mobilenet_v3') {
@@ -163,21 +175,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnModelMobilenet) {
         btnModelMobilenet.addEventListener('click', () => {
-            selectedModel = 'mobilenet_v3';
-            localStorage.setItem('selectedModel', selectedModel);
-            updateModelButtons();
+            selectModelBackend('mobilenet_v3');
         });
     }
 
     if (btnModelCustomCnn) {
         btnModelCustomCnn.addEventListener('click', () => {
-            selectedModel = 'custom_cnn';
-            localStorage.setItem('selectedModel', selectedModel);
-            updateModelButtons();
+            selectModelBackend('custom_cnn');
         });
     }
 
     updateModelButtons();
+    // Nếu mô hình đã lưu khác mặc định, thông báo backend đồng bộ trước
+    if (selectedModel && selectedModel !== 'mobilenet_v3') {
+        selectModelBackend(selectedModel);
+    }
 
     // 5. Tải danh sách dược liệu được nhận diện nhiều nhất từ backend
     loadTopRecognizedHerbs();
@@ -253,11 +265,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cập nhật biến bộ nhớ
         const previousSource = cameraSource;
         cameraSource = chosenSource;
-        selectedModel = chosenModel;
         if (newRpiUrl) rpiCameraBase = newRpiUrl;
 
-        // Cập nhật nút chọn model bên ngoài
-        updateModelButtons();
+        // Cập nhật và đồng bộ mô hình AI sang backend
+        if (chosenModel !== selectedModel) {
+            selectModelBackend(chosenModel);
+        } else {
+            updateModelButtons();
+        }
 
         // Nếu người dùng chọn Raspberry Pi mà chưa kiểm tra kết nối, đưa ra nhắc nhở rõ ràng
         if (chosenSource === 'rpi') {

@@ -39,6 +39,7 @@ from services.model_service import (
     MODEL_CONFIGS,
     get_active_model_id,
     get_available_models,
+    load_model_instance,
     predict_image,
     set_active_model_id,
     warmup_models,
@@ -162,14 +163,16 @@ class SelectModelPayload(BaseModel):
 
 
 @app.post("/models/select")
-def select_model(payload: SelectModelPayload):
-    """Chọn mô hình nhận diện mặc định."""
+def select_model(payload: SelectModelPayload, background_tasks: BackgroundTasks):
+    """Chọn mô hình nhận diện mặc định và nạp trước vào RAM."""
     if payload.model_id not in MODEL_CONFIGS:
         raise HTTPException(
             status_code=400,
             detail=f"Mô hình '{payload.model_id}' không hợp lệ. Chỉ chấp nhận: {list(MODEL_CONFIGS.keys())}",
         )
     set_active_model_id(payload.model_id)
+    # Tải trước mô hình vào RAM trong luồng nền để khi quét ảnh không bị chậm
+    background_tasks.add_task(load_model_instance, payload.model_id)
     return {
         "message": f"Đã chuyển mô hình sang: {MODEL_CONFIGS[payload.model_id]['name']}",
         "active_model": get_active_model_id(),
