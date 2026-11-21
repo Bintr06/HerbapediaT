@@ -1,0 +1,51 @@
+{
+    "image_reading": "OpenCV (cv2.IMREAD_COLOR)",
+    "color_conversion": "BGR_to_RGB",
+    "clahe": {
+        "enabled": true,
+        "color_space": "LAB",
+        "channel": "L",
+        "clip_limit": 2.0,
+        "tile_grid_size": [
+            8,
+            8
+        ],
+        "position": "Before Resize"
+    },
+    "resize": [
+        224,
+        224
+    ],
+    "normalization": {
+        "type": "ImageNet",
+        "mean": [
+            0.485,
+            0.456,
+            0.406
+        ],
+        "std": [
+            0.229,
+            0.224,
+            0.225
+        ]
+    },
+    "num_classes": 16,
+    "classes": [
+        "Aloe",
+        "Bitter Gourd",
+        "Centella asiatica",
+        "Coffee",
+        "Grape",
+        "Guava",
+        "Hibiscus",
+        "Jackfruit",
+        "Lemon",
+        "Mango",
+        "Neem",
+        "Orange",
+        "Papaya",
+        "Tea",
+        "Tomato",
+        "Tulsi"
+    ]
+}

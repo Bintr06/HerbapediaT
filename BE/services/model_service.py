@@ -1,44 +1,100 @@
-import gc
+import json
 import logging
 import os
-import threading
 from pathlib import Path
 from typing import Any
 
-# Đặt backend cho Keras sang torch trước khi nạp thư viện Keras
-os.environ.setdefault("KERAS_BACKEND", "torch")
-import keras  # noqa: E402
-import numpy as np  # noqa: E402
-from PIL import Image  # noqa: E402
+import cv2
+import numpy as np
+import torch
+from PIL import Image, ImageOps
+
+from services.leafai_models import (
+    CustomLeafCNN,
+    LeafAI_Model,
+    apply_clahe_preprocessing,
+    load_checkpoint_strict,
+)
 
 logger = logging.getLogger(__name__)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODELS_DIR = BASE_DIR / "models"
+WEIGHTS_DIR = MODELS_DIR / "models"
+CONFIGS_DIR = MODELS_DIR / "configs"
 
-# 20 loài dược liệu theo đúng thứ tự nhãn trong dataset (sắp xếp A-Z theo tên thư mục)
-CLASS_NAMES = [
+# Mặc định 16 loài dược liệu chuẩn của LeafAI_PBL4_Deploy_16Classes
+DEFAULT_LEAFAI_CLASS_NAMES = [
     "Aloe",
-    "Arabian-jasmine",
-    "Betel",
-    "Brahmi",
+    "Bitter Gourd",
+    "Centella asiatica",
     "Coffee",
-    "Eucalyptus",
+    "Grape",
     "Guava",
     "Hibiscus",
     "Jackfruit",
     "Lemon",
     "Mango",
-    "Marigold",
-    "Mint",
     "Neem",
-    "Onion",
+    "Orange",
     "Papaya",
-    "Pepper",
-    "Rose",
+    "Tea",
     "Tomato",
     "Tulsi",
 ]
+
+
+def _read_json(path: Path) -> dict[str, Any]:
+    if path.is_file():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            logger.warning(f"Không thể đọc {path}: {exc}")
+    return {}
+
+
+def _load_class_names() -> list[str]:
+    mapping = _read_json(CONFIGS_DIR / "class_mapping.json")
+    classes = mapping.get("classes")
+    if isinstance(classes, list) and len(classes) > 0:
+        return [str(c) for c in classes]
+    idx_to_class = mapping.get("idx_to_class")
+    if isinstance(idx_to_class, dict) and len(idx_to_class) > 0:
+        return [str(idx_to_class[str(i)]) for i in range(len(idx_to_class))]
+    return list(DEFAULT_LEAFAI_CLASS_NAMES)
+
+
+def _load_preprocessing_config() -> dict[str, Any]:
+    cfg = _read_json(CONFIGS_DIR / "preprocessing_config.json")
+    clahe = cfg.get("clahe") or {}
+    norm = cfg.get("normalization") or {}
+    resize = cfg.get("resize") or [224, 224]
+    tile = clahe.get("tile_grid_size") or [8, 8]
+    return {
+        "image_size": (int(resize[0]), int(resize[1])),
+        "clip_limit": float(clahe.get("clip_limit", 2.0)),
+        "tile_grid_size": (int(tile[0]), int(tile[1])),
+        "mean": tuple(float(v) for v in (norm.get("mean") or [0.485, 0.456, 0.406])),
+        "std": tuple(float(v) for v in (norm.get("std") or [0.229, 0.224, 0.225])),
+    }
+
+
+def _load_model1_thresholds() -> dict[str, float]:
+    data = _read_json(CONFIGS_DIR / "model1_thresholds.json")
+    return {
+        "msp_thresh": float(data.get("msp_thresh", 0.95)),
+        "cos_thresh": float(data.get("cos_thresh", 0.6008)),
+        "dist_z_thresh": float(data.get("dist_z_thresh", 2.0)),
+    }
+
+
+def _load_model2_threshold() -> float:
+    data = _read_json(CONFIGS_DIR / "model2_thresholds.json")
+    return float(data.get("msp_thresh", 0.95))
+
+
+LEAFAI_CLASS_NAMES: list[str] = _load_class_names()
+PREPROC_CFG: dict[str, Any] = _load_preprocessing_config()
 
 HERB_INFO_MAP: dict[str, dict[str, str]] = {
     "Aloe": {
@@ -47,23 +103,17 @@ HERB_INFO_MAP: dict[str, dict[str, str]] = {
         "scientific": "Aloe vera (L.) Burm.f.",
         "dataset_name": "Aloevera",
     },
-    "Arabian-jasmine": {
-        "slug": "jasmine",
-        "name": "Hoa nhài (Hoa lài)",
-        "scientific": "Jasminum sambac (L.) Aiton",
-        "dataset_name": "Jasmine",
+    "Bitter Gourd": {
+        "slug": "bitter-gourd",
+        "name": "Khổ qua (Mướp đắng)",
+        "scientific": "Momordica charantia L.",
+        "dataset_name": "Bitter Gourd",
     },
-    "Betel": {
-        "slug": "betel",
-        "name": "Trầu không",
-        "scientific": "Piper betle L.",
-        "dataset_name": "Betel",
-    },
-    "Brahmi": {
-        "slug": "bhrami",
-        "name": "Rau đắng biển (Brahmi)",
-        "scientific": "Bacopa monnieri (L.) Wettst.",
-        "dataset_name": "Bhrami",
+    "Centella asiatica": {
+        "slug": "centella-asiatica",
+        "name": "Rau má",
+        "scientific": "Centella asiatica (L.) Urb.",
+        "dataset_name": "Centella asiatica",
     },
     "Coffee": {
         "slug": "coffee",
@@ -71,11 +121,11 @@ HERB_INFO_MAP: dict[str, dict[str, str]] = {
         "scientific": "Coffea arabica L.",
         "dataset_name": "Coffee",
     },
-    "Eucalyptus": {
-        "slug": "eucalyptus",
-        "name": "Bạch đàn (Khuynh diệp)",
-        "scientific": "Eucalyptus globulus Labill.",
-        "dataset_name": "Eucalyptus",
+    "Grape": {
+        "slug": "grape",
+        "name": "Nho",
+        "scientific": "Vitis vinifera L.",
+        "dataset_name": "Grape",
     },
     "Guava": {
         "slug": "guava",
@@ -107,29 +157,17 @@ HERB_INFO_MAP: dict[str, dict[str, str]] = {
         "scientific": "Mangifera indica L.",
         "dataset_name": "Mango",
     },
-    "Marigold": {
-        "slug": "marigold",
-        "name": "Hoa vạn thọ",
-        "scientific": "Tagetes erecta L.",
-        "dataset_name": "Marigold",
-    },
-    "Mint": {
-        "slug": "mint",
-        "name": "Bạc hà",
-        "scientific": "Mentha × piperita L.",
-        "dataset_name": "Mint",
-    },
     "Neem": {
         "slug": "neem",
         "name": "Xoan Ấn Độ (Sầu đâu)",
         "scientific": "Azadirachta indica A.Juss.",
         "dataset_name": "Neem",
     },
-    "Onion": {
-        "slug": "onion",
-        "name": "Hành",
-        "scientific": "Allium cepa L.",
-        "dataset_name": "Onion",
+    "Orange": {
+        "slug": "orange",
+        "name": "Cam",
+        "scientific": "Citrus × sinensis (L.) Osbeck",
+        "dataset_name": "Orange",
     },
     "Papaya": {
         "slug": "papaya",
@@ -137,17 +175,11 @@ HERB_INFO_MAP: dict[str, dict[str, str]] = {
         "scientific": "Carica papaya L.",
         "dataset_name": "Papaya",
     },
-    "Pepper": {
-        "slug": "pepper",
-        "name": "Hồ tiêu (Tiêu)",
-        "scientific": "Piper nigrum L.",
-        "dataset_name": "Pepper",
-    },
-    "Rose": {
-        "slug": "rose",
-        "name": "Hoa hồng",
-        "scientific": "Rosa chinensis Jacq.",
-        "dataset_name": "Rose",
+    "Tea": {
+        "slug": "tea",
+        "name": "Trà xanh (Chè xanh)",
+        "scientific": "Camellia sinensis (L.) Kuntze",
+        "dataset_name": "Tea",
     },
     "Tomato": {
         "slug": "tomato",
@@ -164,27 +196,35 @@ HERB_INFO_MAP: dict[str, dict[str, str]] = {
 }
 
 MODEL_CONFIGS: dict[str, dict[str, Any]] = {
-    "mobilenet_v3": {
-        "id": "mobilenet_v3",
-        "name": "MobileNetV3 (Fine-tuning)",
-        "description": "Mô hình MobileNetV3 Large được huấn luyện Fine-tuning, tối ưu tốc độ và độ chính xác cao.",
-        "filename": "mobilenet_leaf_model.keras",
-        "input_size": (224, 224),
-        "rescale": 1.0,
+    "efficientnet_b0": {
+        "id": "efficientnet_b0",
+        "name": "EfficientNet-B0",
+        "accuracy": "99.32%",
+        "accuracy_value": 99.32,
+        "osr_accuracy": "99.92%",
+        "description": "Model 1: EfficientNet-B0 + CLAHE + Prototype Open-Set Recognition (16 loài).",
+        "filename": "models/model1_best.pth",
+        "framework": "pytorch_model1",
+        "input_size": PREPROC_CFG["image_size"],
+        "class_names": LEAFAI_CLASS_NAMES,
     },
-    "custom_cnn": {
-        "id": "custom_cnn",
-        "name": "Custom CNN (From Scratch)",
-        "description": "Mô hình mạng tích chập 5 khối CNN tự thiết kế và huấn luyện từ đầu.",
-        "filename": "best_leaf_model.keras",
-        "input_size": (224, 224),
-        "rescale": 1.0 / 255.0,
+    "custom_cnn_v2": {
+        "id": "custom_cnn_v2",
+        "name": "CustomLeafCNN",
+        "accuracy": "97.76%",
+        "accuracy_value": 97.76,
+        "osr_accuracy": "99.72%",
+        "description": "Model 2: CustomLeafCNN 5 khối + CLAHE + MSP Open-Set Recognition (16 loài).",
+        "filename": "models/model2_best.pth",
+        "framework": "pytorch_model2",
+        "input_size": PREPROC_CFG["image_size"],
+        "class_names": LEAFAI_CLASS_NAMES,
     },
 }
 
-_active_model_id = os.getenv("DEFAULT_MODEL", "mobilenet_v3")
+_active_model_id = os.getenv("DEFAULT_MODEL", "efficientnet_b0")
 _loaded_models: dict[str, Any] = {}
-_model_lock = threading.Lock()
+_device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_available_models() -> list[dict[str, Any]]:
@@ -196,8 +236,13 @@ def get_available_models() -> list[dict[str, Any]]:
             {
                 "id": m_id,
                 "name": cfg["name"],
+                "accuracy": cfg.get("accuracy", ""),
+                "accuracy_value": cfg.get("accuracy_value", 0.0),
+                "osr_accuracy": cfg.get("osr_accuracy", ""),
                 "description": cfg["description"],
-                "input_size": cfg["input_size"],
+                "framework": cfg.get("framework", "pytorch_model1"),
+                "num_classes": len(cfg.get("class_names", LEAFAI_CLASS_NAMES)),
+                "input_size": list(cfg["input_size"]),
                 "filename": cfg["filename"],
                 "is_available": model_path.exists(),
                 "is_active": m_id == current_id,
@@ -209,7 +254,7 @@ def get_available_models() -> list[dict[str, Any]]:
 def get_active_model_id() -> str:
     global _active_model_id
     if _active_model_id not in MODEL_CONFIGS:
-        _active_model_id = "mobilenet_v3"
+        _active_model_id = "efficientnet_b0"
     return _active_model_id
 
 
@@ -222,92 +267,99 @@ def set_active_model_id(model_id: str) -> bool:
     return False
 
 
-def load_model_instance(model_id: str):
+def load_model_instance(model_id: str) -> dict[str, Any]:
     if model_id not in MODEL_CONFIGS:
         raise ValueError(f"Mô hình không hợp lệ: {model_id}")
 
     if model_id in _loaded_models:
         return _loaded_models[model_id]
 
-    with _model_lock:
-        if model_id in _loaded_models:
-            return _loaded_models[model_id]
+    cfg = MODEL_CONFIGS[model_id]
+    model_path = MODELS_DIR / cfg["filename"]
+    if not model_path.exists():
+        raise FileNotFoundError(f"Không tìm thấy file mô hình tại {model_path}")
 
-        # Nếu chạy trên Render (bị giới hạn 512MB RAM), giải phóng mô hình cũ trước khi nạp mô hình mới
-        # Nếu chạy trên Railway / Server mạnh, giữ cả 2 mô hình trong RAM để chuyển đổi tức thì (0ms)!
-        if os.getenv("RENDER") and _loaded_models:
-            _loaded_models.clear()
-            gc.collect()
+    framework = cfg["framework"]
+    num_classes = len(cfg["class_names"])
+    logger.info(f"Đang nạp mô hình {cfg['name']} ({framework}, {num_classes} lớp) từ {model_path}...")
 
-        cfg = MODEL_CONFIGS[model_id]
-        model_path = MODELS_DIR / cfg["filename"]
-        if not model_path.exists():
-            raise FileNotFoundError(f"Không tìm thấy file mô hình tại {model_path}")
+    if framework == "pytorch_model1":
+        model = LeafAI_Model(num_classes=num_classes, pretrained=False)
+        load_checkpoint_strict(model, model_path, device=_device)
+        thresholds = _load_model1_thresholds()
+        bundle = {"model": model, "thresholds": thresholds}
+        _loaded_models[model_id] = bundle
+        logger.info(f"Nạp thành công Model 1 ({cfg['name']}) với ngưỡng OSR: {thresholds}")
+        return bundle
 
-        logger.info(f"Đang nạp mô hình {cfg['name']} từ {model_path}...")
-        model = keras.saving.load_model(str(model_path))
-        
-        # Tự động đồng bộ kích thước input_shape từ mô hình thực tế
+    if framework == "pytorch_model2":
+        model = CustomLeafCNN(num_classes=num_classes)
+        load_checkpoint_strict(model, model_path, device=_device)
+        msp_thresh = _load_model2_threshold()
+        bundle = {"model": model, "msp_thresh": msp_thresh}
+        _loaded_models[model_id] = bundle
+        logger.info(f"Nạp thành công Model 2 ({cfg['name']}) với msp_thresh={msp_thresh:.4f}")
+        return bundle
+
+    raise ValueError(f"Framework không được hỗ trợ: {framework}")
+
+
+def warmup_models() -> None:
+    for model_id, cfg in MODEL_CONFIGS.items():
         try:
-            in_shape = getattr(model, "input_shape", None)
-            if in_shape and len(in_shape) >= 3 and in_shape[1] and in_shape[2]:
-                cfg["input_size"] = (int(in_shape[1]), int(in_shape[2]))
-                logger.info(f"Đã nhận diện kích thước đầu vào {cfg['name']}: {cfg['input_size']}")
-            has_internal_rescaling = any(
-                "rescaling" in getattr(layer, "name", "").lower() or "rescale" in getattr(layer, "name", "").lower()
-                for layer in getattr(model, "layers", [])
-            )
-            if has_internal_rescaling:
-                cfg["rescale"] = 1.0
-                logger.info(f"Mô hình {cfg['name']} đã có tầng Rescaling nội bộ -> rescale = 1.0")
-        except Exception as e:
-            logger.warning(f"Không thể đọc tự động cấu hình mô hình: {e}")
-        if hasattr(model, "eval"):
-            try:
-                model.eval()
-            except Exception:
-                pass
-
-        _loaded_models[model_id] = model
-        # Dọn dẹp các đối tượng giải nén tạm thời từ tệp .keras
-        gc.collect()
-        logger.info(f"Nạp thành công mô hình {cfg['name']}!")
-        return model
-
-
-def warmup_models():
-    # Chỉ làm nóng mô hình đang kích hoạt để tiết kiệm RAM (512MB Render) và khởi động tức thì
-    active_id = get_active_model_id()
-    try:
-        cfg = MODEL_CONFIGS.get(active_id)
-        if cfg:
             model_path = MODELS_DIR / cfg["filename"]
-            if model_path.exists():
-                logger.info(f"Đang nạp trước mô hình mặc định: {cfg['name']}...")
-                model = load_model_instance(active_id)
-                dummy = np.zeros((1, *cfg["input_size"], 3), dtype=np.float32)
-                try:
-                    import torch
-                    dummy_tensor = torch.from_numpy(dummy)
-                    with torch.inference_mode():
-                        _ = model(dummy_tensor, training=False)
-                except Exception:
-                    _ = model(dummy, training=False)
-                del dummy
-                if "dummy_tensor" in locals():
-                    del dummy_tensor
-                gc.collect()
-                logger.info(f"Mô hình {active_id} ({cfg['name']}) đã sẵn sàng phục vụ dự đoán!")
-    except Exception as exc:
-        logger.warning(f"Không thể làm nóng mô hình {active_id}: {exc}")
+            if not model_path.exists():
+                logger.warning(f"Bỏ qua làm nóng {model_id}: không tìm thấy {model_path}")
+                continue
+            loaded = load_model_instance(model_id)
+            dummy_t = torch.zeros((1, 3, *cfg["input_size"]), dtype=torch.float32, device=_device)
+            with torch.no_grad():
+                _ = loaded["model"](dummy_t)
+            logger.info(f"Làm nóng mô hình {model_id} thành công!")
+        except Exception as exc:
+            logger.warning(f"Không thể làm nóng mô hình {model_id}: {exc}")
 
 
-def preprocess_image(image: Image.Image, target_size: tuple[int, int], rescale: float) -> np.ndarray:
+def preprocess_leafai_image(image: Image.Image) -> torch.Tensor:
+    """EXIF Transpose -> RGB -> BGR -> CLAHE (LAB kênh L, trước Resize) -> Resize 224x224 -> Normalize."""
+    image = ImageOps.exif_transpose(image)
     if image.mode != "RGB":
         image = image.convert("RGB")
-    image = image.resize(target_size, Image.Resampling.BILINEAR)
-    img_array = np.asarray(image, dtype=np.float32) * rescale
-    return np.expand_dims(img_array, axis=0)
+    rgb_np = np.asarray(image, dtype=np.uint8)
+    bgr_np = cv2.cvtColor(rgb_np, cv2.COLOR_RGB2BGR)
+    tensor = apply_clahe_preprocessing(
+        bgr_np,
+        image_size=PREPROC_CFG["image_size"],
+        clip_limit=PREPROC_CFG["clip_limit"],
+        tile_grid_size=PREPROC_CFG["tile_grid_size"],
+        mean=PREPROC_CFG["mean"],
+        std=PREPROC_CFG["std"],
+    )
+    return tensor.to(_device)
+
+
+def _build_candidates(probs: np.ndarray, class_names: list[str], top_k: int = 5) -> list[dict[str, Any]]:
+    top_indices = np.argsort(probs)[::-1][:top_k]
+    candidates = []
+    for idx in top_indices:
+        c_idx = int(idx)
+        c_name = class_names[c_idx] if c_idx < len(class_names) else f"Class_{c_idx}"
+        c_info = HERB_INFO_MAP.get(
+            c_name,
+            {"slug": c_name.lower().replace(" ", "-"), "name": c_name, "scientific": ""},
+        )
+        c_prob = float(probs[c_idx])
+        candidates.append(
+            {
+                "class_name": c_name,
+                "name": c_info["name"],
+                "scientific": c_info.get("scientific", ""),
+                "slug": c_info.get("slug", c_name.lower().replace(" ", "-")),
+                "confidence": f"{c_prob * 100:.2f}%",
+                "confidence_value": round(c_prob * 100, 2),
+            }
+        )
+    return candidates
 
 
 def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, Any]:
@@ -316,72 +368,74 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
         target_model_id = get_active_model_id()
 
     cfg = MODEL_CONFIGS[target_model_id]
-    model = load_model_instance(target_model_id)
+    framework = cfg["framework"]
+    class_names: list[str] = cfg["class_names"]
+    loaded = load_model_instance(target_model_id)
+    tensor_x = preprocess_leafai_image(image)
 
-    x = preprocess_image(image, cfg["input_size"], cfg["rescale"])
+    if framework == "pytorch_model1":
+        model: LeafAI_Model = loaded["model"]
+        thresholds: dict[str, float] = loaded["thresholds"]
+        osr_res = model.predict_open_set(tensor_x, thresholds=thresholds)
+        probs = osr_res["probs"][0].detach().cpu().numpy()
+        is_known = bool(osr_res["is_known"][0].item())
+        osr_info: dict[str, Any] = {
+            "status": "KNOWN" if is_known else "UNKNOWN",
+            "method": "Prototype OSR (MSP + Cosine + Distance Z-score)",
+            "votes": f"{int(osr_res['votes'][0].item())}/3",
+            "msp": round(float(osr_res["msp"][0].item()) * 100, 2),
+            "cosine": round(float(osr_res["cosine"][0].item()), 4),
+            "dist_z": round(float(osr_res["dist_z"][0].item()), 3),
+            "thresholds": thresholds,
+        }
+    else:
+        model2: CustomLeafCNN = loaded["model"]
+        msp_thresh: float = loaded["msp_thresh"]
+        osr_list = model2.predict_open_set(tensor_x, msp_threshold=msp_thresh, class_names=class_names)
+        res0 = osr_list[0]
+        probs = np.asarray(res0["probabilities"], dtype=np.float32)
+        is_known = res0["status"] == "KNOWN"
+        osr_info = {
+            "status": res0["status"],
+            "method": "MSP Open-Set (95% Validation)",
+            "msp": round(float(res0["confidence_msp"]) * 100, 2),
+            "msp_threshold": round(float(msp_thresh) * 100, 2),
+        }
 
-    try:
-        import torch
-        x_tensor = torch.from_numpy(x)
-        with torch.inference_mode():
-            preds = model(x_tensor, training=False)
-            if hasattr(preds, "detach"):
-                preds = preds.detach().cpu().numpy()
-            elif hasattr(preds, "numpy"):
-                preds = preds.numpy()
-    except Exception:
-        try:
-            preds = model(x, training=False)
-            if hasattr(preds, "detach"):
-                preds = preds.detach().cpu().numpy()
-            elif hasattr(preds, "numpy"):
-                preds = preds.numpy()
-        except Exception:
-            preds = model.predict(x, verbose=0)
-    finally:
-        del x
-        if "x_tensor" in locals():
-            del x_tensor
-        gc.collect()
+    enable_osr = os.getenv("ENABLE_OSR", "true").strip().lower() in ("true", "1", "yes")
+    if not enable_osr:
+        is_known = True
+        osr_info["status"] = "BYPASSED"
+        osr_info["method"] = "OSR tắt qua cấu hình ENABLE_OSR=false"
 
-    probs = preds[0] if len(preds.shape) > 1 else preds
-    top_indices = np.argsort(probs)[::-1][:5]
-    top_idx = int(top_indices[0])
-    top_prob = float(probs[top_idx])
-    top_class = CLASS_NAMES[top_idx]
-    herb_info = HERB_INFO_MAP.get(
-        top_class,
-        {"slug": top_class.lower(), "name": top_class, "scientific": ""},
-    )
+    top_candidates = _build_candidates(probs, class_names, top_k=5)
+    best_candidate = top_candidates[0]
+    top_prob_pct = best_candidate["confidence_value"]
 
-    top_candidates = []
-    for idx in top_indices:
-        c_name = CLASS_NAMES[int(idx)]
-        c_info = HERB_INFO_MAP.get(
-            c_name,
-            {"slug": c_name.lower(), "name": c_name, "scientific": ""},
-        )
-        c_prob = float(probs[idx])
-        top_candidates.append(
-            {
-                "class_name": c_name,
-                "name": c_info["name"],
-                "scientific": c_info.get("scientific", ""),
-                "slug": c_info.get("slug", c_name.lower()),
-                "confidence": f"{c_prob * 100:.1f}%",
-                "confidence_value": round(c_prob * 100, 1),
-            }
-        )
+    if is_known:
+        predicted_name = best_candidate["name"]
+        scientific_name = best_candidate["scientific"]
+        class_name = best_candidate["class_name"]
+        herb_slug = best_candidate["slug"]
+    else:
+        predicted_name = f"Chưa xác định (Ngoài tập {len(class_names)} loài)"
+        scientific_name = f"Gần giống nhất: {best_candidate['name']} ({best_candidate['confidence']} — Từ chối bởi OSR)"
+        class_name = "Rejected (UNKNOWN)"
+        herb_slug = best_candidate["slug"]
 
     return {
+        "status": "KNOWN" if is_known else "UNKNOWN",
+        "is_known": is_known,
+        "osr": osr_info,
         "model_id": target_model_id,
         "model_name": cfg["name"],
-        "predicted_class": herb_info["name"],
-        "scientific_name": herb_info.get("scientific", ""),
-        "class_name": top_class,
-        "herb_slug": herb_info.get("slug", top_class.lower()),
-        "confidence": f"{top_prob * 100:.1f}%",
-        "confidence_value": round(top_prob * 100, 1),
+        "model_accuracy": cfg.get("accuracy", ""),
+        "model_accuracy_value": cfg.get("accuracy_value", 0.0),
+        "predicted_class": predicted_name,
+        "scientific_name": scientific_name,
+        "class_name": class_name,
+        "herb_slug": herb_slug,
+        "confidence": best_candidate["confidence"],
+        "confidence_value": top_prob_pct,
         "top_candidates": top_candidates,
     }
-

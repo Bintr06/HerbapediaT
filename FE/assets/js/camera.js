@@ -29,24 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedUploadFile = null;
     let localStream = null;
     let isCameraStreaming = false;
-
-    function getApiBaseUrl() {
-        return (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
-    }
-    const API_BASE_URL = getApiBaseUrl();
-
-    // Chuyển DataURL thành Blob an toàn tương thích 100% với iOS Safari & Android
-    function dataURLtoBlob(dataurl) {
-        const arr = dataurl.split(',');
-        const mime = (arr[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
-        const bstr = atob(arr[1]);
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-        return new Blob([u8arr], { type: mime });
-    }
+    const API_BASE_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
 
     // Toast thông báo chuyên nghiệp
     function showCameraToast(message, isError = false) {
@@ -107,25 +90,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 3. Hàm nén & tối ưu hóa ảnh trước khi upload để đạt tốc độ quét siêu tốc (<0.5s)
-    function optimizeImageFile(file, maxWidth = 640, quality = 0.8) {
+    // 3. Hàm nén & tối ưu hóa ảnh trước khi upload để tăng tốc độ nhận diện gấp 5-10 lần
+    function optimizeImageFile(file, maxWidth = 1024, quality = 0.85) {
         if (localStorage.getItem('autoOptimize') === 'false') {
             return Promise.resolve(file);
         }
-        if (!file || !file.type || !file.type.startsWith('image/')) {
-            return Promise.resolve(file);
-        }
-        // Nếu ảnh JPEG đã rất nhẹ (<80KB) thì gửi luôn
-        if (file.type === 'image/jpeg' && file.size < 80 * 1024) {
-            return Promise.resolve(file);
-        }
         return new Promise((resolve) => {
+            if (!file || !file.type.startsWith('image/') || file.size < 400 * 1024) {
+                return resolve(file);
+            }
             const img = new Image();
-            const objectUrl = URL.createObjectURL(file);
-            img.onload = () => {
-                URL.revokeObjectURL(objectUrl);
-                let { width, height } = img;
-                if (width > maxWidth || height > maxWidth) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                img.onload = () => {
+                    let { width, height } = img;
+                    if (width <= maxWidth && height <= maxWidth) {
+                        return resolve(file);
+                    }
                     if (width > height) {
                         height = Math.round((height * maxWidth) / width);
                         width = maxWidth;
@@ -133,80 +114,86 @@ document.addEventListener('DOMContentLoaded', () => {
                         width = Math.round((width * maxWidth) / height);
                         height = maxWidth;
                     }
-                }
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                canvas.toBlob(
-                    (blob) => {
-                        if (blob && (blob.size < file.size || file.type !== 'image/jpeg')) {
-                            resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
-                        } else {
-                            resolve(file);
-                        }
-                    },
-                    'image/jpeg',
-                    quality
-                );
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    canvas.toBlob(
+                        (blob) => {
+                            if (blob && blob.size < file.size) {
+                                resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+                            } else {
+                                resolve(file);
+                            }
+                        },
+                        'image/jpeg',
+                        quality
+                    );
+                };
+                img.src = e.target.result;
             };
-            img.onerror = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve(file);
-            };
-            img.src = objectUrl;
+            reader.readAsDataURL(file);
         });
     }
 
-    // 4. Quản lý chọn mô hình AI (MobileNetV3 hoặc Custom CNN)
-    let selectedModel = localStorage.getItem('selectedModel') || 'mobilenet_v3';
-    const btnModelMobilenet = document.getElementById('btnModelMobilenet');
-    const btnModelCustomCnn = document.getElementById('btnModelCustomCnn');
-
-    function selectModelBackend(modelId) {
-        selectedModel = modelId;
+    // 4. Quản lý chọn mô hình AI (Model 1: EfficientNet-B0, Model 2: CustomLeafCNN - 16 loài lá)
+    const VALID_MODELS = ['efficientnet_b0', 'custom_cnn_v2'];
+    let selectedModel = localStorage.getItem('selectedModel') || 'efficientnet_b0';
+    if (!VALID_MODELS.includes(selectedModel)) {
+        selectedModel = 'efficientnet_b0';
         localStorage.setItem('selectedModel', selectedModel);
-        updateModelButtons();
-        // Báo cho backend nạp trước mô hình ngầm vào RAM để quét tức thì (<0.3s)
-        fetch(`${getApiBaseUrl()}/models/select`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model_id: modelId })
-        }).catch(() => {});
     }
 
+    const modelButtons = [
+        { id: 'efficientnet_b0', el: document.getElementById('btnModelEfficientnet') },
+        { id: 'custom_cnn_v2', el: document.getElementById('btnModelCustomCnnV2') }
+    ];
+
     function updateModelButtons() {
-        if (btnModelMobilenet && btnModelCustomCnn) {
-            if (selectedModel === 'mobilenet_v3') {
-                btnModelMobilenet.className = 'px-4 py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-sm flex items-center gap-1.5';
-                btnModelCustomCnn.className = 'px-4 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5';
-            } else {
-                btnModelCustomCnn.className = 'px-4 py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-sm flex items-center gap-1.5';
-                btnModelMobilenet.className = 'px-4 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5';
+        modelButtons.forEach(({ id, el }) => {
+            if (!el) return;
+            const isActive = (selectedModel === id);
+            el.className = isActive
+                ? 'px-3.5 py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-sm flex items-center gap-1.5'
+                : 'px-3.5 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5';
+
+            const accBadge = el.querySelector('[data-model-acc]');
+            if (accBadge) {
+                accBadge.className = isActive
+                    ? 'text-[10px] px-1.5 py-0.2 bg-[#8CC63F] text-white rounded-full font-bold'
+                    : 'text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold';
             }
-        }
+        });
+
         const modalModelRadio = document.querySelector(`input[name="modalModelChoice"][value="${selectedModel}"]`);
         if (modalModelRadio) modalModelRadio.checked = true;
     }
 
-    if (btnModelMobilenet) {
-        btnModelMobilenet.addEventListener('click', () => {
-            selectModelBackend('mobilenet_v3');
+    modelButtons.forEach(({ id, el }) => {
+        if (!el) return;
+        el.addEventListener('click', () => {
+            selectedModel = id;
+            localStorage.setItem('selectedModel', selectedModel);
+            updateModelButtons();
         });
-    }
+    });
 
-    if (btnModelCustomCnn) {
-        btnModelCustomCnn.addEventListener('click', () => {
-            selectModelBackend('custom_cnn');
-        });
-    }
+    // Đồng bộ độ chính xác từng mô hình từ API /models của Backend (nếu có)
+    fetch(`${API_BASE_URL}/models`, { signal: AbortSignal.timeout(3000) })
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (!data || !Array.isArray(data.models)) return;
+            data.models.forEach(m => {
+                if (m.id && m.accuracy) {
+                    const badge = document.querySelector(`[data-model-acc="${m.id}"]`);
+                    if (badge) badge.textContent = m.accuracy;
+                }
+            });
+        })
+        .catch(() => {});
 
     updateModelButtons();
-    // Nếu mô hình đã lưu khác mặc định, thông báo backend đồng bộ trước
-    if (selectedModel && selectedModel !== 'mobilenet_v3') {
-        selectModelBackend(selectedModel);
-    }
 
     // 5. Tải danh sách dược liệu được nhận diện nhiều nhất từ backend
     loadTopRecognizedHerbs();
@@ -219,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sourceRadio = document.querySelector(`input[name="cameraSourceChoice"][value="${currentSource}"]`);
         if (sourceRadio) sourceRadio.checked = true;
 
-        const currentModel = localStorage.getItem('selectedModel') || 'mobilenet_v3';
+        const currentModel = localStorage.getItem('selectedModel') || 'efficientnet_b0';
         const modelRadio = document.querySelector(`input[name="modalModelChoice"][value="${currentModel}"]`);
         if (modelRadio) modelRadio.checked = true;
 
@@ -262,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleSaveSettings() {
         const chosenSource = document.querySelector('input[name="cameraSourceChoice"]:checked')?.value || 'webcam';
-        const chosenModel = document.querySelector('input[name="modalModelChoice"]:checked')?.value || 'mobilenet_v3';
+        const chosenModel = document.querySelector('input[name="modalModelChoice"]:checked')?.value || 'efficientnet_b0';
         const newRpiUrl = (inputRpiUrl ? inputRpiUrl.value : '').trim().replace(/\/+$/, '');
         const newConf = confidenceRange ? confidenceRange.value : '35';
         const newOptimize = checkOptimizeImage ? checkOptimizeImage.checked : true;
@@ -282,14 +269,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cập nhật biến bộ nhớ
         const previousSource = cameraSource;
         cameraSource = chosenSource;
+        selectedModel = chosenModel;
         if (newRpiUrl) rpiCameraBase = newRpiUrl;
 
-        // Cập nhật và đồng bộ mô hình AI sang backend
-        if (chosenModel !== selectedModel) {
-            selectModelBackend(chosenModel);
-        } else {
-            updateModelButtons();
-        }
+        // Cập nhật nút chọn model bên ngoài
+        updateModelButtons();
 
         // Nếu người dùng chọn Raspberry Pi mà chưa kiểm tra kết nối, đưa ra nhắc nhở rõ ràng
         if (chosenSource === 'rpi') {
@@ -549,37 +533,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleSelectedImageFile(file) {
         if (isCameraStreaming) stopCameraStream();
         selectedUploadFile = file;
-
-        // Hiển thị preview ảnh tức thì trong 1ms bằng Object URL (không làm đơ trình duyệt)
-        const previewUrl = URL.createObjectURL(file);
-        if (imagePreview) {
-            imagePreview.src = previewUrl;
-            imagePreview.style.display = 'block';
-        }
-        if (frameMessage) frameMessage.style.display = 'none';
-        if (videoElement) videoElement.style.display = 'none';
-        if (btnClearPreview) {
-            btnClearPreview.classList.remove('hidden');
-            btnClearPreview.classList.add('flex');
-        }
-        if (btnUploadStartScan) {
-            btnUploadStartScan.classList.remove('hidden');
-            btnUploadStartScan.classList.add('flex');
-        }
-        if (typeof feather !== 'undefined') feather.replace();
-
-        // Nén và lưu bản tối ưu nhẹ (<50KB) vào localStorage cho result.html hiển thị mượt
-        optimizeImageFile(file, 640, 0.8).then(optFile => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    localStorage.setItem('lastCapturedImage', e.target.result);
-                } catch (err) {
-                    console.warn('Không thể lưu ảnh vào localStorage:', err);
-                }
-            };
-            reader.readAsDataURL(optFile);
-        });
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            if (imagePreview) {
+                imagePreview.src = event.target.result;
+                imagePreview.style.display = 'block';
+            }
+            if (frameMessage) frameMessage.style.display = 'none';
+            if (videoElement) videoElement.style.display = 'none';
+            if (btnClearPreview) {
+                btnClearPreview.classList.remove('hidden');
+                btnClearPreview.classList.add('flex');
+            }
+            localStorage.setItem('lastCapturedImage', event.target.result);
+            if (btnUploadStartScan) {
+                btnUploadStartScan.classList.remove('hidden');
+                btnUploadStartScan.classList.add('flex');
+            }
+            if (typeof feather !== 'undefined') feather.replace();
+        };
+        reader.readAsDataURL(file);
     }
 
     // 10. Kéo & Thả ảnh vào Camera Frame (Drag and Drop)
@@ -703,64 +676,31 @@ document.addEventListener('DOMContentLoaded', () => {
             let capturedBlob = null;
 
             if (cameraSource === 'webcam') {
-                // Chụp khung hình từ Video Element và tối ưu kích thước <640px cho tốc độ quét <1s
+                // Chụp khung hình từ Video Element
                 if (!videoElement || videoElement.videoWidth === 0) {
                     throw new Error('Khung hình camera chưa sẵn sàng.');
                 }
                 const canvas = document.createElement('canvas');
-                let w = videoElement.videoWidth;
-                let h = videoElement.videoHeight;
-                const maxDim = 640;
-                if (w > maxDim || h > maxDim) {
-                    if (w > h) {
-                        h = Math.round((h * maxDim) / w);
-                        w = maxDim;
-                    } else {
-                        w = Math.round((w * maxDim) / h);
-                        h = maxDim;
-                    }
-                }
-                canvas.width = w;
-                canvas.height = h;
+                canvas.width = videoElement.videoWidth;
+                canvas.height = videoElement.videoHeight;
                 const ctx = canvas.getContext('2d');
-                ctx.drawImage(videoElement, 0, 0, w, h);
-                const base64Data = canvas.toDataURL('image/jpeg', 0.82);
-                try {
-                    localStorage.setItem('lastCapturedImage', base64Data);
-                } catch (e) {
-                    console.warn('LocalStorage full:', e);
-                }
-
-                // ĐÓNG BĂNG CAMERA TỨC THÌ:
-                // Tạm dừng video và hiển thị khung hình tĩnh vừa chụp để camera không di chuyển nữa
-                try {
-                    videoElement.pause();
-                } catch (e) {}
-                videoElement.style.display = 'none';
-                if (imagePreview) {
-                    imagePreview.src = base64Data;
-                    imagePreview.style.display = 'block';
-                }
-
-                // Chuyển DataURL thành Blob an toàn 100% cho mọi trình duyệt di động (iOS Safari & Android Chrome)
-                capturedBlob = dataURLtoBlob(base64Data);
+                ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                capturedBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
             } else {
                 // Chụp từ Raspberry Pi qua /capture
                 const captureRes = await fetch(`${rpiCameraBase}/capture`, { signal: AbortSignal.timeout(4000) });
                 if (!captureRes.ok) throw new Error('Không thể chụp ảnh từ Raspberry Pi.');
                 capturedBlob = await captureRes.blob();
-                const base64Data = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(capturedBlob);
-                });
-                localStorage.setItem('lastCapturedImage', base64Data);
-                // Đóng băng khung hình Raspberry Pi hiển thị ảnh snapshot
-                if (imagePreview) {
-                    imagePreview.src = base64Data;
-                }
             }
+
+            // Chuyển blob thành Base64 để lưu vào localStorage cho trang result.html hiển thị
+            const base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(capturedBlob);
+            });
+            localStorage.setItem('lastCapturedImage', base64Data);
 
             // Gửi ảnh đến Backend /predict
             const token = localStorage.getItem('accessToken');
@@ -771,24 +711,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const headers = {};
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            let slowTimer = setTimeout(() => {
-                if (loadingStatus) {
-                    loadingStatus.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin text-[#8CC63F]"></i> Đang kích hoạt cụm AI đám mây (lần đầu có thể mất thêm vài giây)...';
-                    if (typeof feather !== 'undefined') feather.replace();
-                }
-            }, 3500);
-
-            let predRes;
-            try {
-                const targetUrl = `${getApiBaseUrl()}/predict`;
-                predRes = await fetch(targetUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: formData
-                });
-            } finally {
-                clearTimeout(slowTimer);
-            }
+            const predRes = await fetch(`${API_BASE_URL}/predict`, {
+                method: 'POST',
+                headers: headers,
+                body: formData
+            });
 
             if (!predRes.ok) {
                 const errRes = await predRes.json().catch(() => ({}));
@@ -798,27 +725,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const predictionData = await predRes.json();
             localStorage.setItem('lastPrediction', JSON.stringify(predictionData));
 
-            // Chuyển trang kết quả tức thì (<10ms)
-            if (scanLine) scanLine.style.display = 'none';
-            if (loadingStatus) loadingStatus.style.display = 'none';
-            window.location.href = 'result.html';
+            // Hiệu ứng quét 1s trước khi sang trang kết quả
+            setTimeout(() => {
+                if (scanLine) scanLine.style.display = 'none';
+                if (loadingStatus) loadingStatus.style.display = 'none';
+                window.location.href = 'result.html';
+            }, 1000);
 
         } catch (err) {
             console.error('Lỗi khi quét từ camera:', err);
-            // Khôi phục lại camera trực tiếp nếu có lỗi để người dùng chụp lại
-            if (cameraSource === 'webcam') {
-                if (imagePreview) imagePreview.style.display = 'none';
-                if (videoElement) {
-                    videoElement.style.display = 'block';
-                    try {
-                        videoElement.play();
-                    } catch (e) {}
-                }
-            } else if (cameraSource === 'rpi') {
-                if (imagePreview) {
-                    imagePreview.src = `${rpiCameraBase}/video_feed?t=${Date.now()}`;
-                }
-            }
+            alert(err.message || 'Lỗi chụp ảnh từ camera.');
             if (btnCameraScan) {
                 btnCameraScan.disabled = false;
                 btnCameraScan.innerHTML = '<i data-feather="camera" class="w-4 h-4"></i> Bắt đầu quét';
@@ -826,12 +742,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (scanLine) scanLine.style.display = 'none';
             if (loadingStatus) loadingStatus.style.display = 'none';
-
-            let errText = err.message || 'Lỗi chụp ảnh từ camera.';
-            if (errText.toLowerCase().includes('load failed') || errText.toLowerCase().includes('failed to fetch')) {
-                errText = 'Không thể kết nối đến máy chủ AI (Load failed). Vui lòng thử tải lại trang web hoặc kiểm tra kết nối mạng.';
-            }
-            alert(errText);
         }
     }
 
@@ -861,25 +771,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (typeof feather !== 'undefined') feather.replace();
             }
 
-            let slowTimer = setTimeout(() => {
-                if (loadingStatus) {
-                    loadingStatus.innerHTML = '<i data-feather="loader" class="w-4 h-4 animate-spin text-[#8CC63F]"></i> Đang kích hoạt cụm AI đám mây (lần đầu có thể mất thêm vài giây)...';
-                    if (typeof feather !== 'undefined') feather.replace();
-                }
-            }, 3500);
-
             try {
                 const optimizedFile = await optimizeImageFile(selectedUploadFile);
                 const formData = new FormData();
                 formData.append('file', optimizedFile, optimizedFile.name);
                 formData.append('model_name', selectedModel);
 
-                const response = await fetch(`${getApiBaseUrl()}/predict`, {
+                const response = await fetch(`${API_BASE_URL}/predict`, {
                     method: 'POST',
                     headers: headers,
                     body: formData
                 });
-                clearTimeout(slowTimer);
                 const result = await response.json().catch(() => ({}));
                 if (!response.ok) {
                     throw new Error(result.detail || 'Không thể nhận diện ảnh.');
@@ -887,12 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 localStorage.setItem('lastPrediction', JSON.stringify(result));
                 window.location.href = 'result.html';
             } catch (error) {
-                clearTimeout(slowTimer);
-                let errText = error.message || 'Lỗi quét ảnh.';
-                if (errText.toLowerCase().includes('load failed') || errText.toLowerCase().includes('failed to fetch')) {
-                    errText = 'Không thể kết nối đến máy chủ AI (Load failed). Vui lòng kiểm tra lại mạng hoặc thử lại.';
-                }
-                alert(errText);
+                alert(error.message);
                 btnUploadStartScan.disabled = false;
                 btnUploadStartScan.innerHTML = '<i data-feather="search" class="w-4 h-4"></i> Bắt đầu quét ảnh';
                 if (typeof feather !== 'undefined') feather.replace();
@@ -909,7 +806,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         try {
-            const response = await fetch(`${getApiBaseUrl()}/herbs/top-recognized?limit=4`, {
+            const response = await fetch(`${API_BASE_URL}/herbs/top-recognized?limit=4`, {
                 signal: AbortSignal.timeout(3000)
             });
             if (!response.ok) {
@@ -954,8 +851,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const targetUrl = `detail.html?id=${encodeURIComponent(herb.slug || herb.id)}`;
 
                 return `
-                    <a href="${targetUrl}" class="w-[75vw] max-w-[270px] md:w-auto shrink-0 snap-center bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-xs hover:-translate-y-1.5 hover:shadow-md transition-all duration-300 flex flex-col group cursor-pointer block overflow-hidden active:scale-98">
-                        <div class="relative h-40 sm:h-48 w-full overflow-hidden bg-gray-100">
+                    <a href="${targetUrl}" class="w-[75vw] md:w-auto shrink-0 snap-center bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm hover:-translate-y-1.5 hover:shadow-lg transition-all duration-300 flex flex-col group cursor-pointer block overflow-hidden">
+                        <div class="relative h-48 w-full overflow-hidden bg-gray-100">
                             <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(herb.name)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.onerror=null;this.src='${defaultFallbackImg}';">
                             <span class="absolute top-3 left-3 ${badgeClass} text-white text-xs font-bold px-3 py-1 rounded-full shadow-md z-10">Top ${rank}</span>
                         </div>

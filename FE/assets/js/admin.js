@@ -8,11 +8,12 @@
 
 const ADMIN_API = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
 
-// 20 Class thực tế được huấn luyện trong mô hình AI (MobileNetV3 / Custom CNN)
+// 16 Class lá chính thức được huấn luyện trong 2 mô hình AI (EfficientNet-B0 & CustomLeafCNN)
 const AI_RECOGNIZED_CLASSES = new Set([
-    'aloe', 'aloevera', 'arabian-jasmine', 'jasmine', 'betel', 'bhrami', 'brahmi',
-    'coffee', 'eucalyptus', 'guava', 'hibiscus', 'jackfruit', 'lemon', 'mango',
-    'marigold', 'mint', 'neem', 'onion', 'papaya', 'pepper', 'rose', 'tomato', 'tulsi'
+    'aloe', 'aloevera', 'bitter-gourd', 'bitter gourd',
+    'centella-asiatica', 'centella asiatica', 'coffee', 'grape', 'guava',
+    'hibiscus', 'jackfruit', 'lemon', 'mango', 'neem', 'orange', 'papaya',
+    'tea', 'tomato', 'tulsi'
 ]);
 
 function isAiHerb(herb) {
