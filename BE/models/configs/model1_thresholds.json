@@ -1,0 +1,9 @@
+{
+    "model": "Model 1 - EfficientNet-B0",
+    "num_classes": 16,
+    "method": "MSP + Cosine Similarity + Distance Z-score (Votes >= 2 & Agreement)",
+    "msp_thresh": 0.95,
+    "cos_thresh": 0.6008,
+    "dist_z_thresh": 2.0,
+    "calibration_source": "Validation set (correct predictions, 5th/95th percentile)"
+}

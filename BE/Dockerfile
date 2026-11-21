@@ -17,10 +17,8 @@ RUN pip install --no-cache-dir --retries 5 --index-url https://download.pytorch.
 
 COPY requirements.txt .
 
-ENV KERAS_BACKEND=torch
-
 RUN pip install --no-cache-dir --retries 5 -r requirements.txt \
-   ` && python -c "import cv2, torch, torchvision, keras; print('Verified ML stack:', cv2.__version__, torch.__version__, keras.__version__)"
+    && python -c "import cv2, torch, torchvision; print('Verified ML stack:', cv2.__version__, torch.__version__)"
 
 COPY . .
 

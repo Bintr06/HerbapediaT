@@ -1,0 +1,75 @@
+{
+    "package_name": "LeafAI_PBL4_Deploy_16Classes",
+    "created_at": "2026-11-20 15:40:04",
+    "num_classes": 16,
+    "classes": [
+        "Aloe",
+        "Bitter Gourd",
+        "Centella asiatica",
+        "Coffee",
+        "Grape",
+        "Guava",
+        "Hibiscus",
+        "Jackfruit",
+        "Lemon",
+        "Mango",
+        "Neem",
+        "Orange",
+        "Papaya",
+        "Tea",
+        "Tomato",
+        "Tulsi"
+    ],
+    "files": [
+        {
+            "relative_path": "models/model1_bundle.pth",
+            "size_mb": 36.1616,
+            "sha256": "1ba8bf630850f328bf5b6c2f696ecec3ae5f13ca957c1491aebdf81e79e379c4"
+        },
+        {
+            "relative_path": "models/model1_best.pth",
+            "size_mb": 36.1581,
+            "sha256": "0799380dc0e0f23768fd25fed023f4dac1b7c503a83660671e532a84eccaff7d"
+        },
+        {
+            "relative_path": "models/model2_bundle.pth",
+            "size_mb": 6.0432,
+            "sha256": "32331fc3beab51b7e4c209cd98f63ef87ae0690fca0c4d43a03f419a232dd166"
+        },
+        {
+            "relative_path": "models/model2_best.pth",
+            "size_mb": 6.0412,
+            "sha256": "b5c0021af4a2de045dfeea151b5b87233573c69482dbde54b0e82ec800050deb"
+        },
+        {
+            "relative_path": "configs/class_mapping.json",
+            "size_mb": 0.0011,
+            "sha256": "e72a71c10e28670a494de0ebfd10bcd76c9f6c7f0c01424e9b667c9d9b721248"
+        },
+        {
+            "relative_path": "configs/preprocessing_config.json",
+            "size_mb": 0.0009,
+            "sha256": "c5c7d056cbff1809535d7a75d454c6f87912b3431d23bdd312ceab7cdce49e96"
+        },
+        {
+            "relative_path": "configs/model1_thresholds.json",
+            "size_mb": 0.0003,
+            "sha256": "d4e81197bc7f498e35be29564871bb6e34bbeb16dfee43afa630dfed7caca7a5"
+        },
+        {
+            "relative_path": "configs/model2_thresholds.json",
+            "size_mb": 0.0002,
+            "sha256": "74db2613c316bd0c5eaef2219394d8b0be3df7df47ba66d452ebc7b3f5b24c29"
+        },
+        {
+            "relative_path": "reports/FINAL_TRAINING_REPORT.md",
+            "size_mb": 0.0026,
+            "sha256": "652e2cc484b429aebdd67b48dbeb46f75de6ff50aadfa988a0d4f8370597789d"
+        },
+        {
+            "relative_path": "reports/FINAL_TRAINING_REPORT.json",
+            "size_mb": 0.006,
+            "sha256": "e24bb9170f41da750709f5d25d5dff91b9794eb0ac6f5c775ca024361bc99534"
+        }
+    ]
+}

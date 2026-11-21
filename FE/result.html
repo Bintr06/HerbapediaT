@@ -139,7 +139,7 @@
                             </div>
                             <div>
                                 <p class="text-forest-900 font-bold text-xs truncate" id="resultModelText">EfficientNet-B0</p>
-                                <p class="text-[11px] text-[#8CC63F] font-semibold mt-0.5" id="resultModelAccText">Độ chính xác: 96.8%</p>
+                                <p class="text-[11px] text-[#8CC63F] font-semibold mt-0.5" id="resultModelAccText">Độ chính xác: 99.32%</p>
                             </div>
                         </div>
 
@@ -244,10 +244,8 @@
             }
 
             const fallbackModels = {
-                efficientnet_b0: { name: 'EfficientNet-B0', acc: '96.8%' },
-                custom_cnn_v2: { name: 'Custom CNN v2', acc: '91.4%' },
-                mobilenet_v3: { name: 'MobileNetV3 (Fine-tuning)', acc: '95.6%' },
-                custom_cnn: { name: 'Custom CNN v1', acc: '88.4%' }
+                efficientnet_b0: { name: 'EfficientNet-B0', acc: '99.32%' },
+                custom_cnn_v2: { name: 'CustomLeafCNN', acc: '97.76%' }
             };
             const fb = fallbackModels[prediction.model_id] || fallbackModels.efficientnet_b0;
             const modelName = prediction.model_name || fb.name;

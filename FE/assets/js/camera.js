@@ -137,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. Quản lý chọn mô hình AI (EfficientNet-B0, Custom CNN v2, MobileNetV3 hoặc Custom CNN v1)
-    const VALID_MODELS = ['efficientnet_b0', 'custom_cnn_v2', 'mobilenet_v3', 'custom_cnn'];
+    // 4. Quản lý chọn mô hình AI (Model 1: EfficientNet-B0, Model 2: CustomLeafCNN - 16 loài lá)
+    const VALID_MODELS = ['efficientnet_b0', 'custom_cnn_v2'];
     let selectedModel = localStorage.getItem('selectedModel') || 'efficientnet_b0';
     if (!VALID_MODELS.includes(selectedModel)) {
         selectedModel = 'efficientnet_b0';
@@ -147,9 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const modelButtons = [
         { id: 'efficientnet_b0', el: document.getElementById('btnModelEfficientnet') },
-        { id: 'custom_cnn_v2', el: document.getElementById('btnModelCustomCnnV2') },
-        { id: 'mobilenet_v3', el: document.getElementById('btnModelMobilenet') },
-        { id: 'custom_cnn', el: document.getElementById('btnModelCustomCnn') }
+        { id: 'custom_cnn_v2', el: document.getElementById('btnModelCustomCnnV2') }
     ];
 
     function updateModelButtons() {

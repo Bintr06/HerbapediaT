@@ -203,19 +203,11 @@
                 <div class="inline-flex flex-wrap justify-center gap-1 p-1 bg-gray-100/90 rounded-2xl sm:rounded-full text-xs font-semibold" id="modelSelectorGroup">
                     <button type="button" id="btnModelEfficientnet" data-model-id="efficientnet_b0" class="px-3.5 py-1.5 rounded-full transition-all duration-200 bg-forest-900 text-white shadow-sm flex items-center gap-1.5">
                         <span>EfficientNet-B0</span>
-                        <span data-model-acc="efficientnet_b0" class="text-[10px] px-1.5 py-0.2 bg-[#8CC63F] text-white rounded-full font-bold">96.8%</span>
+                        <span data-model-acc="efficientnet_b0" class="text-[10px] px-1.5 py-0.2 bg-[#8CC63F] text-white rounded-full font-bold">99.32%</span>
                     </button>
                     <button type="button" id="btnModelCustomCnnV2" data-model-id="custom_cnn_v2" class="px-3.5 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5">
-                        <span>Custom CNN v2</span>
-                        <span data-model-acc="custom_cnn_v2" class="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">91.4%</span>
-                    </button>
-                    <button type="button" id="btnModelMobilenet" data-model-id="mobilenet_v3" class="px-3.5 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5">
-                        <span>MobileNetV3</span>
-                        <span data-model-acc="mobilenet_v3" class="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">95.6%</span>
-                    </button>
-                    <button type="button" id="btnModelCustomCnn" data-model-id="custom_cnn" class="px-3.5 py-1.5 rounded-full transition-all duration-200 text-gray-600 hover:text-forest-900 flex items-center gap-1.5">
-                        <span>Custom CNN v1</span>
-                        <span data-model-acc="custom_cnn" class="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">88.4%</span>
+                        <span>CustomLeafCNN</span>
+                        <span data-model-acc="custom_cnn_v2" class="text-[10px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 rounded-full font-bold">97.76%</span>
                     </button>
                 </div>
             </div>
@@ -226,11 +218,11 @@
                 <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?w=600&fit=crop" data-sample-name="Lô hội (Nha đam)">
                     🌱 Nha đam
                 </button>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1628556270448-4d4e4148e1b1?w=600&fit=crop" data-sample-name="Bạc hà">
-                    🌿 Bạc hà
+                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1590502593747-42a996133562?w=600&fit=crop" data-sample-name="Chanh vàng">
+                    🍋 Chanh vàng
                 </button>
-                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?w=600&fit=crop" data-sample-name="Trầu không">
-                    🍃 Trầu không
+                <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1582793988951-9aed5509eb97?w=600&fit=crop" data-sample-name="Trà xanh">
+                    🍃 Trà xanh
                 </button>
                 <button type="button" class="sample-chip px-3 py-1 bg-white/70 hover:bg-white border border-gray-200 rounded-full transition-all hover:border-[#8CC63F] hover:text-forest-900 shadow-sm" data-sample-url="https://images.unsplash.com/photo-1524350876685-274059332603?w=600&fit=crop" data-sample-name="Cà phê">
                     ☕ Cà phê
@@ -270,14 +262,14 @@
         <section class="w-full mt-20 pt-8">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-forest-900 font-serif">26+</div>
-                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Cây dược liệu AI nhận diện</div>
+                    <div class="text-3xl sm:text-4xl font-extrabold text-forest-900 font-serif">16</div>
+                    <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Loài lá AI nhận diện</div>
                     <div class="text-[11px] text-gray-400 font-light mt-0.5">42+ loài trong từ điển số</div>
                 </div>
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
-                    <div class="text-3xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">96.8%</div>
+                    <div class="text-3xl sm:text-4xl font-extrabold text-[#8CC63F] font-serif">99.32%</div>
                     <div class="text-xs sm:text-sm font-semibold text-gray-600 mt-1">Độ chính xác nhận diện</div>
-                    <div class="text-[11px] text-gray-400 font-light mt-0.5">EfficientNet-B0 &amp; MobileNetV3</div>
+                    <div class="text-[11px] text-gray-400 font-light mt-0.5">EfficientNet-B0 &amp; CustomLeafCNN</div>
                 </div>
                 <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-white/80 p-5 shadow-sm text-center hover:-translate-y-1 transition-all">
                     <div class="text-3xl sm:text-4xl font-extrabold text-forest-900 font-serif">&lt; 80ms</div>
@@ -401,7 +393,7 @@
                     </div>
                     <h3 class="font-bold text-forest-900 text-base mb-1.5">Kiến trúc AI Đa mô hình</h3>
                     <p class="text-xs text-gray-500 leading-relaxed font-light">
-                        So sánh đối chứng trực quan giữa 4 mô hình: EfficientNet-B0 (96.8%), Custom CNN v2 (91.4%), MobileNetV3 (95.6%) và Custom CNN v1 (88.4%).
+                        So sánh đối chứng trực quan giữa 2 mô hình PyTorch OSR (16 loài lá): EfficientNet-B0 (99.32%) và CustomLeafCNN (97.76%).
                     </p>
                 </div>
 
@@ -504,9 +496,9 @@
             <div>
                 <h4 class="text-xs font-bold uppercase tracking-wider text-forest-900 mb-3">Công nghệ Lõi</h4>
                 <ul class="text-xs space-y-2 text-gray-600">
-                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> EfficientNet-B0 Model 1 (96.8%)</li>
-                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> Custom CNN v2 Model 2 (91.4%)</li>
-                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> MobileNetV3 &amp; Custom CNN v1</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> EfficientNet-B0 Model 1 (99.32%)</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> CustomLeafCNN Model 2 (97.76%)</li>
+                    <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> Open-Set Recognition (16 loài lá)</li>
                     <li class="flex items-center gap-1.5"><i data-feather="check" class="w-3 h-3 text-[#8CC63F]"></i> FastAPI &amp; Raspberry Pi Camera</li>
                 </ul>
             </div>
@@ -581,39 +573,19 @@
                             <div class="flex-1 flex items-center justify-between gap-2">
                                 <div>
                                     <span class="font-bold text-forest-900 block">EfficientNet-B0 (Model 1 - PyTorch OSR)</span>
-                                    <span class="text-[11px] text-gray-500">17 loài dược liệu • CLAHE + Prototype Open-Set</span>
+                                    <span class="text-[11px] text-gray-500">16 loài lá • CLAHE + Prototype Open-Set (99.92% sau lọc)</span>
                                 </div>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#8CC63F]/15 text-forest-900 font-bold shrink-0">96.8%</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-[#8CC63F]/15 text-forest-900 font-bold shrink-0">99.32%</span>
                             </div>
                         </label>
                         <label class="flex items-start gap-2.5 p-3 rounded-xl border border-gray-200 bg-white cursor-pointer hover:border-[#8CC63F] transition-all text-xs text-gray-700 has-[:checked]:border-[#8CC63F] has-[:checked]:bg-green-50/40 has-[:checked]:shadow-sm">
                             <input type="radio" name="modalModelChoice" value="custom_cnn_v2" class="accent-[#8CC63F] mt-0.5">
                             <div class="flex-1 flex items-center justify-between gap-2">
                                 <div>
-                                    <span class="font-bold text-forest-900 block">Custom CNN v2 (Model 2 - PyTorch OSR)</span>
-                                    <span class="text-[11px] text-gray-500">17 loài dược liệu • 5-Block CNN + CLAHE + MSP OSR</span>
+                                    <span class="font-bold text-forest-900 block">CustomLeafCNN (Model 2 - PyTorch OSR)</span>
+                                    <span class="text-[11px] text-gray-500">16 loài lá • 5-Block CNN siêu nhẹ + CLAHE + MSP OSR</span>
                                 </div>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold shrink-0">91.4%</span>
-                            </div>
-                        </label>
-                        <label class="flex items-start gap-2.5 p-3 rounded-xl border border-gray-200 bg-white cursor-pointer hover:border-[#8CC63F] transition-all text-xs text-gray-700 has-[:checked]:border-[#8CC63F] has-[:checked]:bg-green-50/40 has-[:checked]:shadow-sm">
-                            <input type="radio" name="modalModelChoice" value="mobilenet_v3" class="accent-[#8CC63F] mt-0.5">
-                            <div class="flex-1 flex items-center justify-between gap-2">
-                                <div>
-                                    <span class="font-bold text-forest-900 block">MobileNetV3 (Fine-tuning)</span>
-                                    <span class="text-[11px] text-gray-500">20 loài dược liệu • Tốc độ suy luận nhanh</span>
-                                </div>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold shrink-0">95.6%</span>
-                            </div>
-                        </label>
-                        <label class="flex items-start gap-2.5 p-3 rounded-xl border border-gray-200 bg-white cursor-pointer hover:border-[#8CC63F] transition-all text-xs text-gray-700 has-[:checked]:border-[#8CC63F] has-[:checked]:bg-green-50/40 has-[:checked]:shadow-sm">
-                            <input type="radio" name="modalModelChoice" value="custom_cnn" class="accent-[#8CC63F] mt-0.5">
-                            <div class="flex-1 flex items-center justify-between gap-2">
-                                <div>
-                                    <span class="font-bold text-forest-900 block">Custom CNN v1 (From Scratch)</span>
-                                    <span class="text-[11px] text-gray-500">20 loài dược liệu • Mạng CNN 5 khối phiên bản 1</span>
-                                </div>
-                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 font-bold shrink-0">88.4%</span>
+                                <span class="text-[11px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold shrink-0">97.76%</span>
                             </div>
                         </label>
                     </div>
