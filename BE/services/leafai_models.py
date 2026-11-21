@@ -94,7 +94,11 @@ class LeafAI_Model(nn.Module):
 
         votes = ok_msp.int() + ok_cos.int() + ok_dist.int()
         agreement = (pred_msp == pred_cos) & (pred_msp == pred_dist)
-        is_known = (votes >= 2) & agreement
+        # Nới lỏng OSR: 
+        # 1. Nếu MSP rất cao (>= 98%), tự động xác nhận
+        # 2. Hoặc đạt >= 2 votes (MSP, Cosine, Distance Z-score)
+        # 3. Hoặc có sự đồng thuận 3 bên và ít nhất 1 vote
+        is_known = (msp >= 0.98) | (votes >= 2) | (agreement & (votes >= 1))
 
         pred = pred_msp.clone()
         pred[~is_known] = -1

@@ -402,6 +402,12 @@ def predict_image(image: Image.Image, model_id: str | None = None) -> dict[str, 
             "msp_threshold": round(float(msp_thresh) * 100, 2),
         }
 
+    enable_osr = os.getenv("ENABLE_OSR", "true").strip().lower() in ("true", "1", "yes")
+    if not enable_osr:
+        is_known = True
+        osr_info["status"] = "BYPASSED"
+        osr_info["method"] = "OSR tắt qua cấu hình ENABLE_OSR=false"
+
     top_candidates = _build_candidates(probs, class_names, top_k=5)
     best_candidate = top_candidates[0]
     top_prob_pct = best_candidate["confidence_value"]

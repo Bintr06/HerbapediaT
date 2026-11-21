@@ -2,6 +2,6 @@
     "model": "Model 2 - CustomLeafCNN",
     "num_classes": 16,
     "method": "MSP (Maximum Softmax Probability)",
-    "msp_thresh": 0.95,
+    "msp_thresh": 0.8,
     "calibration_source": "Validation set (correct predictions, 5th percentile)"
 }

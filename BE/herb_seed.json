@@ -7,22 +7,26 @@
     "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
     "tags": [
       "thanh nhiệt",
-      "làm đẹp"
+      "nhuận tràng",
+      "liền sẹo",
+      "kháng khuẩn"
     ],
-    "usage": "Làm dịu da và hỗ trợ chăm sóc da bên ngoài.",
-    "parts": "Gel trong lá",
-    "identification": "Cây mọng nước, lá dài hình mũi mác, mép có răng cưa nhỏ.",
+    "usage": "Thanh nhiệt gián hỏa, nhuận tràng thông tiện (liều nhỏ kích thích tiêu hóa, liều cao gây tẩy xổ). Dùng ngoài làm mát dịu bỏng nhiệt, dưỡng ẩm, kháng viêm và kích thích tái tạo biểu mô.",
+    "parts": "Thịt lá (gel), chất nhựa vàng (aloin phơi khô làm vị thuốc lô hội).",
+    "identification": "Cây thân thảo sống lâu năm, lá mọng nước hình mũi mác dày, mọc sát gốc xếp thành hoa thị, mép lá có gai nhọn cứng rải rác.",
     "remedies": [
-      "Gel nha đam dùng ngoài da sau khi đã sơ chế sạch."
+      "Chữa bỏng nhiệt độ nhẹ: Dùng gel thịt lá nha đam tươi đã ngâm rửa sạch mủ vàng, gọt vỏ rồi đắp nhẹ trực tiếp lên vết bỏng giúp hạ nhiệt và giảm phồng rộp.",
+      "Thanh nhiệt, giải độc cơ thể: Gel thịt nha đam nấu với đường phèn hoặc đậu xanh, uống mát trong ngày hè.",
+      "Hỗ trợ tiêu hóa, trị táo bón: Dùng 10-15g thịt lá nha đam tươi gọt sạch mủ vàng ăn trực tiếp hoặc xay uống."
     ],
-    "safety": "Không bôi gel chưa sơ chế lên vết thương hở; không tự ý dùng đường uống liều cao.",
-    "habitat": "Vùng khô nóng; trồng làm cảnh và làm nguyên liệu mỹ phẩm.",
-    "preparation": "Rửa sạch, bỏ nhựa vàng và chỉ lấy phần gel trong; ưu tiên sản phẩm đã chuẩn hóa.",
-    "caution": "Gel dùng ngoài da không thay thế điều trị bỏng, viêm da hoặc vết thương.",
+    "safety": "Chỉ dùng phần thịt trong suốt sau khi ngâm nước muối rửa trôi mủ vàng aloin. Phụ nữ mang thai, cho con bú và người tiêu chảy tỳ vị hư hàn không dùng đường uống.",
+    "habitat": "Nguồn gốc Bắc Phi, thích nghi khí hậu khô nóng nhiều nắng; trồng phổ biến khắp các vườn dược liệu và hộ gia đình.",
+    "preparation": "Cắt cuống lá để đứng 15 phút cho chảy hết dịch nhựa vàng độc hại, gọt sạch vỏ xanh, ngâm rửa phần gel trong nước muối loãng trước khi dùng.",
+    "caution": "Nhựa vàng chứa Anthranoid gây co bóp tử cung mạnh và kích ứng niêm mạc ruột non; không thoa gel lên vết thương hở sâu đang nhiễm trùng.",
     "usageDetails": [
-      "Dạng dùng: gel trong đã loại bỏ nhựa vàng, chủ yếu dùng ngoài da.",
-      "Cách dùng: rửa sạch lá, bỏ gai, tách gel và rửa nhiều lần trước khi bôi một lớp mỏng; thử trên vùng da nhỏ trước.",
-      "Liều: không tự uống gel/nhựa nha đam; dùng sản phẩm đường uống chỉ theo nhãn và tư vấn chuyên môn."
+      "Dạng dùng: Gel tươi đã sơ chế sạch mủ vàng; nước nấu thanh nhiệt; dùng ngoài thoa dưỡng ẩm.",
+      "Cách dùng: Gọt sạch vỏ xanh, ngâm xả nhớt và nhựa vàng kỹ; dùng ngoài thoa nhẹ lên da; dùng trong nấu chín.",
+      "Liều dùng: Dùng trong 10-20g thịt lá/ngày. Không tự uống nhựa vàng khô quá liều chỉ định y khoa."
     ]
   },
   {
@@ -212,22 +216,27 @@
     "scientific": "Coffea arabica L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "thanh nhiệt"
+      "hưng phấn thần kinh",
+      "lợi tiểu",
+      "chống oxy hóa",
+      "kích thích tiêu hóa"
     ],
-    "usage": "Hạt rang tạo đồ uống chứa caffeine, dùng với lượng phù hợp.",
-    "parts": "Hạt rang",
-    "identification": "Cây bụi thường xanh, quả chín đỏ, bên trong có hai hạt.",
+    "usage": "Caffeine kích thích hệ thần kinh trung ương và vỏ não, tăng tập trung, giảm mệt mỏi, trợ tim nhẹ và kích thích co bóp dạ dày. Axit chlorogenic trong hạt xanh và lá giàu chất chống oxy hóa bảo vệ tế bào.",
+    "parts": "Hạt nhân phơi khô rang giòn (Semen Coffeae), lá bánh tẻ.",
+    "identification": "Cây thân gỗ nhỏ cao 3-5m, cành ngang tỏa rộng. Lá mọc đối hình bầu dục thon, phiến lá dày láng bóng màu xanh lục thẫm, mép gợn sóng.",
     "remedies": [
-      "Ưu tiên đồ uống ít đường và tránh dùng sát giờ ngủ."
+      "Chống mệt mỏi, tăng tỉnh táo: Uống 1 tách cà phê phin (10-15g bột cà phê nguyên chất) vào buổi sáng.",
+      "Trà lá cà phê chống oxy hóa: Dùng lá cà phê bánh tẻ phơi khô hãm nước sôi uống như trà xanh giúp hạ đường huyết nhẹ.",
+      "Giảm ngộ độc thuốc ức chế thần kinh trung ương: Dùng cà phê đen đậm đặc theo chỉ dẫn sơ cứu y tế."
     ],
-    "safety": "Caffeine có thể gây mất ngủ, hồi hộp; người mang thai cần giới hạn theo tư vấn.",
-    "habitat": "Cây bụi vùng cao nguyên; quả chín thường đỏ hoặc vàng.",
-    "preparation": "Uống lượng vừa phải, hạn chế đường và không dùng sát giờ ngủ.",
-    "caution": "Người nhạy cảm caffeine, trẻ em và phụ nữ mang thai cần giới hạn lượng dùng.",
+    "safety": "Tránh lạm dụng gây bồn chồn, tim đập nhanh, mất ngủ và tăng tiết axit dạ dày. Người cao huyết áp, tim mạch, viêm loét dạ dày cần hạn chế.",
+    "habitat": "Trồng trọt quy mô công nghiệp tại các vùng đất đỏ bazan cao nguyên (Tây Nguyên, Nam Mỹ, Châu Phi).",
+    "preparation": "Hạt sau thu hoạch lên men tách vỏ thịt, phơi khô nhân, rang ở nhiệt độ thích hợp rồi xay mịn.",
+    "caution": "Không uống lúc đói cồn cào hoặc sát giờ đi ngủ; phụ nữ có thai chỉ nên dùng dưới 200mg caffeine/ngày.",
     "usageDetails": [
-      "Dạng dùng: hạt rang pha thành đồ uống, không dùng lá/quả xanh làm thuốc.",
-      "Cách dùng: uống lượng vừa phải, ưu tiên ít đường và tránh buổi tối; tính cả caffeine từ các đồ uống khác.",
-      "Liều: không có một mức phù hợp cho mọi người; giảm hoặc ngừng khi hồi hộp, run, mất ngủ."
+      "Dạng dùng: Bột hạt rang pha nước sôi (phin, máy), chiết xuất hạt cà phê xanh, trà lá cà phê.",
+      "Cách dùng: Dùng sau bữa ăn 30-60 phút; hạn chế thêm nhiều đường sữa công nghiệp.",
+      "Liều dùng: Tương đương 1-3 tách/ngày (dưới 400mg caffeine cho người trưởng thành khỏe mạnh)."
     ]
   },
   {
@@ -390,23 +399,27 @@
     "scientific": "Psidium guajava L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "tiêu hóa",
-      "cầm máu"
+      "sáp trường chỉ tả",
+      "cầm tiêu chảy",
+      "kháng khuẩn",
+      "hạ đường huyết"
     ],
-    "usage": "Quả là thực phẩm giàu chất xơ; lá có ứng dụng dân gian.",
-    "parts": "Quả và lá",
-    "identification": "Cây thân gỗ nhỏ, vỏ trơn, quả tròn hoặc hình quả lê.",
+    "usage": "Vị chát, tính ấm, thu liễm sáp trường (làm săn se niêm mạc ruột), kháng khuẩn chống viêm đường ruột rất mạnh. Quả chín giàu vitamin C và chất xơ hòa tan giúp nhuận tràng nhẹ và tăng miễn dịch.",
+    "parts": "Búp non, lá bánh tẻ (Folium Psidii), quả xanh và quả chín.",
+    "identification": "Cây thân gỗ nhỏ cao 3-6m, vỏ nhẵn dễ bong thành từng mảng mỏng. Lá mọc đối hình bầu dục thuôn, nổi rõ gân đối xứng ở mặt dưới.",
     "remedies": [
-      "Ưu tiên ăn quả chín đã rửa sạch."
+      "Đặc trị tiêu chảy do nhiễm lạnh/vi khuẩn: Búp ổi non 15-20g, gừng tươi nướng cháy 8g, búp chè xanh 10g sắc với 500ml nước còn 200ml chia 2 lần uống ấm.",
+      "Trị viêm loét miệng họng, viêm nướu: Lá ổi bánh tẻ 30g đun sôi với 1 lít nước, thêm chút muối hột dùng súc miệng hàng ngày.",
+      "Hỗ trợ hạ đường huyết: 15-20g lá ổi khô hãm nước sôi uống thay nước trà sau các bữa ăn chính."
     ],
-    "safety": "Không dùng lá thay thế thuốc điều trị tiêu chảy hoặc bệnh lý khác.",
-    "habitat": "Cây ăn quả nhiệt đới, thích nghi nhiều loại đất.",
-    "preparation": "Ăn quả chín đã rửa sạch; lá chỉ dùng trong sản phẩm có hướng dẫn.",
-    "caution": "Tiêu chảy kèm sốt, máu hoặc mất nước cần được khám, không tự điều trị bằng lá.",
+    "safety": "Lá ổi và búp non có tính thu liễm mạnh, không dùng khi bị táo bón hoặc tiêu chảy do nhiễm trùng lỵ trực trùng cấp kèm sốt cao.",
+    "habitat": "Nguồn gốc nhiệt đới Châu Mỹ, mọc tự nhiên và canh tác phổ biến khắp cả nước.",
+    "preparation": "Búp ổi và lá hái quanh năm, rửa sạch dùng tươi hoặc phơi khô sao vàng nhẹ để hãm nước.",
+    "caution": "Không uống nước lá ổi quá đặc lúc bụng đói vì gây cồn cào và xót ruột.",
     "usageDetails": [
-      "Dạng dùng: quả là thực phẩm; lá chỉ dùng trong chế phẩm/bài thuốc có chỉ định.",
-      "Cách dùng: ăn quả chín đã rửa sạch; không tự dùng nước lá kéo dài để trị tiêu chảy.",
-      "Liều: tiêu chảy có máu, sốt, đau nhiều hoặc mất nước cần khám, không trì hoãn bằng thuốc dân gian."
+      "Dạng dùng: Nước sắc búp ổi, trà lá ổi khô, nước súc miệng, quả chín ăn tươi.",
+      "Cách dùng: Uống ấm khi bụng đau quặn tiêu chảy; hãm trà loãng uống hàng ngày.",
+      "Liều dùng: Búp tươi 15-30g/ngày; lá khô 10-15g/ngày."
     ]
   },
   {
@@ -441,22 +454,27 @@
     "scientific": "Hibiscus rosa-sinensis L.",
     "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "thanh nhiệt"
+      "thanh nhiệt",
+      "giải độc",
+      "tiêu thũng",
+      "trị mụn nhọt"
     ],
-    "usage": "Cây hoa phổ biến; cánh hoa được dùng trong một số thức uống và mỹ phẩm.",
-    "parts": "Hoa đã xác định đúng loài",
-    "identification": "Cây bụi, hoa lớn nhiều màu, nhị tạo thành trụ dài.",
+    "usage": "Vị ngọt, hơi đắng, tính bình, quy kinh Can Tỳ. Thanh nhiệt giải độc, lương huyết, tiêu thũng bài nùng (làm tan mủ mụn nhọt). Hoa và lá chứa nhiều chất nhầy thực vật làm dịu niêm mạc đường tiêu hóa.",
+    "parts": "Hoa dâm bụt tươi, lá non và vỏ rễ.",
+    "identification": "Cây bụi cao 2-4m. Lá đơn mọc so le hình bầu dục có răng cưa ở nửa trên mép lá. Hoa đơn độc ở nách lá, cánh hoa lớn xòe rộng, nhị dính liền thành cột dài nhô ra ngoài.",
     "remedies": [
-      "Không tự dùng hoa cây cảnh làm thuốc uống."
+      "Trị mụn nhọt sưng đau, áp xe chưa vỡ mủ: Lá và hoa dâm bụt tươi mỗi thứ một nắm rửa sạch, giã nát với một nhúm muối hạt đắp trực tiếp lên vùng da sưng đỏ.",
+      "Hỗ trợ giảm kiết lỵ, đi ngoài ra máu: Hoa dâm bụt đỏ 10 bông rửa sạch, thái nhỏ xào với lòng đỏ trứng gà ăn lúc đói.",
+      "Thanh nhiệt lương huyết: Hoa dâm bụt phơi trong bóng râm (âm can) hãm nước sôi uống."
     ],
-    "safety": "Cần phân biệt với bụp giấm và các loài Hibiscus khác.",
-    "habitat": "Cây bụi hoa lớn; cần phân biệt dâm bụt cảnh với bụp giấm.",
-    "preparation": "Không tự nấu hoa cây cảnh để uống; chọn nguyên liệu thực phẩm có nhãn.",
-    "caution": "Có thể gây dị ứng; dữ liệu về liều dùng trong thai kỳ còn hạn chế.",
+    "safety": "Cần phân biệt rõ dâm bụt (Hibiscus rosa-sinensis) với Bụp giấm / Atiso đỏ (Hibiscus sabdariffa). Không dùng hoa đã bị phun thuốc trừ sâu cây cảnh.",
+    "habitat": "Trồng rộng rãi làm hàng rào, cây cảnh đô thị và vườn thuốc dân gian khắp các miền khí hậu Việt Nam.",
+    "preparation": "Thu hái hoa khi mới nở sáng sớm, rửa nhẹ tay tránh dập cánh hoa; dùng tươi giã đắp hoặc phơi trong bóng râm.",
+    "caution": "Người có thể trạng hư hàn, lạnh bụng, tiêu chảy mạn tính không nên uống nước hoa dâm bụt thường xuyên.",
     "usageDetails": [
-      "Dạng dùng: cần phân biệt dâm bụt cảnh với bụp giấm; hoa cảnh không mặc nhiên dùng làm trà.",
-      "Cách dùng: chỉ dùng nguyên liệu được bán cho mục đích thực phẩm, pha theo nhãn sản phẩm.",
-      "Liều: không tự dùng để điều trị huyết áp hoặc bệnh mạn tính; hỏi bác sĩ nếu đang dùng thuốc."
+      "Dạng dùng: Giã nát đắp ngoài da; hoa tươi xào/sắc nước; hoa khô hãm trà.",
+      "Cách dùng: Đắp ngoài lưu 30-45 phút rồi rửa sạch; đường uống hãm nước sôi.",
+      "Liều dùng: Hoa tươi 20-30g; lá tươi 30-50g."
     ]
   },
   {
@@ -466,22 +484,27 @@
     "scientific": "Artocarpus heterophyllus Lam.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "tiêu hóa"
+      "thanh nhiệt",
+      "tiêu viêm",
+      "lợi sữa",
+      "nhuận phế"
     ],
-    "usage": "Quả là thực phẩm phổ biến, giàu năng lượng và chất xơ.",
-    "parts": "Múi quả và hạt đã nấu chín",
-    "identification": "Cây gỗ lớn, quả to có vỏ gai, múi vàng khi chín.",
+    "usage": "Lá mít vị chát đắng nhẹ, tính bình, có tác dụng tiêu viêm, tiêu thũng, kích thích tăng tiết sữa cho phụ nữ sau sinh. Hạt mít bổ trung ích khí, giàu tinh bột tiêu hóa chậm. Mủ mít dùng ngoài tiêu sưng giảm đau.",
+    "parts": "Lá mít (đặc biệt lá bánh tẻ và lá rụng vàng), quả mít non, hạt mít chín.",
+    "identification": "Cây gỗ lớn cao 10-15m. Lá dày dai mọc so le hình bầu dục ngược, mặt trên xanh bóng đậm. Quả to có gai ngắn nhọn, khi bổ có nhiều nhựa mủ trắng dính.",
     "remedies": [
-      "Ăn lượng vừa phải, đặc biệt với người cần kiểm soát đường huyết."
+      "Lợi sữa cho sản phụ ít sữa: Lá mít tươi 40g đun sôi kỹ với 500ml nước uống hàng ngày; hoặc quả mít non gọt vỏ thái mỏng nấu canh với móng giò.",
+      "Trị mụn nhọt, sưng tấy ngoài da: Dùng lá mít tươi giã nát với chút muối hột đắp lên chỗ sưng đau hoặc bôi nhựa mủ mít tươi trực tiếp lên đầu mụn.",
+      "Chữa tiêu chảy phân lỏng: Lá mít khô 20-30g sắc với nước uống trong ngày."
     ],
-    "safety": "Có thể gây đầy bụng hoặc dị ứng ở một số người.",
-    "habitat": "Cây gỗ lớn vùng nhiệt đới, quả mọc trực tiếp trên thân và cành lớn.",
-    "preparation": "Ăn múi chín hoặc hạt đã nấu chín, khẩu phần vừa phải.",
-    "caution": "Nhựa mít có thể gây kích ứng; người dị ứng latex cần thận trọng.",
+    "safety": "Múi mít chín ngọt chứa nhiều đường, người có cơ địa nhiệt miệng, bốc hỏa, tiểu đường hoặc mỡ máu cao không nên ăn nhiều.",
+    "habitat": "Cây ăn quả nhiệt đới bản địa phổ biến ở Việt Nam và Đông Nam Á.",
+    "preparation": "Lá mít hái bánh tẻ rửa sạch, ngâm nước muối khử mủ; hạt mít phải luộc hoặc nướng chín kỹ trước khi ăn.",
+    "caution": "Nhựa mủ mít dính dính có thể kích ứng niêm mạc mắt; hạt mít ăn nhiều sống gây đầy hơi khó tiêu.",
     "usageDetails": [
-      "Dạng dùng: múi chín và hạt đã nấu chín là thực phẩm.",
-      "Cách dùng: tách múi, bỏ xơ và hạt sống; hạt phải luộc/nấu chín, ăn khẩu phần vừa.",
-      "Liều: không có liều dược liệu; người đái tháo đường hoặc dễ đầy bụng cần giới hạn khẩu phần."
+      "Dạng dùng: Nước sắc lá mít, lá mít giã đắp ngoài, quả non nấu canh, hạt chín luộc.",
+      "Cách dùng: Sắc nước uống ấm; giã nhuyễn đắp lên vùng da mụn nhọt.",
+      "Liều dùng: Lá tươi 30-50g; lá khô 15-20g."
     ]
   },
   {
@@ -542,23 +565,27 @@
     "scientific": "Citrus limon (L.) Osbeck",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "tiêu hóa",
-      "giải độc"
+      "thanh nhiệt",
+      "sinh tân chỉ khát",
+      "tiêu đờm",
+      "sát trùng"
     ],
-    "usage": "Quả dùng làm gia vị, nước uống và tạo hương vị.",
-    "parts": "Quả và vỏ đã làm sạch",
-    "identification": "Cây có gai, quả vàng hình bầu dục, vỏ có tinh dầu thơm.",
+    "usage": "Vị chua thanh, tính bình. Sinh tân dịch giải khát, thanh nhiệt, hóa đờm, chỉ khái. Vỏ chanh vàng giàu tinh dầu limonene và bioflavonoid hỗ trợ tiêu hóa, làm thông thoáng đường hô hấp và kháng khuẩn khoang họng.",
+    "parts": "Dịch quả (nước cốt), vỏ quả (Pericarpium Citri Limon), lá chanh.",
+    "identification": "Cây bụi gai nhỏ, lá hình trứng bầu dục mép có răng cưa tù. Quả hình trứng thon hai đầu núm nhọn, khi chín vỏ ngả vàng tươi bóng đẹp chứa nhiều tuyến tinh dầu.",
     "remedies": [
-      "Dùng nước chanh pha loãng trong khẩu phần phù hợp."
+      "Giảm đau rát họng, ho có đờm: Chanh vàng thái lát mỏng ngâm mật ong nguyên chất, ngậm nhai nuốt nước cốt từ từ 3-4 lần/ngày.",
+      "Bù nước, giải nhiệt sau lao động nặng: Nước cốt 1/2 quả chanh vàng pha với 300ml nước ấm, thêm chút muối khoáng và mật ong uống giải khát.",
+      "Xông giải cảm sốt nhẹ: Vỏ chanh vàng, lá sả, lá bưởi đun sôi xông toàn thân 10 phút."
     ],
-    "safety": "Axit có thể làm mòn men răng và kích ứng dạ dày.",
-    "habitat": "Cây có gai, quả vàng, vỏ chứa tinh dầu thơm.",
-    "preparation": "Pha loãng nước quả và súc miệng bằng nước sau khi uống để bảo vệ men răng.",
-    "caution": "Axit không chữa được trào ngược; tránh bôi nước hoặc tinh dầu lên da trước khi ra nắng.",
+    "safety": "Không uống nước chanh nguyên chất đậm đặc vì axit citric gây mòn men răng và bào mòn niêm mạc dạ dày.",
+    "habitat": "Nguồn gốc Nam Á và Địa Trung Hải, hiện được trồng rộng rãi phục vụ ẩm thực và dược liệu.",
+    "preparation": "Rửa sạch vỏ quả, ngâm nước muối; thái lát ngâm mật ong hoặc vắt lấy nước cốt pha loãng.",
+    "caution": "Người đang bị viêm loét dạ dày tá tràng thể trào ngược tăng tiết axit không uống khi đói bụng.",
     "usageDetails": [
-      "Dạng dùng: quả làm gia vị/nước uống; vỏ chỉ dùng khi đạt chuẩn thực phẩm.",
-      "Cách dùng: rửa sạch, pha nước cốt với nước; dùng sau ăn nếu dễ kích ứng dạ dày và súc miệng sau uống.",
-      "Liều: không uống nước cốt thay thuốc dạ dày; tránh bôi nước/vỏ lên da trước khi ra nắng."
+      "Dạng dùng: Nước cốt pha loãng, chanh ngâm mật ong/muối, tinh dầu vỏ chanh xông hơi.",
+      "Cách dùng: Pha loãng với nước ấm 40°C; uống sau khi ăn no 30 phút.",
+      "Liều dùng: 1/2 - 1 quả mỗi ngày."
     ]
   },
   {
@@ -620,22 +647,27 @@
     "scientific": "Mangifera indica L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "tiêu hóa"
+      "chống oxy hóa",
+      "hạ đường huyết",
+      "kháng khuẩn",
+      "nhuận tràng"
     ],
-    "usage": "Quả là thực phẩm phổ biến, có nhiều giống và độ chua ngọt khác nhau.",
-    "parts": "Quả chín",
-    "identification": "Cây gỗ lớn, lá dài bóng, quả hình thận hoặc bầu dục.",
+    "usage": "Lá xoài chứa hàm lượng rất cao polyphenol tự nhiên mangiferin - hoạt chất đã được chứng minh có tác dụng chống oxy hóa vượt trội, kháng virus, bảo vệ mạch máu và hỗ trợ điều hòa đường huyết. Quả xoài bổ dưỡng kiện tỳ vị.",
+    "parts": "Lá xoài non/bánh tẻ (Folium Mangiferae), quả chín, vỏ quả và hạt.",
+    "identification": "Cây thân gỗ to tán lá xum xuê. Lá đơn mọc so le phiến thon dài nhọn hai đầu, gân lá nổi rõ, khi non có màu tím nâu hoặc xanh non bóng.",
     "remedies": [
-      "Ăn quả chín với lượng phù hợp."
+      "Hỗ trợ giảm đường huyết cho người tiền tiểu đường: Hái 5-7 lá xoài non rửa sạch, ngâm nước sôi để qua đêm, sáng sớm chắt lấy nước uống trước bữa ăn.",
+      "Kháng viêm họng, viêm nướu miệng: Lá xoài bánh tẻ một nắm đun sôi với 500ml nước, thêm chút muối dùng súc họng miệng 2-3 lần/ngày.",
+      "Bồi bổ tiêu hóa, thanh nhiệt: Ăn quả xoài chín tự nhiên với lượng vừa phải sau bữa ăn."
     ],
-    "safety": "Có thể dị ứng với nhựa vỏ hoặc gây tăng đường huyết khi ăn nhiều.",
-    "habitat": "Cây ăn quả nhiệt đới, nhiều giống địa phương.",
-    "preparation": "Ăn quả chín đã gọt và rửa sạch; điều chỉnh khẩu phần theo chế độ ăn.",
-    "caution": "Nhựa vỏ và lá có thể gây viêm da tiếp xúc ở người nhạy cảm.",
+    "safety": "Mủ từ cuống lá và vỏ xoài tươi có thể gây bỏng rát viêm da dị ứng. Lá xoài có tác dụng hạ đường huyết nên cần theo dõi khi kết hợp với thuốc tiểu đường.",
+    "habitat": "Cây ăn quả đặc trưng của vùng nhiệt đới gió mùa, trồng phổ biến khắp đất nước.",
+    "preparation": "Hái lá non hoặc bánh tẻ không dập nát, rửa sạch trôi hết lớp phấn và mủ cuống, phơi khô trong bóng râm hoặc dùng tươi.",
+    "caution": "Không lạm dụng nước lá xoài quá liều có thể gây tụt đường huyết đột ngột; người tiểu đường nặng không ăn nhiều xoài chín ngọt đậm.",
     "usageDetails": [
-      "Dạng dùng: quả chín là thực phẩm; lá, vỏ và hạt không tự dùng làm thuốc.",
-      "Cách dùng: rửa, gọt vỏ, bỏ hạt và ăn quả chín với khẩu phần phù hợp.",
-      "Liều: không có liều dược liệu cho quả ăn; người dị ứng nhựa cây hoặc kiểm soát đường huyết cần thận trọng."
+      "Dạng dùng: Nước hãm lá xoài tươi, trà lá xoài khô, nước súc miệng lá xoài.",
+      "Cách dùng: Ngâm hãm nước sôi; súc miệng; uống ấm.",
+      "Liều dùng: 5-10 lá non tươi mỗi ngày."
     ]
   },
   {
@@ -696,22 +728,27 @@
     "scientific": "Azadirachta indica A.Juss.",
     "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
     "tags": [
+      "sát trùng",
+      "kháng nấm",
+      "thanh nhiệt giải độc",
       "kháng viêm"
     ],
-    "usage": "Cây được dùng trong nghiên cứu và sản phẩm chăm sóc ngoài da.",
-    "parts": "Lá hoặc dầu đã chuẩn hóa",
-    "identification": "Cây gỗ, lá kép lông chim, vị rất đắng.",
+    "usage": "Vị cực đắng, tính hàn. Trong y học cổ truyền Ấn Độ (Ayurveda), Neem được tôn xưng là 'thần dược trị bệnh'. Có hoạt tính kháng khuẩn phổ rộng, diệt nấm (như Candida, nấm da), chống ký sinh trùng và thanh lọc cơ thể.",
+    "parts": "Lá neem phơi khô (Folium Azadirachtae), dầu hạt neem.",
+    "identification": "Cây gỗ lớn cao 10-15m. Lá kép lông chim mọc so le, các lá chét hình lưỡi liềm mép khía răng cưa rõ rệt nhọn ở đỉnh.",
     "remedies": [
-      "Không tự uống lá hoặc dầu neem."
+      "Chữa viêm da cơ địa, vảy nến, nấm ngứa ngoài da: Dùng 100g lá neem tươi đun sôi lấy nước tắm rửa hoặc giã nát lá neem tươi đắp ngoài vùng da nấm ngứa.",
+      "Trị gàu, nấm da đầu: Nấu nước lá neem gội đầu và massage chân tóc giúp làm sạch gàu và giảm rụng tóc.",
+      "Súc miệng trị viêm nướu, hôi miệng: Lá neem khô 5g hãm với 200ml nước sôi làm nước súc miệng sát khuẩn mỗi sáng."
     ],
-    "safety": "Có thể độc với gan và không phù hợp cho trẻ em, phụ nữ mang thai.",
-    "habitat": "Cây gỗ chịu hạn, lá kép có vị đắng.",
-    "preparation": "Ưu tiên sản phẩm ngoài da có kiểm soát; không tự uống lá hoặc dầu.",
-    "caution": "Tránh dùng cho trẻ em, thai kỳ và người có bệnh gan nếu chưa được tư vấn.",
+    "safety": "Chỉ ưu tiên sử dụng ngoài da (tắm, rửa, bôi, gội). TUYỆT ĐỐI KHÔNG tự ý uống dầu hạt neem hoặc uống nước lá neem liều cao kéo dài vì có độc tính với gan thận.",
+    "habitat": "Nguồn gốc Ấn Độ, thích nghi khô hạn, được trồng nhiều ở Ninh Thuận, Bình Thuận và các tỉnh phía Nam.",
+    "preparation": "Lá rửa sạch, dùng tươi nấu nước tắm hoặc phơi khô tán bột mịn trộn làm cao đắp ngoài.",
+    "caution": "Chống chỉ định đường uống cho trẻ sơ sinh, trẻ nhỏ, phụ nữ mang thai hoặc đang có kế hoạch sinh con (có thể gây sảy thai).",
     "usageDetails": [
-      "Dạng dùng: một số chế phẩm ngoài da; lá/dầu nguyên chất không phải đồ uống an toàn.",
-      "Cách dùng: chỉ dùng sản phẩm bôi có thành phần, nồng độ và hướng dẫn rõ; thử vùng da nhỏ trước.",
-      "Liều: không tự uống lá/dầu neem, nhất là trẻ em, thai kỳ hoặc người bệnh gan."
+      "Dạng dùng: Nước lá tắm rửa ngoài da, nước gội đầu trị nấm, bột lá đắp ngoài, dầu neem bôi ngoài.",
+      "Cách dùng: Rửa da, ngâm chân, gội đầu; thử trên vùng da nhỏ trước khi bôi diện rộng.",
+      "Liều dùng: Chỉ dùng ngoài da; nếu uống theo đơn chỉ định dược sĩ không quá 2-3g lá khô/ngày."
     ]
   },
   {
@@ -799,23 +836,27 @@
     "scientific": "Carica papaya L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "tiêu hóa",
-      "thanh nhiệt"
+      "tiêu thực",
+      "nhuận tràng",
+      "tiêu viêm",
+      "lành vết loét"
     ],
-    "usage": "Quả chín là thực phẩm giàu dinh dưỡng và chất xơ.",
-    "parts": "Quả chín",
-    "identification": "Thân mềm có sẹo lá, lá xẻ lớn, quả mọc quanh thân.",
+    "usage": "Quả chín ngọt mát bổ dưỡng kiện tỳ nhuận tràng. Nhựa mủ và lá chứa enzyme protease Papain có hoạt tính thủy phân protein cực mạnh, giúp tiêu hóa đạm, chống viêm loét và tiêu mủ hoại tử.",
+    "parts": "Quả chín, lá đu đủ (Folium Caricae papayae), hạt và hoa đu đủ đực.",
+    "identification": "Cây thân thảo dạng gỗ mềm không phân nhánh mang nhiều vết sẹo cuống lá. Lá to xẻ thùy chân vịt sâu 5-7 thùy cuống rỗng dài vươn rộng.",
     "remedies": [
-      "Ăn quả chín đã rửa và gọt sạch."
+      "Nhuận tràng, trị táo bón, đẹp da: Ăn 200-300g quả đu đủ chín vàng đều mỗi ngày sau bữa ăn.",
+      "Chữa ho dai dẳng, viêm họng: Hoa đu đủ đực tươi 15g (hoặc 10g khô) chưng cách thủy với đường phèn hoặc mật ong, ngậm nuốt nước cốt từ từ.",
+      "Hỗ trợ làm mềm thịt, hỗ trợ tiêu hóa kém: Dùng vài giọt nhựa lá/quả đu đủ xanh ướp vào thực phẩm giúp tiêu hóa dễ dàng."
     ],
-    "safety": "Mủ và hạt không nên tự dùng; người dị ứng latex cần thận trọng.",
-    "habitat": "Cây thân mềm, lá xẻ lớn, quả mọc quanh phần thân trên.",
-    "preparation": "Ăn quả chín; không tự dùng mủ hoặc hạt làm thuốc.",
-    "caution": "Mủ đu đủ có thể gây dị ứng và không phù hợp trong thai kỳ nếu dùng dạng cô đặc.",
+    "safety": "Phụ nữ mang thai TUYỆT ĐỐI KHÔNG ăn đu đủ xanh hoặc uống nước sắc lá đu đủ đậm đặc vì chất papain và nhựa mủ kích thích co bóp tử cung mạnh gây sảy thai.",
+    "habitat": "Cây trồng quen thuộc ở mọi miền quê nhiệt đới, dễ sống và cho quả quanh năm.",
+    "preparation": "Quả chín gọt vỏ bỏ hạt; hoa đu đủ đực hái rửa sạch chưng cách thủy; lá đu đủ rửa sạch phơi khô hãm nước.",
+    "caution": "Nhựa đu đủ có tính kích ứng niêm mạc rất mạnh, tránh để bắn vào mắt gây tổn thương giác mạc.",
     "usageDetails": [
-      "Dạng dùng: quả chín làm thực phẩm; mủ, lá và hạt không tự dùng.",
-      "Cách dùng: rửa quả, gọt vỏ, bỏ hạt và ăn chín; không dùng quả xanh/mủ dạng cô đặc trong thai kỳ.",
-      "Liều: không có liều thuốc tự dùng; người dị ứng latex cần thận trọng."
+      "Dạng dùng: Quả chín ăn tươi, hoa đu đủ đực chưng mật ong, trà lá đu đủ khô.",
+      "Cách dùng: Ăn trực tiếp quả chín; uống nước hoa chưng ngậm ấm họng.",
+      "Liều dùng: Quả chín 100-300g/ngày; hoa đực 10-20g/ngày."
     ]
   },
   {
@@ -825,23 +866,27 @@
     "scientific": "Solanum lycopersicum L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "thanh nhiệt",
-      "tiêu hóa"
+      "sinh tân chỉ khát",
+      "bổ âm dưỡng huyết",
+      "chống oxy hóa",
+      "bảo vệ tim mạch"
     ],
-    "usage": "Quả giàu nước và thường dùng trong bữa ăn.",
-    "parts": "Quả chín",
-    "identification": "Cây thân mềm có lông, quả tròn hoặc dài, chuyển đỏ khi chín.",
+    "usage": "Vị ngọt chua, tính mát. Sinh tân chỉ khát, kiện vị tiêu thực, lương huyết bình can. Hoạt chất Lycopene là chất chống oxy hóa nhóm carotenoid cực mạnh giúp bảo vệ tuyến tiền liệt, bảo vệ màng tim mạch và làm sáng da.",
+    "parts": "Quả chín đỏ (Fructus Lycopersici).",
+    "identification": "Cây thân thảo mềm bò hoặc đứng, toàn thân có lông ngắn tiết mùi hăng nhẹ. Lá kép lông chim mép xẻ răng cưa. Quả mọng hình cầu hoặc bầu dục khi chín đổi sang màu đỏ tươi căng mọng.",
     "remedies": [
-      "Dùng quả chín, rửa sạch và chế biến phù hợp."
+      "Bổ sung Lycopene, bảo vệ tim mạch và thị lực: Quả cà chua chín nấu chín với dầu thực vật (chất béo giúp hòa tan và hấp thu Lycopene gấp 3-4 lần so với ăn sống).",
+      "Thanh nhiệt giải khát mùa hè: Cà chua chín rửa sạch trần nước sôi lột vỏ, ép lấy nước cốt thêm chút muối uống giải nhiệt.",
+      "Hỗ trợ giảm huyết áp, dưỡng da: Nấu canh cà chua đậu phụ thanh đạm ăn trong bữa cơm hàng ngày."
     ],
-    "safety": "Không ăn nhiều lá hoặc quả còn xanh; có thể gây khó chịu tiêu hóa.",
-    "habitat": "Cây thân mềm có lông, quả chuyển đỏ khi chín.",
-    "preparation": "Rửa sạch, ưu tiên quả chín; chế biến giúp giảm vị chua với người nhạy dạ dày.",
-    "caution": "Lá và phần xanh có alkaloid, không nên dùng làm rau hoặc trà.",
+    "safety": "TUYỆT ĐỐI KHÔNG ăn cà chua xanh còn non, thân lá cà chua vì chứa hàm lượng Solanine độc hại gây ngộ độc đường tiêu hóa.",
+    "habitat": "Cây rau quả nông nghiệp trồng khắp các vùng đồng bằng và cao nguyên trên toàn quốc.",
+    "preparation": "Chỉ dùng quả đã chín đỏ tự nhiên; rửa sạch gọt bỏ hạt nếu dễ bị kích ứng dạ dày.",
+    "caution": "Người bị bệnh thận ứ kali hoặc trào ngược thực quản nặng nên ăn lượng vừa phải vì cà chua chứa nhiều axit và kali.",
     "usageDetails": [
-      "Dạng dùng: quả chín làm thực phẩm; lá, thân và quả xanh không dùng làm trà.",
-      "Cách dùng: rửa sạch, ăn sống hoặc nấu chín; người trào ngược nên điều chỉnh lượng và cách chế biến.",
-      "Liều: dùng như rau quả, không tự dùng bộ phận xanh vì có thể chứa alkaloid gây độc."
+      "Dạng dùng: Quả chín ăn tươi, nước ép cà chua chín, nấu chín với dầu ăn trong các món canh xào.",
+      "Cách dùng: Nấu chín với dầu mỡ để phát huy tối đa hoạt chất lycopene.",
+      "Liều dùng: 1-2 quả chín cỡ vừa mỗi ngày (100-200g)."
     ]
   },
   {
@@ -851,23 +896,27 @@
     "scientific": "Ocimum tenuiflorum L.",
     "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "kháng viêm",
-      "tiêu hóa"
+      "phát hãn giải biểu",
+      "kháng khuẩn",
+      "giảm ho long đờm",
+      "giảm stress"
     ],
-    "usage": "Lá thơm dùng làm gia vị và trà trong nhiều nền văn hóa.",
-    "parts": "Lá và ngọn",
-    "identification": "Thân vuông, lá thơm, có thể có màu xanh hoặc tím, hoa mọc thành chùm.",
+    "usage": "Vị cay the, mùi thơm nồng, tính ấm quy kinh Phế Vị. Phát hãn tán hàn (làm ra mồ hôi giải cảm lạnh), hóa thấp trừ đờm, chỉ khái, tiêu viêm. Tinh dầu chứa Eugenol và Caryophyllene giúp kháng khuẩn hô hấp, làm dịu căng thẳng thần kinh và tăng sức bền cơ thể.",
+    "parts": "Lá, ngọn non mang hoa và toàn cây trên mặt đất (Herba Ocimi tenuiflori).",
+    "identification": "Cây thân thảo sống dai cao 50-80cm, thân vuông có lông mịn màu xanh hoặc tím tía. Lá mọc đối hình trứng mép có răng cưa lượn sóng, vò nát có mùi thơm ngát đinh hương dịu mát.",
     "remedies": [
-      "Dùng như rau thơm hoặc trà loãng từ nguyên liệu sạch."
+      "Trị cảm cúm, sốt không ra mồ hôi, đau đầu nghẹt mũi: Dùng 20g lá húng quế thánh, 10g sả, 10g gừng đun sôi xông mặt hoặc sắc nước uống ấm rồi đắp chăn cho toát mồ hôi.",
+      "Giảm ho đờm, viêm họng hạt: Hái 10-15 lá tươi rửa sạch, giã nát trộn với 1 thìa mật ong hấp cách thủy uống từ từ làm ấm đường thở.",
+      "Thư giãn thần kinh, giảm căng thẳng (Adaptogen): Hãm 5-7 lá Tulsi tươi hoặc khô vào ấm nước sôi uống nhâm nhi như trà thư giãn mỗi tối."
     ],
-    "safety": "Không dùng tinh dầu đậm đặc hoặc thay thế thuốc kê đơn.",
-    "habitat": "Cây thân vuông, lá thơm, thường có thân và cụm hoa tím.",
-    "preparation": "Dùng lá sạch làm rau thơm hoặc trà loãng; không uống tinh dầu.",
-    "caution": "Không tự dùng liều cao khi mang thai hoặc đang dùng thuốc chống đông.",
+    "safety": "Phụ nữ có thai và người đang dùng thuốc chống đông máu cần thận trọng vì Tulsi có tác dụng hoạt huyết và làm loãng máu nhẹ.",
+    "habitat": "Nguồn gốc Nam Á; trong văn hóa Ấn Độ được tôn kính là 'Thảo mộc Nữ hoàng' (Holy Basil). Trồng phổ biến làm cây thuốc vườn nhà tại Việt Nam.",
+    "preparation": "Thu hái lá bánh tẻ và hoa khi cây đang phát triển tươi tốt, rửa sạch dùng tươi hoặc phơi khô trong bóng râm giữ nguyên tinh dầu thơm.",
+    "caution": "Không đun nấu nước lá quá lâu trên lửa lớn làm bay hơi mất lượng tinh dầu quý Eugenol.",
     "usageDetails": [
-      "Dạng dùng: lá/ngọn làm rau thơm hoặc trà; tinh dầu không dùng đường uống tùy tiện.",
-      "Cách dùng: rửa sạch, dùng tươi hoặc pha trà loãng từ nguyên liệu khô đạt chuẩn.",
-      "Liều: không có liều tự dùng chung; hỏi bác sĩ khi mang thai, sắp phẫu thuật hoặc dùng thuốc chống đông."
+      "Dạng dùng: Trà lá tươi/khô, nước xông cảm cúm, siro hoa lá hấp mật ong, rau thơm.",
+      "Cách dùng: Hãm nước sôi 90°C đậy kín nắp 5-10 phút; uống ấm.",
+      "Liều dùng: Lá tươi 15-30g/ngày; lá khô hãm trà 5-10g/ngày."
     ]
   },
   {
@@ -930,22 +979,26 @@
     "image": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=900&q=80",
     "tags": [
       "thanh nhiệt",
-      "giải độc"
+      "hạ đường huyết",
+      "giải độc",
+      "tiêu viêm"
     ],
-    "usage": "Quả và dây lá có vị đắng tính hàn, giúp thanh nhiệt, giải độc và làm mát cơ thể.",
-    "parts": "Quả, lá và dây khổ qua",
-    "identification": "Dây leo có tua cuốn, lá mọc so le xẻ thùy sâu 5-7 thùy, quả có nhiều u lồi sần sùi.",
+    "usage": "Vị đắng (khổ), tính hàn, quy kinh Tâm Can Tỳ Vị. Thanh nhiệt tả hỏa, giải độc mát gan, sáng mắt (minh mục). Hoạt chất Charantin và polypeptide-p hỗ trợ kiểm soát đường huyết và ức chế virus.",
+    "parts": "Quả tươi, lá bánh tẻ, dây và hạt.",
+    "identification": "Dây leo thân mảnh khía rãnh, tua cuốn đơn, lá xẻ thùy chân vịt sâu 5-7 thùy. Quả thon dài hoặc bầu dục có nhiều u lồi sần sùi đặc trưng.",
     "remedies": [
-      "Chế biến thành món ăn thanh mát hoặc pha trà khổ qua sấy khô lượng vừa phải."
+      "Hỗ trợ kiểm soát đái tháo đường: Khổ qua tươi 1 quả bỏ ruột ép lấy nước uống mỗi sáng hoặc thái lát phơi khô hãm trà uống hàng ngày.",
+      "Chữa rôm sảy, mẩn ngứa ở trẻ: Nấu một nắm lá khổ qua hoặc 2-3 quả khổ qua tươi lấy nước tắm mát.",
+      "Thanh nhiệt giải cảm sốt: Khổ qua 1 quả thái mỏng nấu canh với thịt nạc ăn trong ngày."
     ],
-    "safety": "Không lạm dụng nước ép khổ qua sống liều cao; phụ nữ mang thai và người huyết áp thấp cần thận trọng.",
-    "habitat": "Trồng phổ biến khắp các vùng nhiệt đới và cận nhiệt đới tại Việt Nam.",
-    "preparation": "Rửa sạch quả, bỏ ruột và hạt già trước khi nấu ăn hoặc thái lát phơi khô pha trà.",
-    "caution": "Người đang dùng thuốc hạ đường huyết cần tham khảo bác sĩ để tránh hạ đường huyết quá mức.",
+    "safety": "Người có tỳ vị hư hàn (dễ lạnh bụng, đi lỏng), người tụt đường huyết và phụ nữ có thai không nên dùng nhiều.",
+    "habitat": "Vùng nhiệt đới và cận nhiệt đới; trồng rộng rãi làm thực phẩm thanh mát và dược liệu ở Việt Nam.",
+    "preparation": "Quả rửa sạch, bổ dọc nạo bỏ ruột và hạt trắng. Có thể dùng tươi, nấu chín hoặc thái mỏng phơi khô sao vàng hạ thổ làm trà.",
+    "caution": "Vị đắng tính hàn dùng kéo dài có thể gây lạnh bụng; hạt khổ qua chứa vicine có thể gây tán huyết ở người thiếu men G6PD.",
     "usageDetails": [
-      "Dạng dùng: quả tươi nấu chín làm thực phẩm hoặc lát quả khô pha trà loãng.",
-      "Cách dùng: xào, nấu canh hoặc hãm 3-5 lát khổ qua khô với nước sôi.",
-      "Liều: dùng vừa phải trong bữa ăn; không tự ý dùng thay thuốc điều trị đái tháo đường."
+      "Dạng dùng: Quả tươi ép nước, nấu canh; dây lá đun nước tắm; quả khô hãm trà.",
+      "Cách dùng: Hãm trà 10-15g khô/ngày; nấu canh dùng 1 quả tươi 100-200g.",
+      "Liều dùng: Dùng đường uống liên tục không quá 3 tuần; cần theo dõi chỉ số đường huyết nếu đang uống thuốc hạ đường."
     ]
   },
   {
@@ -957,22 +1010,26 @@
     "tags": [
       "thanh nhiệt",
       "giải độc",
-      "làm đẹp"
+      "mát gan",
+      "liền sẹo",
+      "lợi tiểu"
     ],
-    "usage": "Thảo mộc thanh nhiệt, giải độc, làm mát gan và hỗ trợ phục hồi da.",
-    "parts": "Toàn cây (lá và thân bò)",
-    "identification": "Thân thảo mọc bò sát đất, lá hình thận hoặc tròn có khía tai bèo đều ở mép, cuống lá dài.",
+    "usage": "Vị đắng nhẹ, tính mát, thanh nhiệt giải độc, lợi niệu tiêu thũng, lương huyết sinh cơ. Hoạt chất asiaticoside kích thích tăng sinh nguyên bào sợi và tổng hợp collagen giúp mau lành tổn thương da.",
+    "parts": "Toàn cây trên mặt đất (Herba Centellae).",
+    "identification": "Cây thảo mọc bò sát đất, thân mảnh đâm rễ ở các đốt. Lá hình thận hoặc tròn cuống dài, mép có khía tai bèo tròn đều.",
     "remedies": [
-      "Nước rau má tươi rửa sạch xay loãng hoặc canh rau má thanh nhiệt."
+      "Mát gan thanh nhiệt, trị mụn nhọt: 50-100g rau má tươi rửa sạch ngâm muối, giã nát hoặc xay nhuyễn vắt lấy nước cốt uống.",
+      "Hỗ trợ lành sẹo, vết trầy xước nhẹ: Rau má tươi giã nát vắt bớt nước, đắp phần bã sạch lên vết thương đã sát khuẩn.",
+      "Hạ sốt, viêm họng nhiệt miệng: Rau má 40g, cỏ mực 40g sắc nước uống trong ngày."
     ],
-    "safety": "Rửa thật kỹ vì cây mọc sát đất dễ nhiễm ký sinh trùng; không uống quá nhiều liên tục nhiều tuần.",
-    "habitat": "Mọc tự nhiên và được trồng ở nơi đất ẩm, mát, bờ ruộng và vườn nhà.",
-    "preparation": "Nhặt sạch rễ bẩn, ngâm rửa kỹ dưới vòi nước sạch; ưu tiên nấu chín hoặc xay với nước đun sôi để nguội.",
-    "caution": "Người tỳ vị hư hàn, hay lạnh bụng tiêu chảy hoặc đang dùng thuốc gan cần hạn chế.",
+    "safety": "Cây mọc sát mặt đất dễ nhiễm vi sinh và ký sinh trùng nên cần rửa kỹ. Không dùng quá 6 tuần liên tục vì có thể gây ảnh hưởng chức năng gan.",
+    "habitat": "Ưa nơi ẩm ướt râm mát, mọc hoang dại và được canh tác quy mô lớn khắp các vùng đồng bằng nhiệt đới.",
+    "preparation": "Ngâm nước muối loãng, rửa sạch bùn đất rễ. Dùng tươi nguyên chất ép nước hoặc sao vàng nhẹ hãm trà.",
+    "caution": "Phụ nữ mang thai không uống nhiều nước rau má vì có thể gây co thắt nhẹ tử cung; người đang uống thuốc an thần cần thận trọng.",
     "usageDetails": [
-      "Dạng dùng: rau tươi nấu canh, luộc hoặc xay nước uống thanh mát.",
-      "Cách dùng: dùng 20-30g rau má tươi đã rửa sạch mỗi lần, không nên pha quá nhiều đường.",
-      "Liều: dùng 2-3 lần/tuần như thực phẩm giải nhiệt, không uống thay nước lọc hàng ngày."
+      "Dạng dùng: Nước ép tươi, nấu canh, hãm trà khô, giã đắp ngoài.",
+      "Cách dùng: Rửa thật sạch nhiều lần; uống tươi ngay sau khi xay, không để qua đêm.",
+      "Liều dùng: 30 - 50g tươi mỗi ngày (hoặc 15 - 20g khô sắc uống)."
     ]
   },
   {
@@ -982,23 +1039,27 @@
     "scientific": "Vitis vinifera L.",
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
-      "thanh nhiệt",
-      "làm đẹp"
+      "bổ khí huyết",
+      "chống lão hóa",
+      "bảo vệ tim mạch",
+      "mạnh gân cốt"
     ],
-    "usage": "Quả giàu chất chống oxy hóa polyphenol, resveratrol; lá nho non dùng trong ẩm thực.",
-    "parts": "Quả chín, hạt nho chuẩn hóa và lá non",
-    "identification": "Dây leo thân gỗ có tua cuốn, lá to xẻ 3-5 thùy có răng cưa, quả mọc thành chùm mọng nước.",
+    "usage": "Quả nho bổ khí huyết, kiện tỳ, cường cân cốt, lợi tiểu tiện. Hạt nho chứa Proanthocyanidins (OPCs) và vỏ chứa Resveratrol là những chất chống oxy hóa tự nhiên cực mạnh giúp bền thành mạch máu và hạ cholesterol.",
+    "parts": "Quả chín (nhục quả), hạt nho (Semen Vitis), lá non (lá nho).",
+    "identification": "Dây leo thân gỗ lâu năm bám bằng tua cuốn đối diện cuống lá. Lá to đơn xẻ 3-5 thùy chân vịt mép có răng cưa nhọn.",
     "remedies": [
-      "Dùng quả nho chín rửa sạch như trái cây bổ sung vitamin và chất chống oxy hóa."
+      "Bồi bổ cơ thể, suy nhược thần kinh: Nho tươi chín 100-150g ăn hàng ngày hoặc uống nước ép nho tươi.",
+      "Chiết xuất hạt nho bảo vệ tim mạch: Dùng các viên tinh chất chuẩn hóa Proanthocyanidins từ hạt nho theo tư vấn dược sĩ.",
+      "Hỗ trợ giảm phù nề, tiểu tiện khó: Lá nho tươi 30g rửa sạch đun với 500ml nước uống thay trà trong ngày."
     ],
-    "safety": "Rửa kỹ lớp phấn/thuốc bám ngoài vỏ quả; người tiểu đường cần kiểm soát lượng ăn vì nho nhiều đường tự nhiên.",
-    "habitat": "Trồng nhiều tại vùng nắng ấm khô ráo như Ninh Thuận, Bình Thuận.",
-    "preparation": "Ngâm rửa từng chùm dưới vòi nước chảy trước khi ăn tươi.",
-    "caution": "Trẻ nhỏ ăn nho nguyên quả dễ bị hóc, cần cắt đôi và bỏ hạt.",
+    "safety": "Quả chín chứa hàm lượng đường fructose tự nhiên cao, người tiểu đường cần định lượng khẩu phần ăn.",
+    "habitat": "Vùng khí hậu ôn đới và bán khô hạn (Ninh Thuận - Việt Nam, Địa Trung Hải, Mỹ).",
+    "preparation": "Ăn tươi cả vỏ sau khi ngâm rửa sạch; hạt nho chiết xuất công nghiệp; lá nho chần nước sôi làm ẩm thực cuốn thịt.",
+    "caution": "Vỏ nho ngoài thị trường hay tồn đọng thuốc bảo vệ thực vật, cần ngâm nước ozone hoặc rửa nước muối kỹ.",
     "usageDetails": [
-      "Dạng dùng: quả chín ăn tươi hoặc chiết xuất hạt nho chuẩn hóa.",
-      "Cách dùng: ăn trực tiếp sau bữa ăn với khẩu phần hợp lý.",
-      "Liều: khoảng 100-150g quả chín mỗi lần."
+      "Dạng dùng: Quả tươi, nước ép, quả khô (nho khô), cao chiết xuất hạt nho chuẩn hóa.",
+      "Cách dùng: Ăn trực tiếp sau bữa ăn; dùng thực phẩm chức năng chiết xuất hạt nho theo nhãn.",
+      "Liều dùng: 100-200g quả tươi/ngày."
     ]
   },
   {
@@ -1009,22 +1070,26 @@
     "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
     "tags": [
       "thanh nhiệt",
-      "tiêu hóa"
+      "tăng sức đề kháng",
+      "lý khí",
+      "hóa đờm kiện tỳ"
     ],
-    "usage": "Quả giàu vitamin C tăng đề kháng; vỏ cam phơi khô (trần bì) hỗ trợ tiêu hóa, giảm đầy bụng.",
-    "parts": "Quả chín và vỏ quả phơi khô",
-    "identification": "Cây gỗ nhỏ thường xanh, cuống lá có cánh nhỏ đặc trưng, hoa trắng thơm, quả hình cầu màu cam.",
+    "usage": "Múi quả ngọt chua tính mát sinh tân chỉ khát, cung cấp vitamin C và flavonoid tăng cường hệ miễn dịch. Vỏ quả cam cay đắng tính ấm (trần bì) có công năng lý khí, hòa vị, kiện tỳ, hóa đờm, trị bụng đầy trướng nấc ợ.",
+    "parts": "Quả chín (dịch quả), vỏ quả cam phơi khô (Trần bì/Chỉ thực - Pericarpium Citri Reticulatae).",
+    "identification": "Cây gỗ nhỏ tán tròn có gai ngắn. Cuống lá có cánh nhỏ hình tim đặc trưng. Quả hình cầu đáy bằng, vỏ có nhiều túi tinh dầu thơm, múi mọng nước.",
     "remedies": [
-      "Nước cam tươi bổ sung vitamin C hoặc trà vỏ cam khô ấm bụng."
+      "Tăng cường sức đề kháng, giải cảm nắng: Vắt 1-2 quả cam tươi pha với 150ml nước ấm và chút mật ong uống vào ban ngày.",
+      "Trị ho có đờm, bụng đầy trướng khó tiêu: Vỏ cam rửa sạch phơi khô 10g hái thái chỉ, gừng tươi 3 lát hãm với nước sôi uống ấm.",
+      "Chữa nôn nấc, chán ăn: Vỏ cam khô 12g sắc nước uống khi còn ấm giúp ổn định tỳ vị."
     ],
-    "safety": "Không uống nước cam chua khi bụng đói hoặc ngay sau khi uống một số thuốc kháng sinh.",
-    "habitat": "Trồng phổ biến khắp các vùng trung du và đồng bằng Việt Nam.",
-    "preparation": "Rửa sạch quả trước khi vắt nước; vỏ cam chỉ dùng làm trà khi đảm bảo nguồn sạch hữu cơ.",
-    "caution": "Người viêm loét dạ dày - trào ngược nên hạn chế cam quá chua.",
+    "safety": "Không uống nước cam lúc đói bụng vì axit có thể gây xót ruột; tránh uống sát giờ đi ngủ hoặc uống chung ngay sau khi uống sữa tươi.",
+    "habitat": "Được trồng phổ biến khắp các miệt vườn từ Bắc chí Nam (Cam sành, cam Xã Đoài, cam Canh, cam Navel).",
+    "preparation": "Quả ăn tươi hoặc vắt nước; vỏ quả rửa sạch phơi khô trong bóng râm, sao vàng nhẹ để dành làm vị thuốc trần bì.",
+    "caution": "Người đang bị viêm loét dạ dày - tá tràng đang trong đợt cấp không uống nước cam chua đậm đặc.",
     "usageDetails": [
-      "Dạng dùng: múi/nước cam tươi hoặc vỏ cam sấy khô hãm trà.",
-      "Cách dùng: uống sau bữa ăn sáng hoặc trưa 30-60 phút.",
-      "Liều: 1 quả cam trung bình mỗi ngày, hạn chế thêm đường."
+      "Dạng dùng: Nước cam tươi vắt, trà vỏ cam khô (trần bì), mứt vỏ cam giảm ho.",
+      "Cách dùng: Uống sau bữa ăn 1-2 giờ; trà vỏ cam hãm nước sôi 90°C.",
+      "Liều dùng: 1-2 quả tươi/ngày; vỏ khô 6-12g/ngày."
     ]
   },
   {
@@ -1060,23 +1125,27 @@
     "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
     "tags": [
       "thanh nhiệt",
-      "kháng viêm",
-      "giải độc"
+      "chống oxy hóa",
+      "kháng khuẩn",
+      "lợi tiểu",
+      "tỉnh táo"
     ],
-    "usage": "Lá giàu catechin (EGCG) giúp tỉnh táo, chống oxy hóa, thanh nhiệt và dùng nấu nước tắm dân gian.",
-    "parts": "Búp và lá bánh tẻ",
-    "identification": "Cây bụi thường xanh, lá mọc so le hình bầu dục thuôn, dày bóng, mép lá có răng cưa nhỏ đều.",
+    "usage": "Vị chát ngọt đắng nhẹ, tính mát quy kinh Tâm Can Tỳ Phế Thận. Thanh nhiệt chỉ khát, tỉnh thần ích trí, lợi tiểu giải độc tiêu thực. Chứa hàm lượng vượt trội polyphenol thực vật EGCG giúp chống lão hóa, ngăn xơ vữa thành mạch và ức chế vi khuẩn.",
+    "parts": "Búp non và lá bánh tẻ (Folium Camelliae sinensis).",
+    "identification": "Cây bụi hoặc cây gỗ nhỏ thường xanh. Lá mọc so le hình bầu dục thon, mép có răng cưa nhỏ đều, chất lá dày dai bóng láng.",
     "remedies": [
-      "Lá chè xanh tươi rửa sạch vò nhẹ, tráng nước đầu rồi hãm nước sôi 80-85°C."
+      "Chống lão hóa, sảng khoái tinh thần: Búp chè xanh tươi một nắm vò dập, tráng qua nước sôi rồi hãm với nước sôi 80-85°C trong 10 phút uống nhâm nhi cả ngày.",
+      "Sát khuẩn ngoài da, trị rôm sảy ngứa ngáy: Lá chè xanh tươi 100g đun sôi kỹ với nước và một nhúm muối, pha ấm tắm cho trẻ hoặc rửa vết ngứa.",
+      "Khử mùi hôi miệng, phòng sâu răng: Ngậm súc miệng bằng nước chè xanh đặc ấm sau mỗi bữa ăn."
     ],
-    "safety": "Không uống trà xanh đặc khi bụng đói (gây cồn cào, say trà) hoặc sát giờ đi ngủ; tránh uống ngay sau bữa ăn giàu sắt.",
-    "habitat": "Trồng nhiều ở vùng đồi núi trung du như Thái Nguyên, Lâm Đồng, Phú Thọ.",
-    "preparation": "Chọn lá chè sạch không tồn dư thuốc sâu, rửa kỹ, vò nhẹ và hãm nước nóng vừa tới.",
-    "caution": "Người mất ngủ, thiếu máu thiếu sắt, phụ nữ mang thai nên hạn chế trà quá đặc.",
+    "safety": "Không uống nước chè xanh quá đặc khi bụng đói (gây say chè, xót dạ dày); không uống sát giờ đi ngủ vì tanin và cafein gây mất ngủ.",
+    "habitat": "Trồng bạt ngàn tại các vùng đồi núi cao mát mẻ (Thái Nguyên, Lâm Đồng, Sơn La, Phú Thọ).",
+    "preparation": "Chọn búp lá tươi sạch không hóa chất, rửa kỹ, vò nhẹ cho dập phiến lá rồi hãm với nước nóng (không dùng nước sôi 100°C làm cháy trà).",
+    "caution": "Người thiếu máu thiếu sắt nên uống trà cách xa bữa ăn ít nhất 1 giờ vì chất tanin cản trở hấp thu sắt từ thức ăn.",
     "usageDetails": [
-      "Dạng dùng: lá tươi hãm nước chè xanh hoặc búp trà sấy khô.",
-      "Cách dùng: hãm 5-10g lá chè tươi với 300-500ml nước nóng 80-85°C trong 5-7 phút.",
-      "Liều: uống 1-2 cốc trà loãng vào buổi sáng hoặc đầu giờ chiều."
+      "Dạng dùng: Nước hãm chè tươi, trà khô (trà xanh, trà đen), nước tắm sát khuẩn.",
+      "Cách dùng: Hãm nước nóng thưởng trà ban ngày; nấu nước tắm rửa ngoài da.",
+      "Liều dùng: Lá tươi 30-50g/ngày; trà khô 5-10g/ngày."
     ]
   }
 ]
