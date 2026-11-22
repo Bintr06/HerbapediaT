@@ -1,7 +1,30 @@
 """
-Kiến trúc & tiền xử lý chuẩn cho gói deploy LeafAI_PBL4_Deploy_16Classes:
-- Model 1: LeafAI_Model (EfficientNet-B0 + Prototype Open-Set Recognition)
-- Model 2: CustomLeafCNN (5-Block CNN + MSP Open-Set Recognition)
+========================================================================================
+HERBAPEDIA AI CORE - TỔNG HỢP CÁC THUẬT TOÁN QUAN TRỌNG TRONG BACKEND (PBL4)
+========================================================================================
+
+1. NHÓM THUẬT TOÁN TIỀN XỬ LÝ ẢNH (IMAGE PREPROCESSING):
+   - CLAHE (Contrast Limited Adaptive Histogram Equalization):
+     Cân bằng thích ứng biểu đồ độ sáng trên kênh L (không gian màu LAB) trước khi resize,
+     giúp làm rõ cấu trúc gân lá trong điều kiện thiếu sáng/ngược sáng ngoài vườn.
+   - Bicubic/Bilinear Resizing (224x224): Nội suy kích thước ảnh đầu vào cho mạng nơ-ron.
+   - ImageNet Normalization: Chuẩn hóa Z-Score theo mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225].
+
+2. NHÓM THUẬT TOÁN HỌC SÂU (DEEP LEARNING CLASSIFICATION):
+   - Model 1 - EfficientNet-B0 (Compound Scaling): Tích chập MBConv (Inverted Residuals + SE Block)
+     trích xuất vector đặc trưng 1280 chiều (Embeddings). Độ chính xác: 99.32%.
+   - Model 2 - CustomLeafCNN: Mạng CNN 5 khối tích chập sâu (Conv2D -> BatchNorm -> ReLU -> MaxPool2d),
+     kết hợp AdaptiveAvgPool2d và Dropout(0.4). Độ chính xác: 97.76%.
+   - Softmax Function: Chuyển logits thô thành phân phối xác suất P(y_i|x).
+
+3. NHÓM THUẬT TOÁN NHẬN DIỆN TẬP MỞ (OPEN-SET RECOGNITION - OSR):
+   - MSP (Maximum Softmax Probability): Đánh giá độ tự tin lớn nhất qua hàm Softmax.
+   - Cosine Similarity: Đo góc cosin giữa vector đặc trưng ảnh đầu vào với vector tâm lớp (Prototypes).
+   - Euclidean Distance & Z-Score Anomaly Detection: Đo khoảng cách không gian L2 và độ lệch chuẩn
+     thống kê Z-score để phát hiện điểm dị biệt (Outliers/Unknowns).
+   - Multi-criteria Voting & Override: Biểu quyết đa tiêu chí (MSP, Cosine, Z-score) kết hợp ngưỡng
+     bảo vệ MSP >= 98% để quyết định mẫu lá thuộc 16 loài hay ngoài danh mục.
+========================================================================================
 """
 
 from pathlib import Path
@@ -74,30 +97,35 @@ class LeafAI_Model(nn.Module):
         self.eval()
         self.check_prototypes()
 
+        # --- THUẬT TOÁN 1: Phân phối xác suất Softmax & MSP (Maximum Softmax Probability) ---
         logits, feats = self.forward(x)
         probs = F.softmax(logits, dim=1)
         msp, pred_msp = probs.max(dim=1)
 
+        # --- THUẬT TOÁN 2: Độ tương đồng Cosine (Cosine Similarity) với Prototypes 1280 chiều ---
         feats_norm = F.normalize(feats, p=2, dim=1)
         protos_norm = F.normalize(self.prototypes, p=2, dim=1)
         similarities = feats_norm @ protos_norm.t()
         cosine, pred_cos = similarities.max(dim=1)
 
+        # --- THUẬT TOÁN 3: Khoảng cách Euclid (L2 Distance) & Z-Score Phát hiện dị biệt (Anomaly Detection) ---
         distances = torch.cdist(feats, self.prototypes, p=2)
         min_dist, pred_dist = distances.min(dim=1)
         std = self.class_std_dist[pred_dist].clamp_min(1e-6)
         z_score = (min_dist - self.class_mean_dist[pred_dist]) / std
 
-        ok_msp = msp >= msp_thresh
-        ok_cos = cosine >= cos_thresh
-        ok_dist = z_score <= dist_z_thresh
+        # --- THUẬT TOÁN 4: Cơ chế biểu quyết đa tiêu chí (Multi-criteria Voting) & Ngưỡng bảo vệ OSR ---
+        ok_msp = msp >= msp_thresh         # Tiêu chí 1: Độ tự tin Softmax đạt chuẩn
+        ok_cos = cosine >= cos_thresh       # Tiêu chí 2: Góc vector đặc trưng gần tâm lớp
+        ok_dist = z_score <= dist_z_thresh  # Tiêu chí 3: Khoảng cách nằm trong khoảng tin cậy thống kê
 
         votes = ok_msp.int() + ok_cos.int() + ok_dist.int()
         agreement = (pred_msp == pred_cos) & (pred_msp == pred_dist)
-        # Nới lỏng OSR: 
-        # 1. Nếu MSP rất cao (>= 98%), tự động xác nhận
-        # 2. Hoặc đạt >= 2 votes (MSP, Cosine, Distance Z-score)
-        # 3. Hoặc có sự đồng thuận 3 bên và ít nhất 1 vote
+
+        # Quyết định OSR:
+        # 1. Override: Nếu xác suất Softmax áp đảo (MSP >= 98%), tự động xác nhận đã biết (KNOWN)
+        # 2. Majority Vote: Đạt ít nhất 2 trong 3 tiêu chuẩn (votes >= 2)
+        # 3. Đồng thuận 3 thước đo (agreement) và có ít nhất 1 tiêu chí đạt
         is_known = (msp >= 0.98) | (votes >= 2) | (agreement & (votes >= 1))
 
         pred = pred_msp.clone()
@@ -246,6 +274,8 @@ def apply_clahe_preprocessing(
     if image_bgr is None:
         raise ValueError("Ảnh đầu vào không hợp lệ (None).")
 
+    # --- THUẬT TOÁN: CLAHE (Contrast Limited Adaptive Histogram Equalization) ---
+    # Tách kênh độ sáng L trong không gian LAB để cân bằng tương phản cục bộ, giữ nguyên màu sắc
     image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)
     lab = cv2.cvtColor(image_rgb, cv2.COLOR_RGB2LAB)
     l_ch, a_ch, b_ch = cv2.split(lab)
