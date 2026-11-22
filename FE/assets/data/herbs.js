@@ -442,3 +442,384 @@ if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
         }
     });
 }
+
+
+// === DỮ LIỆU DƯỢC LIỆU 26 LOÀI BỔ SUNG CHUẨN XÁC DƯỢC HỌC VÀ Y HỌC CỔ TRUYỀN ===
+const OFFICIAL_26_HERBS_DATA = {
+    "betel": {
+        "usage": "Chứa tinh dầu giàu chavicol, betel-phenol và eugenol; có tác dụng kháng sinh và sát khuẩn tự nhiên cực mạnh đối với tụ cầu khuẩn, trực khuẩn mủ xanh và nấm; làm ấm tỳ vị và giảm đau.",
+        "identification": "Dây leo thân nhẵn, có rễ bám ở các mấu. Lá mọc so le hình tim hoặc trứng thuôn, đầu lá nhọn, phiến lá dày láng bóng màu xanh lục sẫm, vò nát có mùi thơm cay hăng nồng.",
+        "parts": "Lá tươi hoặc phơi khô (Folium Piperis betle).",
+        "habitat": "Cây ưa ẩm, nhiều ánh sáng, phát triển mạnh ở vùng nhiệt đới; được trồng leo giàn khắp các vùng nông thôn Việt Nam.",
+        "preparation": "Hái lá bánh tẻ tươi rửa sạch, ngâm nước muối; dùng tươi giã nát đắp ngoài hoặc đun sôi kỹ lấy nước rửa sát trùng.",
+        "remedies": [
+            "Sát trùng vết thương, mụn nhọt, ngứa da: Lá trầu không tươi 50g rửa sạch, đun sôi với 1 lít nước và chút muối hạt, dùng rửa hoặc ngâm vùng da tổn thương.",
+            "Chữa viêm họng, viêm nướu, hôi miệng: Dùng 3-5 lá trầu không giã nát, hòa với nước ấm rồi lọc lấy nước cốt súc miệng 2-3 lần/ngày.",
+            "Giảm ho, cảm lạnh: Hơ ấm lá trầu không rồi miết nhẹ lên ngực, lưng và bụng giúp làm ấm cơ thể."
+        ],
+        "caution": "Không dùng nước lá trầu không đậm đặc thụt rửa sâu vùng kín kéo dài; không đắp lá lên vết thương hở sâu đang chảy máu.",
+        "safety": "Chỉ dùng ngoài da hoặc súc miệng nhổ bỏ; không tự ý uống nước ép lá trầu không liều cao."
+    },
+    "bhrami": {
+        "usage": "Chứa các saponin triterpenoid nhóm Bacoside A và Bacoside B; có hoạt tính bảo vệ tế bào thần kinh, cải thiện khả năng ghi nhớ, tăng dẫn truyền synap và an thần nhẹ.",
+        "identification": "Cây thân thảo nhỏ mọc bò lan trên bùn, thân mọng nước phân nhánh nhiều. Lá nhỏ mọng nước hình thìa mọc đối không cuống. Hoa nhỏ màu trắng hoặc tím nhạt mọc đơn độc ở nách lá.",
+        "parts": "Toàn cây trên mặt đất tươi hoặc khô (Herba Bacopae monnieri).",
+        "habitat": "Ưa nơi đầm lầy, ẩm ướt, ruộng nước và ven kênh mương khắp đồng bằng Bắc Bộ và Nam Bộ.",
+        "preparation": "Thu hái toàn cây rửa sạch bùn đất, dùng tươi ép lấy nước hoặc phơi trong bóng râm (âm can) sắc thuốc.",
+        "remedies": [
+            "Hỗ trợ tăng cường trí nhớ, giảm căng thẳng thần kinh: Dùng 10-15g rau đắng biển khô (hoặc 30g tươi) sắc nước uống ấm hàng ngày.",
+            "Thanh nhiệt giải độc, an thần: Nấu canh rau đắng biển với cá đồng hoặc thịt nạc ăn thanh mát trong bữa cơm."
+        ],
+        "caution": "Dùng liều cao có thể gây kích ứng đường tiêu hóa, buồn nôn, cồn cào ruột; người có nhịp tim chậm nên thận trọng.",
+        "safety": "Phụ nữ mang thai và cho con bú không nên tự ý dùng các chế phẩm rau đắng biển liều cao."
+    },
+    "bringaraja": {
+        "usage": "Chứa wedelolactone, ecliptine và tinh dầu; quy kinh Can Thận. Tác dụng lương huyết, chỉ huyết (cầm máu), bổ can thận âm, làm đen râu tóc và kháng viêm bảo vệ tế bào gan.",
+        "identification": "Cây thân thảo mọc thẳng hoặc bò, thân có lông cứng ráp màu lục hoặc nâu đỏ. Lá mọc đối hình mũi mác hẹp, mép có răng cưa nhỏ. Cụm hoa đầu hình hoa cúc nhỏ màu trắng nở ở nách lá; khi vò nát chảy dịch đen nhánh đặc trưng.",
+        "parts": "Toàn cây tươi hoặc phơi khô (Herba Ecliptae).",
+        "habitat": "Mọc hoang khắp bờ ruộng, bãi cỏ ẩm, ven đường và các vùng đất hoang nhiệt đới.",
+        "preparation": "Nhổ toàn cây rửa sạch bùn đất rễ; dùng tươi giã nát vắt nước cốt hoặc phơi khô nấu nước sắc.",
+        "remedies": [
+            "Cầm máu nhanh (chảy máu cam, trầy xước, rong kinh): Cỏ mực tươi một nắm rửa sạch, giã nát vắt lấy nước cốt uống, bã sạch đắp trực tiếp lên vết thương.",
+            "Hỗ trợ chữa tóc bạc sớm, rụng tóc: Cỏ mực khô 20g, hà thủ ô đỏ 15g, thục địa 15g sắc nước uống đều đặn.",
+            "Hạ sốt, viêm họng ở trẻ em: Cỏ mực tươi 30g, rau má 30g giã nát vắt nước uống."
+        ],
+        "caution": "Người tỳ vị hư hàn, hay đau bụng đầy trướng hoặc tiêu chảy sống phân không nên dùng đơn độc liều lớn.",
+        "safety": "Cây mọc sát đất cần rửa sạch nhiều lần bằng nước muối trước khi vắt nước uống tươi."
+    },
+    "castor": {
+        "usage": "Dầu ép từ hạt (dầu thầu dầu) chứa axit ricinoleic có tác dụng nhuận tràng, tẩy xổ mạnh ở ruột non. Lá thầu dầu có tác dụng tiêu thũng bài nùng, chống ngứa ngoài da.",
+        "identification": "Cây thân gỗ nhỏ cao 2-4m, thân tròn có phấn trắng. Lá lớn xẻ thùy chân vịt sâu 7-9 thùy cuống dài. Quả nang có gai mềm chứa 3 hạt có vân hoa đốm nâu xám bóng loáng giống con bọ ve.",
+        "parts": "Dầu tinh chế từ hạt; lá tươi dùng ngoài (Folium Ricini). TUYỆT ĐỐI KHÔNG DÙNG HẠT SỐNG.",
+        "habitat": "Mọc hoang và được trồng lấy dầu công nghiệp tại các vùng đất bãi bồi, đồi núi trung du.",
+        "preparation": "Hạt ép lạnh tinh chế loại bỏ độc tố công nghiệp; lá tươi hơ nóng hoặc giã nát đắp ngoài.",
+        "remedies": [
+            "Dùng ngoài chữa sa tử cung, sa trực tràng: Lá thầu dầu tươi giã nát với giấm ấm đắp lên huyệt bách hội (đỉnh đầu), khi thấy tạng phủ co lên thì gỡ bỏ ngay.",
+            "Tẩy xổ khi táo bón nặng: Dùng 10-20ml dầu thầu dầu đã loại bỏ độc tố theo chỉ định chặt chẽ của bác sĩ."
+        ],
+        "caution": "Hạt thầu dầu sống chứa protein độc RICIN cực mạnh (chỉ 3-5 hạt có thể gây tử vong ở trẻ em). Tuyệt đối không tự ý nhai nuốt hạt sống.",
+        "safety": "Phụ nữ có thai, người viêm ruột cấp và trẻ nhỏ tuyệt đối cấm dùng đường uống."
+    },
+    "catharanthus": {
+        "usage": "Toàn cây chứa hơn 70 alkaloid nhóm indol, tiêu biểu là vinblastine và vincristine có hoạt tính ức chế phân bào dùng trong điều trị ung thư (bạch cầu, u lympho); rễ chứa ajmalicine giúp hạ huyết áp và an thần.",
+        "identification": "Cây bụi nhỏ cao 40-80cm, thân tròn nhẵn. Lá mọc đối hình bầu dục ngược đầu tù gốc thon, mặt trên xanh đậm bóng. Hoa 5 cánh màu hồng, đỏ hoặc trắng mọc ở kẽ lá.",
+        "parts": "Rễ và lá (Herba Catharanthi rosei).",
+        "habitat": "Trồng làm cảnh và trồng vùng nguyên liệu dược phẩm; thích nghi tốt ở đất cát ven biển và vùng nắng nóng.",
+        "preparation": "Thu hái rễ và lá phơi khô trong bóng râm, sắc nước uống theo liều nghiêm ngặt.",
+        "remedies": [
+            "Hỗ trợ hạ huyết áp, an thần nhẹ: Thân lá dừa cạn phơi khô 10g hãm nước sôi uống (chỉ dùng dạng trà hỗ trợ ngắn ngày).",
+            "Ứng dụng y học hiện đại: Chiết xuất vinblastine và vincristine điều chế thuốc tiêm điều trị ung thư theo phác đồ bệnh viện."
+        ],
+        "caution": "Alkaloid trong dừa cạn có độc tính tích lũy gây suy tủy xương, rụng tóc và độc thần kinh. Không tự ý sắc uống liều cao thay thuốc chữa ung thư.",
+        "safety": "Chống chỉ định tuyệt đối cho phụ nữ có thai, người suy gan suy thận và người huyết áp thấp."
+    },
+    "chilly": {
+        "usage": "Quả chứa capsaicin kích thích thụ thể nhiệt tạo vị cay nồng, làm giãn mạch máu ngoại vi, giảm đau cơ xương khớp, kích thích tiết dịch vị và tăng cường đốt cháy năng lượng.",
+        "identification": "Cây thân thảo sống dai, cành phân nhánh nhiều. Lá đơn mọc so le hình mũi mác mép nguyên. Quả mọng mọc đứng hoặc rủ, nhiều hình dạng, khi chín chuyển sang màu đỏ tươi hoặc vàng cam cay nồng.",
+        "parts": "Quả chín (Fructus Capsici), lá ớt.",
+        "habitat": "Cây gia vị nhiệt đới trồng phổ biến khắp các vùng nông thôn và vườn nhà Việt Nam.",
+        "preparation": "Quả dùng tươi làm gia vị hoặc ngâm rượu xoa bóp ngoài da; lá non hái rửa sạch nấu canh.",
+        "remedies": [
+            "Xoa bóp giảm đau nhức xương khớp, đau dây thần kinh: Quả ớt chín ngâm rượu trắng xoa bóp ngoài da giúp giảm đau cục bộ.",
+            "Thanh nhiệt lợi tiểu (lá ớt): Lá ớt non nấu canh với tôm đồng ăn giải nhiệt nhẹ và kích thích tiêu hóa."
+        ],
+        "caution": "Capsaicin đậm đặc gây kích ứng bỏng rát niêm mạc dạ dày, bỏng da và giác mạc; người viêm loét dạ dày tá tràng thể nóng không ăn nhiều.",
+        "safety": "Rửa sạch tay sau khi chạm vào ớt tươi; tránh để dính vào mắt hoặc vết trầy xước."
+    },
+    "citron-lime": {
+        "usage": "Dịch quả chứa axit citric và vitamin C dồi dào giúp kích thích tiêu hóa, sinh tân chỉ khát, làm sạch dịch đờm; vỏ quả chứa tinh dầu kháng khuẩn mạnh, giải cảm sốt.",
+        "identification": "Cây thân gỗ nhỏ có nhiều gai nhọn cứng. Lá đơn mọc so le hình bầu dục mép có răng cưa nhỏ. Quả nhỏ hình cầu đường kính 3-4cm, khi chín vỏ màu xanh vàng mỏng, thịt quả rất chua.",
+        "parts": "Quả (dịch quả và vỏ quả - Pericarpium Citri), lá chanh ta.",
+        "habitat": "Trồng trọt rộng rãi khắp các vùng nông nghiệp nhiệt đới ẩm Việt Nam.",
+        "preparation": "Vắt lấy nước cốt pha loãng; vỏ quả thái mỏng ngâm muối hoặc nấu nồi nước xông.",
+        "remedies": [
+            "Giải nhiệt, chống mất nước: Nước cốt 1 quả chanh ta pha với 200ml nước ấm và mật ong uống giải khát sau khi vận động.",
+            "Xông giải cảm sốt, thông mũi: Lá chanh ta, lá bưởi, sả, hương nhu đun sôi xông toàn thân 10 phút.",
+            "Giảm ngứa họng, ho gió: Vỏ chanh ta thái lát ngậm với hạt muối hột."
+        ],
+        "caution": "Nước cốt chanh đậm đặc có độ pH thấp gây mòn men răng và tăng tiết axit dạ dày nếu uống lúc đói.",
+        "safety": "Súc miệng bằng nước lọc sau khi uống nước chanh; tránh bôi tinh dầu lên da trước khi ra nắng."
+    },
+    "coriender": {
+        "usage": "Chứa tinh dầu d-linalool (60-70%) và các chất chống oxy hóa; vị cay tính ấm quy kinh Phế Tỳ. Tác dụng phát hãn thấu chẩn (thúc sởi mọc nhanh), kiện tỳ tiêu thực, trừ mùi hôi và kích thích tiêu hóa.",
+        "identification": "Cây thảo nhỏ sống hàng năm, thân rỗng tròn cao 30-50cm. Lá phía gốc có cuống dài, phiến lá chia thùy hình tròn khía răng; lá trên ngọn xẻ thùy hình sợi mảnh. Toàn cây có mùi thơm dễ chịu.",
+        "parts": "Quả phơi khô (Fructus Coriandri) và toàn cây tươi.",
+        "habitat": "Cây rau gia vị ưa mát trồng vụ đông xuân ở hầu hết các tỉnh thành Việt Nam.",
+        "preparation": "Hạt phơi khô sao thơm hãm trà; thân lá tươi rửa sạch ăn sống hoặc nấu canh, đun nước tắm.",
+        "remedies": [
+            "Thúc sởi mọc nhanh, giải độc sởi ở trẻ: Quả mùi 20g sắc lấy nước lau người hoặc đun sôi xông nhẹ cho trẻ.",
+            "Chữa đầy bụng, ăn không tiêu, ợ hơi: Quả mùi khô 10g sao thơm, hãm nước sôi uống ấm sau bữa ăn.",
+            "Nước tắm tất niên thanh lọc cơ thể: Đun một nắm lớn cây mùi già có hoa quả lấy nước tắm thơm mát."
+        ],
+        "caution": "Người mắc bệnh hen phế quản, viêm khí quản mạn tính nên thận trọng vì mùi tinh dầu có thể gây co thắt nhẹ.",
+        "safety": "Rửa sạch đất cát rễ khi ăn sống; dùng an toàn làm gia vị thực phẩm."
+    },
+    "curry": {
+        "usage": "Lá chứa các alkaloid carbazole độc đáo (mahanimbine, girinimbine) và tinh dầu; có hoạt tính chống oxy hóa, bảo vệ tế bào gan, kháng khuẩn và hỗ trợ giảm cholesterol trong máu.",
+        "identification": "Cây bụi hoặc thân gỗ nhỏ cao 2-4m. Lá kép lông chim mọc so le mang 11-25 lá chét hình mũi mác không đối xứng ở gốc, khi vò nát tỏa mùi thơm nồng gia vị cà ri đặc trưng.",
+        "parts": "Lá tươi và lá phơi khô (Folium Murrayae koenigii).",
+        "habitat": "Nguồn gốc Nam Á, hiện được di thực trồng làm gia vị và dược liệu tại nhiều tỉnh phía Nam.",
+        "preparation": "Dùng lá tươi sao nhẹ hoặc nấu trực tiếp trong món ăn; lá khô tán bột gia vị.",
+        "remedies": [
+            "Hỗ trợ giảm mỡ máu, cải thiện tiêu hóa: Nhai nuốt 6-8 lá cà ri tươi mỗi sáng hoặc dùng làm gia vị trong các món nấu.",
+            "Dưỡng tóc, giảm gàu ngứa chân tóc: Nấu nước lá cà ri gội đầu giúp kích thích mọc tóc và nuôi dưỡng da đầu."
+        ],
+        "caution": "Không thay thế hoàn toàn thuốc điều trị rối loạn mỡ máu hoặc đái tháo đường kê đơn.",
+        "safety": "Sử dụng an toàn trong khẩu phần ẩm thực hàng ngày."
+    },
+    "doddpathre": {
+        "usage": "Lá chứa tinh dầu giàu carvacrol và colein có tác dụng kháng sinh tự nhiên cực mạnh đối với phế cầu khuẩn, trực khuẩn ho gà và tụ cầu vàng; tiêu đờm, chỉ khái, giải cảm và hạ sốt.",
+        "identification": "Cây thân thảo sống dai cao 20-50cm, thân mọng nước có lông mịn. Lá mọc đối dày mọng nước hình tim tròn mép có răng cưa lượn sóng tròn, mặt lá phủ lớp lông tơ mềm; vò lá có mùi thơm chanh the mát dễ chịu.",
+        "parts": "Lá và ngọn non tươi (Folium Colei amboinici).",
+        "habitat": "Dễ trồng bằng cành giâm, phát triển tốt ở vườn nhà, chậu cảnh khắp các miền đất nước.",
+        "preparation": "Hái lá tươi rửa sạch ngâm muối; chưng cách thủy với đường phèn hoặc giã nát vắt nước.",
+        "remedies": [
+            "Đặc trị ho có đờm, viêm họng ở trẻ em và người lớn: Lá húng chanh tươi 15g rửa sạch, thái nhỏ chưng cách thủy với đường phèn hoặc mật ong, ngậm nuốt nước cốt từ từ 3-4 lần/ngày.",
+            "Chữa cảm cúm, sốt không ra mồ hôi: Lá húng chanh tươi 20g, gừng tươi 3 lát sắc nước uống ấm rồi đắp chăn cho toát mồ hôi.",
+            "Giảm đau rát do côn trùng cắn: Giã nát lá húng chanh đắp trực tiếp lên vết đốt."
+        ],
+        "caution": "Lá tươi có nhiều lông tơ mịn, người có cơ địa quá mẫn cần rửa sạch tránh gây ngứa họng khi nhai sống.",
+        "safety": "Rất an toàn cho cả trẻ nhỏ và phụ nữ cho con bú khi dùng chưng đường phèn."
+    },
+    "drumstick": {
+        "usage": "Lá chứa hàm lượng cực cao vitamin C, vitamin A, canxi, sắt, protein thực vật và polyphenol (quercetin, chlorogenic acid); bồi bổ cơ thể suy nhược, tăng tiết sữa, hạ huyết áp và chống viêm loét.",
+        "identification": "Cây thân gỗ nhỏ cao 5-10m, vỏ cây có rãnh nứt. Lá kép lông chim 3 lần mọc so le mang nhiều lá chét nhỏ hình trứng tròn. Quả dài hình que có 3 cạnh chứa hạt có cánh mỏng.",
+        "parts": "Lá non, búp, quả non và hạt (Folium & Semen Morinagae).",
+        "habitat": "Cây chịu hạn tốt, mọc nhanh, được trồng nhiều ở các tỉnh miền Trung và Nam Bộ.",
+        "preparation": "Lá non tuốt rửa sạch nấu canh ăn chín; lá sấy lạnh nghiền bột dinh dưỡng.",
+        "remedies": [
+            "Bồi bổ sức khỏe cho người già, trẻ còi xương: Lá chùm ngây non nấu canh với tôm thịt ăn 2-3 lần/tuần.",
+            "Lợi sữa cho sản phụ sau sinh: Lá chùm ngây non 100g nấu canh ăn nóng giúp tăng tiết sữa tự nhiên.",
+            "Bột lá chùm ngây làm thực phẩm bổ sung: Lá sấy lạnh nghiền bột mịn pha nước uống bổ sung vi chất dinh dưỡng."
+        ],
+        "caution": "Phụ nữ đang mang thai TUYỆT ĐỐI KHÔNG ăn nhiều chùm ngây vì hoạt chất alpha-sitosterol gây co bóp cơ trơn tử cung dẫn tới nguy cơ sảy thai.",
+        "safety": "Không ăn chùm ngây vào buổi tối muộn vì hàm lượng vitamin C cao có thể gây mất ngủ."
+    },
+    "eucalyptus": {
+        "usage": "Lá chứa 1.5–3.5% tinh dầu giàu Cineol (Eucalyptol > 70%) có tác dụng sát trùng đường hô hấp cực mạnh, tiêu đờm, giãn phế quản, giảm đau cơ khớp và xua đuổi côn trùng.",
+        "identification": "Cây thân gỗ lớn cao 20-30m, vỏ thân dễ bóc thành từng dải dài. Lá cây trưởng thành mọc so le hình lưỡi liềm thuôn dài cuống ngắn, phiến lá dày có nhiều túi tinh dầu trong suốt li ti; vò lá có mùi tinh dầu khuynh diệp bốc lên mũi.",
+        "parts": "Lá phơi khô và tinh dầu chiết xuất (Folium & Oleum Eucalypti).",
+        "habitat": "Trồng trọt thành rừng phòng hộ và vùng nguyên liệu lấy gỗ, tinh dầu ở khắp các tỉnh đồi núi và trung du.",
+        "preparation": "Lá khô đun nước xông mũi họng; tinh dầu pha loãng với dầu nền để xoa bóp ngoài da.",
+        "remedies": [
+            "Xông thông mũi, giảm nghẹt mũi sổ mũi: Lá bạch đàn khô 20g (hoặc 3-5 giọt tinh dầu) cho vào bát nước sôi trùm khăn xông mũi họng.",
+            "Xoa bóp giữ ấm, giảm đau cơ: Dùng dầu khuynh diệp xoa bóp vùng ngực, lòng bàn chân và các khớp sưng đau khi trời lạnh.",
+            "Sát khuẩn không khí phòng ngủ: Xông tinh dầu khuynh diệp bằng đèn xông giúp thanh lọc không khí và phòng cảm cúm."
+        ],
+        "caution": "TUYỆT ĐỐI KHÔNG UỐNG tinh dầu bạch đàn nguyên chất vì có thể gây ngộ độc ức chế hô hấp cấp tính. Không bôi trực tiếp tinh dầu nguyên chất lên mặt trẻ sơ sinh.",
+        "safety": "Chỉ dùng ngoài da (pha loãng với dầu nền) hoặc xông hơi hít thở."
+    },
+    "ginger": {
+        "usage": "Thân rễ chứa tinh dầu và các chất cay gingerol, shogaol; tính ấm vị cay quy kinh Phế Tỳ Vị. Tác dụng phát biểu tán hàn (giải cảm lạnh), ôn trung chỉ ẩu (làm ấm dạ dày, cầm nôn), hóa đàm chỉ khái và tăng tuần hoàn máu.",
+        "identification": "Cây thân thảo sống lâu năm cao 0.6-1m. Thân rễ nạc phình to phân nhiều nhánh nằm ngang dưới đất, vỏ màu vàng nhạt, ruột vàng có mùi thơm cay nồng đặc trưng. Lá không cuống mọc so le hình mũi mác dài.",
+        "parts": "Thân rễ tươi (Sinh khương - Rhizoma Zingiberis recens) hoặc khô (Can khương).",
+        "habitat": "Cây gia vị dược liệu cổ truyền trồng rộng khắp các vùng sinh thái từ đồng bằng đến miền núi.",
+        "preparation": "Củ rửa sạch đất, để nguyên vỏ hoặc cạo nhẹ; thái lát mỏng hãm nước sôi hoặc nướng chín.",
+        "remedies": [
+            "Chữa cảm lạnh, trúng gió, lạnh bụng đi ngoài: Gừng tươi 20g đập dập, thêm chút đường phèn nấu với 200ml nước uống ấm nóng rồi đắp chăn.",
+            "Chống say tàu xe, giảm ốm nghén nhẹ: Ngậm một lát gừng tươi nhai nuốt nước từ từ trước khi lên xe 30 phút.",
+            "Giảm đau nhức xương khớp, lạnh chân tay: Ngâm chân nước ấm pha gừng giã nát và muối hột 20 phút mỗi tối trước khi ngủ."
+        ],
+        "caution": "Không dùng nhiều cho người có thể trạng nhiệt (đang sốt cao, vã mồ hôi, trĩ chảy máu, ho ra máu); tránh ăn gừng bị thối hỏng vì chứa safrole gây độc gan.",
+        "safety": "Người cao huyết áp nên thận trọng không uống trà gừng quá đặc vào ban đêm."
+    },
+    "henna": {
+        "usage": "Lá chứa lawsone (hydroxynaphthoquinone) có ái lực gắn kết bền vững với keratin của tóc và da tạo màu nhuộm tự nhiên; có hoạt tính kháng nấm, làm se niêm mạc và làm dịu vết bỏng nhẹ.",
+        "identification": "Cây bụi hoặc thân gỗ nhỏ cao 2-4m, cành có gai ở đầu. Lá mọc đối hình bầu dục hay mũi mác ngắn, phiến lá dai nhẵn bóng. Cụm hoa chùm ở đầu cành màu trắng hoặc đỏ thơm ngát.",
+        "parts": "Lá phơi khô tán bột (Folium Lawsoniae).",
+        "habitat": "Nguồn gốc Trung Đông và Nam Á; trồng làm cảnh và cây nhuộm ở một số vùng phía Nam Việt Nam.",
+        "preparation": "Lá phơi khô nghiền thành bột mịn, hòa với nước ấm hoặc nước trà để ủ nhuộm tóc ngoài da.",
+        "remedies": [
+            "Nhuộm tóc và dưỡng tóc tự nhiên: Bột lá móng hòa với nước ấm thành hỗn hợp sệt, ủ tóc 1-2 giờ rồi xả sạch giúp phủ bạc và bóng tóc an toàn.",
+            "Chữa nấm móng, nước ăn chân: Lá móng tươi giã nát với chút muối và giấm đắp vào kẽ chân bị nấm."
+        ],
+        "caution": "Cần phân biệt bột lá móng thuần khiết tự nhiên với sản phẩm 'Henna đen' hóa học có pha p-phenylenediamine (PPD) - chất gây dị ứng và bỏng da nghiêm trọng.",
+        "safety": "Chỉ dùng ngoài da; thử dị ứng trên mu bàn tay 24 giờ trước khi nhuộm diện rộng."
+    },
+    "jasmine": {
+        "usage": "Hoa chứa tinh dầu thơm quý (benzyl acetate, linalool, methyl jasmonate); vị cay ngọt tính mát. Tác dụng sơ can giải uất, thanh nhiệt giáng hỏa, trấn tĩnh an thần, giảm lo âu căng thẳng và hạ huyết áp nhẹ.",
+        "identification": "Cây bụi nhỏ cành mảnh vươn dài. Lá mọc đối hình bầu dục bóng ở mặt trên. Cụm hoa mọc ở ngọn cành màu trắng muốt tinh khiết, cánh hoa xếp nhiều lớp, nở về đêm và tỏa mùi thơm ngọt ngào nồng nàn.",
+        "parts": "Hoa mới nở (Flos Jasmini sambac) và rễ.",
+        "habitat": "Cây cảnh thơm truyền thống trồng ở sân vườn khắp ba miền đất nước.",
+        "preparation": "Hái hoa vào chiều muộn khi nụ sắp nở, ướp với trà hoặc sấy lạnh làm trà hoa cúc lài.",
+        "remedies": [
+            "Trà hoa lài dưỡng tâm an thần, dễ ngủ: Hoa lài tươi 5 bông (hoặc nụ khô) hãm với nước sôi 85°C uống ấm trước giờ ngủ 1 tiếng.",
+            "Thanh nhiệt giải cảm nắng, hoa mắt chóng mặt: Hoa lài 10g, hoa cúc trắng 10g hãm trà uống giải nhiệt ngày hè."
+        ],
+        "caution": "Không sử dụng hoa lài cảnh bị phun hóa chất bảo quản hoặc hương liệu nhân tạo để pha trà.",
+        "safety": "Rất an toàn khi dùng hoa sạch tự nhiên để ướp trà thưởng thức."
+    },
+    "lantana": {
+        "usage": "Lá và hoa chứa tinh dầu, triterpenoid (lantadene A, B); dùng trong dân gian để sát trùng ngoài da, tiêu độc, giảm ngứa. Rễ có tác dụng thanh nhiệt hạ sốt.",
+        "identification": "Cây bụi nhỏ cành vuông có gai quặp. Lá mọc đối hình trứng mép có răng cưa nhọn, mặt lá nhám ráp có lông cứng; vò lá có mùi hăng hắc khó ngửi. Cụm hoa hình tán tròn nhiều hoa nhỏ đổi màu từ vàng, cam sang đỏ hoặc hồng.",
+        "parts": "Rễ và lá dùng ngoài. TUYỆT ĐỐI KHÔNG ĂN QUẢ XANH.",
+        "habitat": "Cây hoang dại mọc thành bụi rậm ở ven đồi, bãi hoang và trồng làm hàng rào hoa.",
+        "preparation": "Hái lá tươi rửa sạch đun nước tắm rửa hoặc giã nát đắp ngoài nốt mụn sưng.",
+        "remedies": [
+            "Nấu nước tắm chữa ghẻ lở, ngứa da, viêm da: Lá ngũ sắc tươi 50g đun sôi với 2 lít nước và muối hạt, dùng rửa hoặc ngâm chỗ ngứa.",
+            "Giảm sưng tấy mụn nhọt ngoài da: Lá tươi giã nát đắp lên nốt mụn nhọt chưa vỡ mủ."
+        ],
+        "caution": "Quả xanh của cây ngũ sắc chứa lantadene A rất độc, có thể gây nôn mửa, giãn đồng tử và tổn thương gan nếu trẻ nhỏ ăn phải. Tuyệt đối không tự sắc uống lá tươi.",
+        "safety": "Chỉ sử dụng ngoài da; trồng cách xa tầm tay trẻ nhỏ."
+    },
+    "lemongrass": {
+        "usage": "Thân lá chứa 1–2% tinh dầu giàu Citral (65–85%) và Geraniol; vị cay thơm tính ấm. Tác dụng thông tiểu, tiêu thực, giải độc rượu, kích thích tiêu hóa, phát hãn giải cảm và ức chế nấm mốc vi khuẩn.",
+        "identification": "Cây thân thảo sống lâu năm mọc thành bụi dày. Lá dài hẹp như lá lúa mép ráp, bẹ lá cuốn chặt ôm lấy nhau tạo thành thân giả màu trắng xanh hoặc tím nhẹ; toàn thân tỏa mùi thơm chanh sảng khoái.",
+        "parts": "Thân rễ giả và lá tươi (Herba Cymbopogonis).",
+        "habitat": "Cây gia vị trồng trọt phổ biến khắp các khu vườn từ nông thôn đến thành thị.",
+        "preparation": "Đập dập thân sả nấu nước xông hoặc nấu canh, hãm trà ấm với gừng.",
+        "remedies": [
+            "Nồi xông giải cảm cúm, nhức đầu nghẹt mũi: Củ sả đập dập 5 củ, lá chanh, lá bưởi, hương nhu đun sôi xông mồ hôi toàn thân.",
+            "Hỗ trợ tiêu hóa, giảm trướng bụng đầy hơi: Củ sả 20g đập dập, gừng 10g nấu nước sôi thêm chút đường uống ấm sau bữa ăn.",
+            "Xua đuổi muỗi và khử mùi phòng: Xịt tinh dầu sả chanh hoặc đốt tinh dầu trong phòng ngủ."
+        ],
+        "caution": "Người thể trạng âm hư hỏa vượng (trong người hay nóng trong, háo khát, táo bón) không nên uống trà sả quá đậm đặc.",
+        "safety": "An toàn tuyệt đối làm gia vị ẩm thực; không uống tinh dầu sả nguyên chất chưa pha loãng."
+    },
+    "malabar-spinach": {
+        "usage": "Chứa nhiều chất nhầy (mucilage), vitamin A, C, sắt và canxi; vị ngọt chua tính hàn quy kinh Tâm Tỳ Can Đại trường. Tác dụng thanh nhiệt giải độc, nhuận tràng thông tiện, làm mát huyết và lợi sữa.",
+        "identification": "Dây leo thân mập nhớt mọng nước màu xanh lục hoặc tím đỏ. Lá đơn mọc so le dày mọng nước hình tim tròn nhẵn bóng. Quả mọng hình cầu nhỏ khi chín chuyển sang màu đen tím tiết nước nhuộm màu tím biếc.",
+        "parts": "Lá và ngọn non tươi (Herba Basellae albae).",
+        "habitat": "Cây rau ăn lá quen thuộc trồng leo bờ rào khắp nông thôn nhiệt đới.",
+        "preparation": "Nhặt lá và ngọn non rửa sạch, nấu canh ăn chín thanh mát; giã tươi đắp vết bỏng rát.",
+        "remedies": [
+            "Chữa táo bón, thanh nhiệt mùa hè: Lá mồng tơi non nấu canh với cua đồng hoặc tôm ăn thanh mát giúp nhuận tràng nhanh chóng.",
+            "Lợi sữa cho sản phụ: Mồng tơi nấu canh với thịt nạc hoặc móng giò ăn nóng.",
+            "Làm dịu vết bỏng nhiệt nhẹ: Lá mồng tơi tươi rửa sạch giã nát vắt lấy nước cốt thoa lên chỗ bỏng rát."
+        ],
+        "caution": "Người có tỳ vị hư hàn, thường xuyên đi ngoài phân lỏng, đau bụng lạnh không nên ăn canh mồng tơi quá nhiều.",
+        "safety": "Rửa sạch từng lá trước khi nấu; dùng an toàn làm rau ăn hàng ngày."
+    },
+    "marigold": {
+        "usage": "Cánh hoa chứa hàm lượng cao Lutein và Zeaxanthin - hai chất chống oxy hóa nhóm carotenoid đóng vai trò bảo vệ hoàng điểm mắt, lọc ánh sáng xanh; có tác dụng kháng viêm tiêu thũng và giảm đau.",
+        "identification": "Cây thân thảo hàng năm cao 40-80cm, phân cành nhiều. Lá kép lông chim mép có răng cưa nhỏ, có tuyến tinh dầu mùi thơm hắc đặc trưng. Cụm hoa đầu lớn hình cầu màu vàng tươi hoặc cam đậm, nhiều cánh hoa uốn lượn.",
+        "parts": "Cụm hoa tươi hoặc phơi khô (Flos Tagetes erectae).",
+        "habitat": "Trồng làm cây hoa cảnh ngày Tết và trồng thâm canh thu hoạch hoa làm nguyên liệu chiết xuất lutein.",
+        "preparation": "Thu hái hoa sạch phơi khô hãm nước súc miệng hoặc chiết xuất lutein công nghiệp.",
+        "remedies": [
+            "Chiết xuất Lutein sáng mắt: Dùng các chế phẩm bổ mắt chiết xuất từ hoa vạn thọ theo tư vấn y dược để phòng thoái hóa điểm vàng.",
+            "Giảm đau răng, viêm lợi: Nước hãm hoa vạn thọ ngậm súc miệng giúp giảm sưng đau nướu răng.",
+            "Giảm ho gà, viêm phế quản: Hoa vạn thọ khô 10g chưng cách thủy với mật ong ngậm nuốt từ từ."
+        ],
+        "caution": "Không sử dụng hoa vạn thọ mua từ chợ hoa cảnh để pha trà vì có thể bị phun lượng lớn hóa chất kích thích tăng trưởng.",
+        "safety": "Người có cơ địa dị ứng phấn hoa họ Cúc (Asteraceae) cần thận trọng."
+    },
+    "mint": {
+        "usage": "Lá chứa 1–2% tinh dầu với hoạt chất chính là Menthol (50–70%) và Menthone; vị cay the tính mát quy kinh Phế Can. Tác dụng sơ phong thanh nhiệt (trị cảm mạo phong nhiệt), thông mũi họng, tiêu đờm, kích thích tiêu hóa và làm mát da.",
+        "identification": "Cây thân thảo sống dai, thân vuông màu xanh hoặc tím, bò lan dưới đất và đâm cành đứng cao 20-40cm. Lá mọc đối hình trứng mép có răng cưa nhọn, phiến lá có nhiều tuyến tinh dầu tỏa mùi the mát sảng khoái đặc trưng.",
+        "parts": "Lá và ngọn non tươi hoặc khô (Herba Menthae piperitae).",
+        "habitat": "Ưa nơi đất mùn ẩm mát, được trồng làm rau thơm và dược liệu khắp các vùng miền.",
+        "preparation": "Hái lá tươi rửa sạch ăn sống, hãm trà với nước sôi 85°C hoặc cất tinh dầu bạc hà.",
+        "remedies": [
+            "Chữa cảm cúm, sốt nóng, nghẹt mũi đau đầu: Hái một nắm lá bạc hà tươi (15-20g) rửa sạch hãm với nước sôi uống ấm hoặc đun xông mũi họng.",
+            "Kích thích tiêu hóa, giảm trướng bụng đầy hơi: Uống 1 tách trà lá bạc hà sau bữa ăn giúp giảm co thắt dạ dày.",
+            "Khử mùi hôi miệng, thanh lọc vòm họng: Nhai trực tiếp 2-3 lá bạc hà tươi hoặc súc miệng bằng nước lá bạc hà."
+        ],
+        "caution": "TUYỆT ĐỐI KHÔNG dùng tinh dầu bạc hà nguyên chất hoặc bôi dầu gió chứa menthol vào mũi, miệng trẻ sơ sinh vì có thể gây ức chế hô hấp ngừng thở đột ngột.",
+        "safety": "Người suy nhược cơ thể, gầy yếu, đang vã mồ hôi nhiều không nên uống trà bạc hà đậm đặc."
+    },
+    "nelavembu": {
+        "usage": "Toàn cây chứa hoạt chất đắng Andrographolide và các diterpenoid lactone; vị cực đắng, tính hàn quy kinh Phế Vị Can Đại trường. Được mệnh danh là 'Kháng sinh thực vật' tự nhiên: thanh nhiệt giải độc, tiêu thũng chỉ thống, hạ sốt, ức chế virus đường hô hấp và kháng viêm mạnh mẽ.",
+        "identification": "Cây thân thảo nhỏ mọc thẳng đứng cao 30-80cm, thân vuông 4 cạnh phân nhiều cành ngang. Lá đơn mọc đối hình mũi mác phiến mỏng nhẵn bóng. Cụm hoa chùm ở nách lá và đầu cành hoa nhỏ màu trắng có đốm tím hồng.",
+        "parts": "Phần trên mặt đất phơi khô (Herba Andrographitis paniculatae).",
+        "habitat": "Phân bố rộng ở Ấn Độ và các nước Đông Nam Á; trồng làm vị thuốc quý ở Việt Nam.",
+        "preparation": "Thu hái khi cây bắt đầu nở hoa, cắt đoạn phơi khô trong bóng râm, sắc nước uống.",
+        "remedies": [
+            "Hỗ trợ điều trị viêm họng, viêm amidan, ho sốt: Dùng 10-15g xuyên tâm liên khô sắc nước uống chia 2-3 lần trong ngày.",
+            "Chữa viêm ruột, tiêu chảy cấp, lỵ trực trùng: Xuyên tâm liên 15g, kim ngân hoa 10g sắc nước uống.",
+            "Rửa vết thương lở loét ngoài da: Đun nước xuyên tâm liên đặc rửa vùng da viêm loét sát khuẩn."
+        ],
+        "caution": "Vị thuốc có tính đại hàn, không dùng liên tục quá 2 tuần; người tỳ vị hư hàn, tiêu chảy mãn tính không dùng.",
+        "safety": "Phụ nữ mang thai tuyệt đối không dùng vì có thể gây sảy thai hoặc ức chế rụng trứng."
+    },
+    "nooni": {
+        "usage": "Quả chứa proxeronine, xeronine, scopoletin, anthraquinone và nhiều chất chống oxy hóa; vị cay nồng hơi nồng gắt tính bình. Tác dụng hoạt huyết thông kinh, nhuận tràng lợi tiểu, giảm đau nhức xương khớp và hỗ trợ điều hòa huyết áp.",
+        "identification": "Cây bụi hoặc thân gỗ nhỏ cao 4-8m cành to 4 cạnh. Lá mọc đối hình bầu dục lớn xanh bóng láng dài 15-30cm. Quả hạch kép hình trứng xù xì nhiều mắt quả nhỏ, khi chín đổi từ màu xanh sang trắng ngà mọng nước tỏa mùi khai nồng đặc trưng.",
+        "parts": "Quả chín, rễ nhàu và lá (Fructus & Radix Morindae citrifoliae).",
+        "habitat": "Mọc hoang nhiều ở vùng ẩm ướt ven sông rạch Nam Bộ và các tỉnh Tây Nguyên.",
+        "preparation": "Quả chín ngâm rượu hoặc xắt lát phơi khô sao vàng sắc nước; quả chín ăn với muối.",
+        "remedies": [
+            "Chữa đau nhức xương khớp, phong thấp, đau lưng mỏi gối: Quả nhàu chín ngâm rượu gạo hoặc xắt lát phơi khô sao vàng sắc nước uống hàng ngày.",
+            "Hỗ trợ hạ huyết áp, an thần dễ ngủ: Rễ nhàu phơi khô 30g sắc nước uống thay trà.",
+            "Nhuận tràng, giải nhiệt: Ăn quả nhàu chín chấm muối hoặc uống nước cốt nhàu lên men."
+        ],
+        "caution": "Quả nhàu chứa hàm lượng Kali cao, người mắc bệnh suy thận mạn tính hoặc đang dùng thuốc giữ kali cần tránh dùng.",
+        "safety": "Không uống rượu nhàu quá liều lượng chỉ định; phụ nữ có thai nên thận trọng."
+    },
+    "onion": {
+        "usage": "Củ chứa tinh dầu giàu allicin, allyl propyl disulfide và flavonoid quercetin; vị cay ngọt tính ấm quy kinh Phế Tỳ. Tác dụng kháng khuẩn đường hô hấp, làm loãng đờm, hạ lipid máu, chống kết tập tiểu cầu và phòng ngừa xơ vữa động mạch.",
+        "identification": "Cây thân thảo sống 2 năm mang thân hành (củ) phình to hình cầu hoặc dẹt nhiều lớp vảy mọng nước màu trắng hoặc tím đỏ. Lá hình ống rỗng tròn màu xanh lục. Cụm hoa hình tán tròn ở đầu một cán hoa rỗng.",
+        "parts": "Thân hành (Củ hành tây - Bulbus Allii cepae).",
+        "habitat": "Cây rau gia vị và củ thực phẩm nông nghiệp trồng rộng khắp các vùng ôn đới và nhiệt đới.",
+        "preparation": "Bóc lớp vỏ khô bên ngoài, rửa sạch củ; dùng tươi xào nấu hoặc hấp cách thủy với đường phèn.",
+        "remedies": [
+            "Giảm nghẹt mũi, cảm lạnh, ho đờm: Củ hành tây thái mỏng hấp cách thủy với đường phèn uống nước cốt làm ấm cổ họng.",
+            "Hỗ trợ giảm mỡ máu, bảo vệ tim mạch: Dùng hành tây tươi trộn dầu giấm ăn trong bữa cơm hàng ngày.",
+            "Làm dịu vết côn trùng đốt: Cắt lát hành tây tươi chà nhẹ lên vết muỗi, kiến cắn giúp giảm sưng ngứa."
+        ],
+        "caution": "Ăn quá nhiều hành sống lúc đói có thể gây ợ nóng, đầy hơi và kích thích niêm mạc dạ dày.",
+        "safety": "Rất an toàn và bổ dưỡng trong chế độ ẩm thực hàng ngày."
+    },
+    "pepper": {
+        "usage": "Quả chứa 5–9% piperine và tinh dầu thơm; vị cay nóng tính đại nhiệt quy kinh Tỳ Vị Phế. Tác dụng ôn trung tán hàn (làm ấm tỳ vị, trục hàn khí), chỉ thống, tăng hấp thu dưỡng chất (như curcumin) và kích thích tiêu hóa dịch vị.",
+        "identification": "Cây dây leo thân gỗ leo bám nhờ rễ móc ở các mấu cành. Lá đơn mọc so le hình bầu dục hay tim nhọn đầu lá, mặt trên xanh đậm bóng. Cụm hoa hình bông dài buông thõng mang 20-30 quả mọng nhỏ hình cầu, khi chín chuyển sang màu đỏ rồi đen khi phơi khô.",
+        "parts": "Quả gần chín phơi khô (Hồ tiêu đen / tiêu sọ - Fructus Piperis nigri).",
+        "habitat": "Trồng trọt quy mô lớn làm nông sản xuất khẩu tại Tây Nguyên và Đông Nam Bộ (Phú Quốc, Bình Phước, Đắk Lắk).",
+        "preparation": "Hạt tiêu khô xay mịn dùng làm gia vị hoặc ngâm rượu xoa bóp.",
+        "remedies": [
+            "Chữa đau bụng tiêu chảy do lạnh bụng, nôn mửa thức ăn: Tiêu đen 2-4g tán bột mịn hòa với nước cháo ấm uống.",
+            "Tăng khả năng hấp thu Curcumin: Dùng 1 nhúm nhỏ hạt tiêu đen cùng tinh bột nghệ giúp tăng sinh khả dụng của nghệ lên gấp 20 lần.",
+            "Ấm khớp, giảm đau lạnh cơ xương: Tiêu ngâm rượu trắng dùng xoa bóp ngoài da."
+        ],
+        "caution": "Vị cay đại nhiệt, cấm dùng cho người có chứng âm hư nội nhiệt, viêm loét dạ dày tá tràng thể nóng hoặc trĩ chảy máu.",
+        "safety": "Dùng lượng vừa phải làm gia vị hàng ngày; tránh hít trực tiếp bột tiêu gây kích ứng niêm mạc mũi."
+    },
+    "rose": {
+        "usage": "Cánh hoa chứa tinh dầu thơm quý (geraniol, citronellol), flavonoid và vitamin C; vị ngọt hơi đắng tính ấm quy kinh Can Tỳ. Tác dụng hành khí giải uất (giảm lo âu u uất), hoạt huyết chỉ thống, thanh nhiệt dưỡng nhan và làm dịu niêm mạc họng.",
+        "identification": "Cây bụi đứng hoặc leo, thân cành có nhiều gai nhọn cong. Lá kép lông chim mọc so le có 3-5 lá chét mép khía răng cưa. Hoa đơn hoặc chùm nở ở đầu cành với nhiều cánh hoa xếp đan xen, mùi thơm thanh nhã quyến rũ.",
+        "parts": "Nụ hoa mới chớm nở phơi khô (Flos Rosae chinensis).",
+        "habitat": "Cây hoa cảnh truyền thống trồng khắp các vùng khí hậu Việt Nam.",
+        "preparation": "Hái nụ hoa sáng sớm sấy khô hãm trà hoặc hấp cách thủy cánh hoa tươi với đường phèn.",
+        "remedies": [
+            "Trà hoa hồng dưỡng nhan, giảm căng thẳng stress: 5-7 nụ hoa hồng sấy khô hãm với nước sôi 85°C uống nhâm nhi thư giãn mỗi tối.",
+            "Giảm ho, viêm họng ở trẻ em: Cánh hoa hồng tươi hấp cách thủy với đường phèn hoặc mật ong cho trẻ uống từng thìa nhỏ.",
+            "Hỗ trợ giảm đau bụng kinh: Nụ hoa hồng 10g hãm nước sôi cùng 3 lát gừng uống ấm trước kỳ kinh."
+        ],
+        "caution": "Không dùng các loại hoa hồng cắt cành mua từ tiệm hoa tươi thương phẩm để làm trà vì nguy cơ tồn dư hóa chất cắm hoa và thuốc bảo vệ thực vật.",
+        "safety": "Chỉ dùng nụ hoa hồng trồng theo chuẩn hữu cơ sạch để làm dược liệu."
+    },
+    "snakeplant": {
+        "usage": "Lá chứa saponin steroid có tác dụng kháng khuẩn, chống nấm và tiêu viêm nhẹ; thường được dùng trong kinh nghiệm dân gian để làm sạch mụn nhọt, viêm tai giữa nhẹ hoặc thanh lọc độc tố không khí trong nhà.",
+        "identification": "Cây thân thảo mọng nước sống lâu năm không có thân trên mặt đất. Lá mọc thẳng đứng từ gốc hình dải giáo dày cứng mọng nước dài 30-80cm, phiến lá có các vằn ngang màu xanh đậm nhạt xen kẽ, viền lá thường có dải vàng kim bóng đẹp.",
+        "parts": "Lá tươi dùng ngoài da.",
+        "habitat": "Cây cảnh phong thủy thanh lọc không khí trong nhà cực kỳ phổ biến tại các hộ gia đình và văn phòng.",
+        "preparation": "Rửa sạch lá tươi, hơ lửa ấm ép lấy dịch hoặc giã nát đắp ngoài.",
+        "remedies": [
+            "Cây cảnh thanh lọc không khí: Đặt cây lưỡi hổ trong phòng ngủ và bàn làm việc giúp hấp thu các hợp chất hữu cơ bay hơi (VOCs) như formaldehyde, benzen.",
+            "Kinh nghiệm dân gian chữa viêm tai nhẹ: Lá lưỡi hổ non hơ nóng ép lấy vài giọt nước cốt nhỏ vào tai giảm đau nhức sưng viêm."
+        ],
+        "caution": "Lá cây chứa saponin có thể gây kích ứng sưng niêm mạc miệng, nôn nao nếu nhai nuốt sống; tuyệt đối để xa tầm với của chó mèo và thú cưng.",
+        "safety": "Chủ yếu dùng làm cây cảnh thanh lọc không gian sống; không tự ý giã uống sống."
+    }
+};
+
+if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
+    window.HerbaPediaHerbs.forEach(herb => {
+        if (OFFICIAL_26_HERBS_DATA[herb.id]) {
+            const d = OFFICIAL_26_HERBS_DATA[herb.id];
+            herb.usage = d.usage;
+            herb.identification = d.identification;
+            herb.parts = d.parts;
+            herb.habitat = d.habitat;
+            herb.preparation = d.preparation;
+            herb.remedies = d.remedies;
+            herb.caution = d.caution;
+            herb.safety = d.safety;
+            herb.usageDetails = [
+                `Đặc điểm dược tính: ${d.usage}`,
+                `Cách chế biến & dùng: ${d.preparation}`,
+                `Lưu ý & an toàn: ${d.caution}`
+            ];
+        }
+    });
+}
