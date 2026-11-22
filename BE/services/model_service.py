@@ -322,11 +322,13 @@ def warmup_models() -> None:
 
 def preprocess_leafai_image(image: Image.Image) -> torch.Tensor:
     """EXIF -> RGB -> CLAHE -> giữ tỷ lệ/padding 224x224 -> Normalize."""
+    # Chuẩn hóa hướng ảnh trước để ảnh chụp từ điện thoại không bị xoay sai.
     image = ImageOps.exif_transpose(image)
     if image.mode != "RGB":
         image = image.convert("RGB")
     rgb_np = np.asarray(image, dtype=np.uint8)
     bgr_np = cv2.cvtColor(rgb_np, cv2.COLOR_RGB2BGR)
+    # Dùng đúng pipeline lúc huấn luyện: CLAHE, letterbox và ImageNet normalization.
     tensor = apply_clahe_preprocessing(
         bgr_np,
         image_size=PREPROC_CFG["image_size"],
@@ -348,6 +350,7 @@ def validate_image_quality(
     """Reject images too small, too dark/bright, or too blurry for reliable inference."""
     checked_image = ImageOps.exif_transpose(image).convert("RGB")
     width, height = checked_image.size
+    # Loại ảnh không đủ thông tin trước inference để tránh dự đoán thiếu tin cậy.
     if min(width, height) < min_dimension:
         raise ValueError(
             f"Ảnh quá nhỏ ({width}x{height}). Vui lòng dùng ảnh có cạnh tối thiểu "
@@ -357,12 +360,14 @@ def validate_image_quality(
     rgb_np = np.asarray(checked_image, dtype=np.uint8)
     gray = cv2.cvtColor(rgb_np, cv2.COLOR_RGB2GRAY)
     brightness = float(gray.mean())
+    # Brightness trung bình nằm ngoài khoảng này thường làm mất chi tiết lá.
     if brightness < min_brightness:
         raise ValueError("Ảnh quá tối. Vui lòng chụp lại ở nơi đủ sáng.")
     if brightness > max_brightness:
         raise ValueError("Ảnh quá sáng. Vui lòng giảm ánh sáng hoặc tránh ngược sáng.")
 
     sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+    # Variance Laplacian thấp là dấu hiệu ảnh bị rung hoặc mất nét.
     if sharpness < min_sharpness:
         raise ValueError("Ảnh quá mờ. Vui lòng giữ máy ổn định và chụp lại.")
 

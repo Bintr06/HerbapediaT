@@ -220,6 +220,7 @@ def history_response(item: PredictionHistory, db: Session) -> dict:
 
 
 def hash_password(password: str) -> str:
+    # Bcrypt tự sinh salt cho mỗi mật khẩu; chỉ lưu hash, không lưu mật khẩu gốc.
     return bcrypt.hashpw(
         password.encode("utf-8"),
         bcrypt.gensalt(),
@@ -228,6 +229,7 @@ def hash_password(password: str) -> str:
 
 def verify_password(password: str, password_hash: str) -> bool:
     try:
+        # Bcrypt tự đọc salt/cost từ hash để so sánh an toàn.
         return bcrypt.checkpw(
             password.encode("utf-8"),
             password_hash.encode("utf-8"),
@@ -240,6 +242,7 @@ def create_access_token(username: str) -> tuple[str, int]:
     expires_in = JWT_EXPIRE_MINUTES * 60
     expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     payload = {"sub": username, "exp": expires_at}
+    # JWT chứa subject và thời hạn; chữ ký HS256 giúp phát hiện token bị sửa.
     token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
     return token, expires_in
 
@@ -601,6 +604,7 @@ def forgot_password_send_otp(
     ).update({"is_used": True}, synchronize_session=False)
 
     # Generate 6-digit OTP code
+    # secrets.randbelow dùng bộ sinh ngẫu nhiên an toàn cho mã OTP 6 chữ số.
     otp_code = f"{secrets.randbelow(900000) + 100000:06d}"
     now_naive = datetime.now(timezone.utc).replace(tzinfo=None)
     expires_at = now_naive + timedelta(minutes=15)

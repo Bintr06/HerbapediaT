@@ -96,6 +96,7 @@ def list_herbs(
     query = db.query(Herb)
     if q and q.strip():
         keyword = f"%{q.strip()}%"
+        # Tìm kiếm không phân biệt hoa thường trên các trường người dùng thường tra cứu.
         query = query.filter(
             (Herb.slug.ilike(keyword))
             | (Herb.dataset_name.ilike(keyword))
@@ -119,6 +120,7 @@ def get_top_recognized_herbs(
     db: Session = Depends(get_db),
 ):
     counts_query = (
+        # Gom nhóm lịch sử nhận diện để xếp hạng theo số lượt quét.
         db.query(
             PredictionHistory.predicted_class,
             func.count(PredictionHistory.id).label("total_scans")

@@ -64,27 +64,33 @@ PBL4/
 
 ---
 
-## 🔬 Các Thuật Toán Cốt Lõi Được Áp Dụng Trong Backend
+## 🔬 Các Thuật Toán Quan Trọng và Vị Trí Trong Code
 
-1. **Thuật toán Tiền xử lý ảnh (Image Preprocessing)**:
-   - **CLAHE (Contrast Limited Adaptive Histogram Equalization)**: Tách kênh độ sáng $L$ trong không gian màu $LAB$ để cân bằng biểu đồ tương phản thích ứng trước khi thay đổi kích thước, giúp làm rõ cấu trúc gân lá ngay cả khi chụp thiếu sáng hoặc ngược sáng.
-   - **Bilinear/Bicubic Interpolation**: Chuẩn hóa kích thước đầu vào về $224 \times 224$ pixels.
-   - **Z-Score Normalization**: Chuẩn hóa tensor ảnh theo trung bình và độ lệch chuẩn của bộ dữ liệu chuẩn ImageNet.
+| Nhóm | Thuật toán | Vị trí triển khai | Vai trò |
+|---|---|---|---|
+| Tiền xử lý | CLAHE trên kênh L của LAB | [`apply_clahe_preprocessing`](BE/services/leafai_models.py#L262) | Tăng tương phản cục bộ nhưng giữ màu lá. |
+| Tiền xử lý | EXIF, letterbox bicubic, ImageNet normalization | [`preprocess_leafai_image`](BE/services/model_service.py#L323) | Đưa ảnh về tensor `(1, 3, 224, 224)` mà không kéo méo tỷ lệ. |
+| Tiền kiểm tra | Brightness, kích thước, Laplacian variance | [`validate_image_quality`](BE/services/model_service.py#L341) | Từ chối ảnh quá nhỏ, tối/sáng hoặc mờ trước inference. |
+| Phân loại | EfficientNet-B0 + MBConv/SE | [`LeafAI_Model`](BE/services/leafai_models.py#L49) | Trích xuất embedding 1280 chiều và logits cho 16 lớp. |
+| Phân loại | CustomLeafCNN 5 khối | [`CustomLeafCNN`](BE/services/leafai_models.py#L143) | Mô hình nhẹ hơn, dùng BatchNorm, ReLU, pooling và Dropout. |
+| Xác suất | Softmax và MSP | [`predict_open_set`](BE/services/leafai_models.py#L79) | Chuyển logits thành xác suất và lấy độ tin cậy lớn nhất. |
+| OSR | Cosine similarity với prototypes | [`predict_open_set`](BE/services/leafai_models.py#L96) | Kiểm tra embedding có gần tâm lớp đã biết hay không. |
+| OSR | Euclidean distance + Z-score | [`predict_open_set`](BE/services/leafai_models.py#L101) | Phát hiện mẫu lệch khỏi phân bố khoảng cách của lớp. |
+| OSR | Majority vote 2/3 tiêu chí | [`predict_open_set`](BE/services/leafai_models.py#L108) | Chỉ chấp nhận ảnh khi ít nhất hai tín hiệu đồng thuận. |
+| Bảo mật | Bcrypt password hashing | [`hash_password`](BE/routers/auth.py#L222) | Hash một chiều, salt ngẫu nhiên, không lưu mật khẩu gốc. |
+| Bảo mật | JWT HS256 | [`create_access_token`](BE/routers/auth.py#L241) | Ký token có `sub` và thời hạn để xác thực API. |
+| Bảo mật | OTP dùng `secrets` | [`forgot_password_send_otp`](BE/routers/auth.py#L579) | Sinh mã 6 số có thời hạn 15 phút và vô hiệu OTP cũ. |
+| Tra cứu | ILIKE đa trường + lọc tag | [`list_herbs`](BE/routers/herbs.py#L91) | Tìm theo tên, tên khoa học, slug, công dụng và nhóm tác dụng. |
+| Thống kê | GROUP BY lượt nhận diện | [`get_top_recognized_herbs`](BE/routers/herbs.py#L117) | Xếp hạng dược liệu phổ biến theo số lượt quét. |
+| Cộng đồng | Phân trang offset/limit | [`list_posts`](BE/routers/community.py#L218) | Tải từng trang bài viết thay vì lấy toàn bộ feed một lần. |
 
-2. **Thuật toán Học sâu (Deep Learning)**:
-   - **EfficientNet-B0**: Sử dụng mạng tích chập với cơ chế Compound Scaling cân bằng độ sâu, độ rộng và độ phân giải, kết hợp khối **MBConv (Inverted Residuals)** và **Squeeze-and-Excitation (SE)** trích xuất vector đặc trưng $1280$ chiều.
-   - **CustomLeafCNN**: Mạng CNN sâu 5 khối tích chập chuẩn hóa tầng (Batch Normalization) và hàm kích hoạt phi tuyến tính ReLU, kết hợp Global Average Pooling để tránh Overfitting.
-   - **Softmax Activation**: Tính toán phân phối xác suất dự đoán $16$ loài cây thuốc.
+### Ghi chú đọc code
 
-3. **Thuật toán Nhận diện tập mở OSR (Open-Set Recognition)**:
-   - **MSP (Maximum Softmax Probability)**: Đánh giá độ tự tin phân loại cực đại.
-   - **Cosine Similarity**: Đo góc định hướng giữa vector đặc trưng ảnh đầu vào với các vector tâm lớp nguyên mẫu (Prototypes).
-   - **Euclidean Distance & Z-Score Anomaly Detection**: Tính toán khoảng cách không gian $L_2$ và độ lệch chuẩn thống kê để phát hiện các mẫu dị biệt nằm ngoài phân bố dữ liệu học.
-   - **Multi-criteria Voting & Override**: Biểu quyết đa tiêu chí kết hợp ngưỡng áp đảo ($MSP \ge 98\%$) đảm bảo nhận diện chính xác ảnh hợp lệ và từ chối các đối tượng bất thường.
-
-4. **Thuật toán Bảo mật & Hệ thống**:
-   - **Bcrypt**: Băm mật khẩu một chiều có muối ngẫu nhiên (Salted Password Hashing).
-   - **HMAC-SHA256**: Ký số và bảo mật JSON Web Token (JWT) cho các phiên giao dịch API.
+- Pipeline AI chạy theo thứ tự: kiểm tra chất lượng → EXIF/RGB → CLAHE → giữ tỷ lệ và padding → normalize → model.
+- EfficientNet-B0 trả về `logits` và embedding; Softmax chỉ dùng để đo xác suất, còn OSR quyết định ảnh thuộc tập đã biết.
+- OSR hiện **không** tự chấp nhận chỉ vì MSP cao. Ảnh cần đạt ít nhất 2/3 tiêu chí: MSP, cosine similarity và Z-score khoảng cách.
+- `CustomLeafCNN` hiện dùng `Dropout(p=0.5)` trong [`CustomLeafCNN`](BE/services/leafai_models.py#L182), không phải `0.4`.
+- Ảnh cộng đồng và ảnh đại diện được upload lên Cloudinary; FE chỉ hiển thị ảnh local hoặc URL Cloudinary hợp lệ, các nguồn ảnh khác dùng logo dự phòng.
 
 ---
 
