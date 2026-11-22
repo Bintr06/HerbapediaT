@@ -55,6 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return AI_RECOGNIZED_CLASSES.has(slug) || AI_RECOGNIZED_CLASSES.has(dataset);
     }
 
+    function getLocalImageUrl(herb, fallbackImg) {
+        if (window.HerbaPediaGetLocalImage) {
+            return window.HerbaPediaGetLocalImage(herb, fallbackImg);
+        }
+        const imageUrl = herb.image || herb.image_url || '';
+        return typeof imageUrl === 'string' && !/^https?:\/\//i.test(imageUrl)
+            ? imageUrl
+            : fallbackImg;
+    }
+
     function renderHerbs(herbs) {
         if (!herbs.length) {
             resultsGrid.innerHTML = `
@@ -91,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const scientificName = herb.scientific || herb.scientific_name || '';
                 const usage = herb.usage || '';
                 const parts = herb.parts || herb.parts_used || '';
-                const imageUrl = herb.image || herb.image_url || fallbackImg;
+                const imageUrl = getLocalImageUrl(herb, fallbackImg);
                 const tagList = Array.isArray(herb.tags) ? herb.tags : [];
                 const hasAi = isAiHerb(herb);
 
@@ -318,12 +328,16 @@ document.addEventListener('DOMContentLoaded', () => {
     applyFilters(false);
 
     // Đồng thời gọi API backend để lấy dữ liệu mới nhất nếu có
-    const herbsApiUrl = (window.HerbaConfig ? window.HerbaConfig.apiUrl('/herbs') : 'https://herbapedia-production.up.railway.app/herbs');
+    const herbsApiUrl = (window.HerbaConfig ? window.HerbaConfig.apiUrl('/herbs') : 'http://127.0.0.1:8000/herbs');
     fetch(herbsApiUrl)
         .then((response) => (response.ok ? response.json() : Promise.reject(new Error('Backend offline'))))
         .then((data) => {
             if (Array.isArray(data) && data.length > 0) {
-                herbRecords = data;
+                const imageOverrides = window.HerbaPediaImageOverrides || {};
+                herbRecords = data.map((herb) => ({
+                    ...herb,
+                    image: imageOverrides[herb.slug || herb.id] || herb.image
+                }));
                 if (statTotalHerbs) {
                     statTotalHerbs.textContent = `${data.length} Dược liệu chuẩn hóa`;
                 }

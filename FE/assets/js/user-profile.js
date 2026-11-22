@@ -1,4 +1,4 @@
-const BLOG_API_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+const BLOG_API_URL = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
 
 let currentUser = null;
 let targetUserId = null;
@@ -72,7 +72,7 @@ function getAvatarUrl(user) {
     if (!user) return 'assets/images/logo.png';
     if (user.avatar_url) return user.avatar_url;
     const name = encodeURIComponent(user.display_name || user.username || 'User');
-    return `https://ui-avatars.com/api/?name=${name}&background=0A2F1D&color=fff`;
+    return 'assets/images/logo.png';
 }
 
 // Lightbox gallery state

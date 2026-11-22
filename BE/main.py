@@ -36,6 +36,7 @@ from services.model_service import (
     load_model_instance,
     predict_image,
     set_active_model_id,
+    validate_image_quality,
     warmup_models,
 )
 
@@ -66,7 +67,7 @@ def save_prediction_history_background(
     try:
         history_record = PredictionHistory(
             user_id=user_id,
-            image_url=image_url or "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1",
+            image_url=image_url or "assets/images/logo.png",
             image_public_id=image_public_id,
             predicted_class=predicted_class,
             confidence=confidence_value,
@@ -89,9 +90,7 @@ async def lifespan(_app: FastAPI):
     except Exception as exc:
         logger.error(f"Khởi tạo Database có cảnh báo: {exc}")
 
-    # Làm nóng mô hình AI trong luồng ngầm (Background Thread)
-    # 1. Giúp Uvicorn mở port 10000 tức thì trong 0.2s, vượt qua kiểm tra Port Scan của Render 100%
-    # 2. Nạp sẵn mô hình vào RAM ngay sau khi khởi động, giúp người dùng quét ảnh tức thì trong ~0.5s
+    # Làm nóng mô hình AI trong luồng ngầm để lần nhận diện đầu tiên không bị chậm.
     def _bg_warmup():
         try:
             logger.info("Background Warmup: Bắt đầu nạp trước mô hình AI vào RAM...")
@@ -193,6 +192,12 @@ async def predict_leaf(
         image.load()
     except (UnidentifiedImageError, OSError) as exc:
         raise HTTPException(status_code=400, detail="File ảnh không hợp lệ") from exc
+
+    try:
+        validate_image_quality(image)
+    except ValueError as exc:
+        image.close()
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     # Xác định model được yêu cầu
     chosen_model_id = (model_name or "").strip()

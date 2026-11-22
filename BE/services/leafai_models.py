@@ -36,6 +36,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.transforms as T
+from PIL import Image, ImageOps
 from torchvision import models
 
 
@@ -120,13 +121,9 @@ class LeafAI_Model(nn.Module):
         ok_dist = z_score <= dist_z_thresh  # Tiêu chí 3: Khoảng cách nằm trong khoảng tin cậy thống kê
 
         votes = ok_msp.int() + ok_cos.int() + ok_dist.int()
-        agreement = (pred_msp == pred_cos) & (pred_msp == pred_dist)
-
-        # Quyết định OSR:
-        # 1. Override: Nếu xác suất Softmax áp đảo (MSP >= 98%), tự động xác nhận đã biết (KNOWN)
-        # 2. Majority Vote: Đạt ít nhất 2 trong 3 tiêu chuẩn (votes >= 2)
-        # 3. Đồng thuận 3 thước đo (agreement) và có ít nhất 1 tiêu chí đạt
-        is_known = (msp >= 0.98) | (votes >= 2) | (agreement & (votes >= 1))
+        # Quyết định OSR: cần ít nhất hai tiêu chí đồng ý, tránh để Softmax
+        # quá tự tin tự động chấp nhận ảnh nằm ngoài tập dữ liệu.
+        is_known = votes >= 2
 
         pred = pred_msp.clone()
         pred[~is_known] = -1
@@ -270,7 +267,7 @@ def apply_clahe_preprocessing(
     mean: Sequence[float] = (0.485, 0.456, 0.406),
     std: Sequence[float] = (0.229, 0.224, 0.225),
 ) -> torch.Tensor:
-    """BGR -> RGB -> LAB CLAHE (kênh L, trước Resize) -> Resize 224x224 -> ImageNet Normalize."""
+    """CLAHE -> giữ tỷ lệ và padding -> Resize 224x224 -> ImageNet Normalize."""
     if image_bgr is None:
         raise ValueError("Ảnh đầu vào không hợp lệ (None).")
 
@@ -283,12 +280,29 @@ def apply_clahe_preprocessing(
     cl = clahe.apply(l_ch)
     image_clahe = cv2.cvtColor(cv2.merge((cl, a_ch, b_ch)), cv2.COLOR_LAB2RGB)
 
+    target_size = (int(image_size[0]), int(image_size[1]))
+    resized = ImageOps.contain(
+        Image.fromarray(image_clahe),
+        target_size,
+        method=Image.Resampling.BICUBIC,
+    )
+    background_color = tuple(
+        max(0, min(255, round(float(channel) * 255)))
+        for channel in mean
+    )
+    letterboxed = Image.new("RGB", target_size, background_color)
+    letterboxed.paste(
+        resized,
+        (
+            (target_size[0] - resized.width) // 2,
+            (target_size[1] - resized.height) // 2,
+        ),
+    )
+
     transform = T.Compose(
         [
-            T.ToPILImage(),
-            T.Resize(tuple(image_size)),
             T.ToTensor(),
             T.Normalize(mean=list(mean), std=list(std)),
         ]
     )
-    return transform(image_clahe).unsqueeze(0)
+    return transform(letterboxed).unsqueeze(0)

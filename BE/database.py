@@ -9,23 +9,13 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 logger = logging.getLogger(__name__)
 load_dotenv()
 
-is_cloud = bool(
-    os.getenv("RENDER")
-    or any(k.startswith("RAILWAY_") for k in os.environ)
-    or os.getenv("PORT")
-)
-
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     os.getenv("MYSQL_URL")
-    or (
-        "sqlite:///./herbapedia.db"
-        if is_cloud
-        else "mysql+pymysql://root:123456@localhost:3306/herbapedia_db"
-    ),
+    or "mysql+pymysql://root:123456@localhost:3306/herbapedia_db",
 )
 
-# Chuẩn hóa tiền tố SQLAlchemy nếu dùng Render / Railway / Supabase
+# Chuẩn hóa tiền tố SQLAlchemy khi người dùng cấu hình URL tương thích.
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 elif DATABASE_URL.startswith("mysql://"):
@@ -222,12 +212,15 @@ def _seed_herbs():
             slug = record["id"]
             if slug in existing_slugs:
                 continue
+            image_url = record.get("image")
+            if isinstance(image_url, str) and image_url.lower().startswith(("http://", "https://")):
+                image_url = "assets/images/logo.png"
             herb = Herb(
                 slug=slug,
                 dataset_name=record["datasetName"],
                 name_vi=record["name"],
                 scientific_name=record["scientific"],
-                image_url=record.get("image"),
+                image_url=image_url or "assets/images/logo.png",
                 tags_json=json.dumps(record.get("tags", []), ensure_ascii=False),
                 usage=record["usage"],
                 parts_used=record["parts"],

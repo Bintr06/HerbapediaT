@@ -321,7 +321,7 @@ def warmup_models() -> None:
 
 
 def preprocess_leafai_image(image: Image.Image) -> torch.Tensor:
-    """EXIF Transpose -> RGB -> BGR -> CLAHE (LAB kênh L, trước Resize) -> Resize 224x224 -> Normalize."""
+    """EXIF -> RGB -> CLAHE -> giữ tỷ lệ/padding 224x224 -> Normalize."""
     image = ImageOps.exif_transpose(image)
     if image.mode != "RGB":
         image = image.convert("RGB")
@@ -336,6 +336,35 @@ def preprocess_leafai_image(image: Image.Image) -> torch.Tensor:
         std=PREPROC_CFG["std"],
     )
     return tensor.to(_device)
+
+
+def validate_image_quality(
+    image: Image.Image,
+    min_dimension: int = 128,
+    min_brightness: float = 20.0,
+    max_brightness: float = 235.0,
+    min_sharpness: float = 15.0,
+) -> None:
+    """Reject images too small, too dark/bright, or too blurry for reliable inference."""
+    checked_image = ImageOps.exif_transpose(image).convert("RGB")
+    width, height = checked_image.size
+    if min(width, height) < min_dimension:
+        raise ValueError(
+            f"Ảnh quá nhỏ ({width}x{height}). Vui lòng dùng ảnh có cạnh tối thiểu "
+            f"{min_dimension}px."
+        )
+
+    rgb_np = np.asarray(checked_image, dtype=np.uint8)
+    gray = cv2.cvtColor(rgb_np, cv2.COLOR_RGB2GRAY)
+    brightness = float(gray.mean())
+    if brightness < min_brightness:
+        raise ValueError("Ảnh quá tối. Vui lòng chụp lại ở nơi đủ sáng.")
+    if brightness > max_brightness:
+        raise ValueError("Ảnh quá sáng. Vui lòng giảm ánh sáng hoặc tránh ngược sáng.")
+
+    sharpness = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+    if sharpness < min_sharpness:
+        raise ValueError("Ảnh quá mờ. Vui lòng giữ máy ổn định và chụp lại.")
 
 
 def _build_candidates(probs: np.ndarray, class_names: list[str], top_k: int = 5) -> list[dict[str, Any]]:

@@ -113,6 +113,21 @@ function notificationEscape(value) {
     }[character]));
 }
 
+function localImageOrFallback(imageUrl, fallback = 'assets/images/logo.png') {
+    const normalizedUrl = String(imageUrl || '').trim();
+    if (!normalizedUrl) return fallback;
+    if (!/^(?:https?:)?\/\//i.test(normalizedUrl)) return normalizedUrl;
+
+    try {
+        const hostname = new URL(normalizedUrl).hostname.toLowerCase();
+        return hostname === 'cloudinary.com' || hostname.endsWith('.cloudinary.com')
+            ? normalizedUrl
+            : fallback;
+    } catch {
+        return fallback;
+    }
+}
+
 function notificationTime(value) {
     const date = new Date(value);
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -147,7 +162,7 @@ function addNotificationToNavbar() {
 
 async function loadNavbarNotifications() {
     if (!hasAuthenticatedSession() || !document.querySelector('[data-notification-bell]')) return;
-    const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+    const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
     const response = await fetch(`${apiBase}/community/notifications`, {
         headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
     });
@@ -160,7 +175,7 @@ async function loadNavbarNotifications() {
     list.innerHTML = result.items.length
         ? result.items.map((item) => `
             <button type="button" data-notification-id="${item.id}" data-post-id="${item.post_id || ''}" class="flex w-full gap-2 p-3 text-left hover:bg-gray-50 ${item.is_read ? '' : 'bg-green-50'}">
-                <img src="${notificationEscape(item.actor?.avatar_url || 'assets/images/logo.png')}" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
+                <img src="${notificationEscape(localImageOrFallback(item.actor?.avatar_url))}" class="w-8 h-8 rounded-full object-cover shrink-0" alt="">
                 <span class="text-xs text-gray-700">${notificationEscape(item.actor?.display_name || 'HerbaPedia')} ${notificationEscape(item.message)}
                     <small class="block text-gray-400 mt-1">${notificationTime(item.created_at)}</small>
                 </span>
@@ -176,7 +191,7 @@ function initializeNavbarNotifications() {
         document.addEventListener('click', async (event) => {
             const notification = event.target.closest('[data-notification-id]');
             if (!notification) return;
-            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
             await fetch(`${apiBase}/community/notifications/read`, {
                 method: 'POST',
                 headers: { Authorization: 'Bearer ' + localStorage.getItem('accessToken') }
@@ -265,11 +280,11 @@ async function updateNavbarProfile() {
     const token = localStorage.getItem('accessToken');
     const fallbackName = localStorage.getItem('userName') || '';
     let displayName = fallbackName;
-    let avatarUrl = avatar.src;
+    let avatarUrl = 'assets/images/logo.png';
 
     if (token) {
         try {
-            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+            const apiBase = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
             const response = await fetch(`${apiBase}/auth/me`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
@@ -287,7 +302,7 @@ async function updateNavbarProfile() {
                     displayName = '';
                     localStorage.removeItem('userName');
                 }
-                if (profile.avatar_url) avatarUrl = profile.avatar_url;
+                avatarUrl = localImageOrFallback(profile.avatar_url);
             }
         } catch (error) {
             console.warn('Không thể tải hồ sơ người dùng cho navbar.', error);

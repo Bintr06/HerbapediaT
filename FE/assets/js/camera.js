@@ -833,7 +833,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     .replace(/'/g, '&#039;');
             };
 
-            const defaultFallbackImg = 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?w=400&h=400&fit=crop';
+            const defaultFallbackImg = 'assets/images/logo.png';
+            const allowedImageUrl = (imageUrl) => {
+                const normalizedUrl = String(imageUrl || '').trim();
+                if (!normalizedUrl) return defaultFallbackImg;
+                if (!/^(?:https?:)?\/\//i.test(normalizedUrl)) return normalizedUrl;
+
+                try {
+                    const hostname = new URL(normalizedUrl).hostname.toLowerCase();
+                    return hostname === 'cloudinary.com' || hostname.endsWith('.cloudinary.com')
+                        ? normalizedUrl
+                        : defaultFallbackImg;
+                } catch {
+                    return defaultFallbackImg;
+                }
+            };
 
             const cardsHtml = herbs.map((herb, idx) => {
                 const rank = herb.rank || (idx + 1);
@@ -846,7 +860,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     badgeClass = 'bg-gradient-to-r from-green-500 to-emerald-500';
                 }
 
-                const imgUrl = (herb.image && String(herb.image).trim()) ? herb.image.trim() : defaultFallbackImg;
+                const imgUrl = window.HerbaPediaGetLocalImage
+                    ? window.HerbaPediaGetLocalImage(herb, defaultFallbackImg)
+                    : allowedImageUrl(herb.image || herb.image_url);
                 const countFormatted = Number(herb.recognition_count || 0).toLocaleString('vi-VN');
                 const targetUrl = `detail.html?id=${encodeURIComponent(herb.slug || herb.id)}`;
 

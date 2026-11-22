@@ -1,8 +1,12 @@
-const COMMUNITY_API = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'https://herbapedia-production.up.railway.app';
+const COMMUNITY_API = (window.HerbaConfig && window.HerbaConfig.API_BASE_URL) || window.API_BASE_URL || 'http://127.0.0.1:8000';
 let communityCurrentUserAvatar = 'assets/images/logo.png';
 let allCommunityPosts = [];
 let currentFilter = 'all';
 let currentSearch = '';
+const COMMUNITY_PAGE_SIZE = 20;
+let communityOffset = 0;
+let communityHasMore = true;
+let communityPostsLoading = false;
 
 function communityEscape(value) {
     return String(value ?? '').replace(/[&<>"']/g, (character) => ({
@@ -24,6 +28,20 @@ function communityFirstName(fullName) {
     if (!normalizedName) return '';
     const nameParts = normalizedName.split(/\s+/);
     return nameParts[nameParts.length - 1];
+}
+
+function communityImageUrl(imageUrl) {
+    const normalizedUrl = String(imageUrl || '').trim();
+    if (!normalizedUrl) return 'assets/images/logo.png';
+    if (!/^(?:https?:)?\/\//i.test(normalizedUrl)) return normalizedUrl;
+    try {
+        const hostname = new URL(normalizedUrl).hostname.toLowerCase();
+        return hostname === 'cloudinary.com' || hostname.endsWith('.cloudinary.com')
+            ? normalizedUrl
+            : 'assets/images/logo.png';
+    } catch {
+        return 'assets/images/logo.png';
+    }
 }
 
 async function loadCommunityUserProfile() {
@@ -71,10 +89,10 @@ async function loadCommunityUserProfile() {
                     profileName.toLowerCase() !== username.toLowerCase()
                     ? profileName
                     : '';
-                avatarUrl = profile.avatar_url || avatarUrl;
+                avatarUrl = communityImageUrl(profile.avatar_url || avatarUrl);
                 localStorage.setItem('userName', displayName);
                 if (profile.avatar_url) localStorage.setItem('userAvatar', profile.avatar_url);
-                communityCurrentUserAvatar = profile.avatar_url || 'assets/images/logo.png';
+                communityCurrentUserAvatar = communityImageUrl(profile.avatar_url);
             }
         } catch (error) {
             console.warn('Không thể tải thông tin hồ sơ trên navbar.', error);
@@ -82,7 +100,7 @@ async function loadCommunityUserProfile() {
     }
 
     if (communityCurrentUserAvatar === 'assets/images/logo.png') {
-        communityCurrentUserAvatar = localStorage.getItem('userAvatar') || avatarUrl;
+        communityCurrentUserAvatar = communityImageUrl(localStorage.getItem('userAvatar') || avatarUrl);
     }
     if (creatorAvatar) {
         creatorAvatar.src = communityCurrentUserAvatar;
@@ -129,21 +147,18 @@ function sanitizePublicName(name) {
 }
 
 function communityAvatar(post) {
-    const authorName = sanitizePublicName(post.author?.display_name);
-    return post.author?.avatar_url ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=0A2F1D&color=fff`;
+    return communityImageUrl(post.author?.avatar_url);
 }
 
 function communityAuthorAvatar(author) {
-    const authorName = sanitizePublicName(author?.display_name);
-    return author?.avatar_url ||
-        `https://ui-avatars.com/api/?name=${encodeURIComponent(authorName)}&background=0A2F1D&color=fff`;
+    return communityImageUrl(author?.avatar_url);
 }
 
 function renderPostImages(post) {
-    const images = Array.isArray(post.images) && post.images.length > 0
+    const rawImages = Array.isArray(post.images) && post.images.length > 0
         ? post.images
         : (post.image_url ? [post.image_url] : []);
+    const images = rawImages.map(communityImageUrl);
 
     if (images.length === 0) return '';
 
@@ -222,6 +237,11 @@ function renderCommunityPost(post) {
                 <i data-feather="trash-2" class="w-4 h-4"></i>
            </button>`
         : '';
+    const editButton = post.can_edit
+        ? `<button data-edit-post type="button" class="p-1.5 text-gray-400 hover:text-[#0A2F1D] rounded-lg hover:bg-green-50 transition-colors" title="Chỉnh sửa bài viết">
+                <i data-feather="edit-3" class="w-4 h-4"></i>
+           </button>`
+        : '';
 
     const commentComposer = communityToken()
         ? `<div class="flex items-start gap-2.5 mt-3 pt-2 border-t border-gray-100">
@@ -256,6 +276,7 @@ function renderCommunityPost(post) {
                     </div>
                 </div>
                 <div class="flex items-center gap-1">
+                    ${editButton}
                     ${deleteButton}
                 </div>
             </div>
@@ -293,10 +314,12 @@ function renderCommunityPost(post) {
         </article>`;
 }
 
-async function loadCommunityPosts() {
+async function loadCommunityPosts({ append = false } = {}) {
     const feed = document.getElementById('communityFeed');
     const creator = document.getElementById('postCreator');
     if (!feed) return;
+    if (communityPostsLoading || (append && !communityHasMore)) return;
+    communityPostsLoading = true;
 
     if (creator) {
         if (!communityToken()) {
@@ -307,13 +330,31 @@ async function loadCommunityPosts() {
     }
 
     try {
-        const response = await fetch(`${COMMUNITY_API}/community/posts`, { headers: communityHeaders() });
+        const nextOffset = append ? communityOffset : 0;
+        const response = await fetch(
+            `${COMMUNITY_API}/community/posts?limit=${COMMUNITY_PAGE_SIZE}&offset=${nextOffset}`,
+            { headers: communityHeaders() }
+        );
         if (!response.ok) throw new Error('Không thể tải bài viết cộng đồng.');
-        allCommunityPosts = await response.json();
+        const page = await response.json();
+        if (!Array.isArray(page)) throw new Error('Dữ liệu bài viết cộng đồng không hợp lệ.');
+        allCommunityPosts = append ? [...allCommunityPosts, ...page] : page;
+        communityOffset = nextOffset + page.length;
+        communityHasMore = page.length === COMMUNITY_PAGE_SIZE;
         renderFilteredPosts();
     } catch (err) {
         console.error(err);
-        feed.innerHTML = '<p class="text-center text-gray-500 bg-white rounded-2xl p-6">Không thể tải bài viết cộng đồng.</p>';
+        if (!append) {
+            feed.innerHTML = '<p class="text-center text-gray-500 bg-white rounded-2xl p-6">Không thể tải bài viết cộng đồng.</p>';
+        }
+    } finally {
+        communityPostsLoading = false;
+        const loadMoreButton = document.getElementById('btnLoadMoreCommunityPosts');
+        if (loadMoreButton) {
+            loadMoreButton.classList.toggle('hidden', !communityHasMore || allCommunityPosts.length === 0);
+            loadMoreButton.disabled = false;
+            loadMoreButton.textContent = 'Xem thêm bài viết';
+        }
     }
 }
 
@@ -346,6 +387,10 @@ function renderFilteredPosts() {
         feed.innerHTML = posts.map(renderCommunityPost).join('');
     }
     if (window.feather) feather.replace();
+    document.getElementById('btnLoadMoreCommunityPosts')?.classList.toggle(
+        'hidden',
+        !communityHasMore || allCommunityPosts.length === 0
+    );
 
     // Tự động cuộn đến bài viết cụ thể nếu có query param ?post=ID
     const targetPostId = new URLSearchParams(window.location.search).get('post');
@@ -636,11 +681,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Search Input
     const searchInput = document.getElementById('communitySearchInput');
     if (searchInput) {
+        let searchTimer;
         searchInput.addEventListener('input', (e) => {
-            currentSearch = e.target.value.trim();
-            renderFilteredPosts();
+            window.clearTimeout(searchTimer);
+            searchTimer = window.setTimeout(() => {
+                currentSearch = e.target.value.trim();
+                renderFilteredPosts();
+            }, 180);
         });
     }
+
+    document.getElementById('btnLoadMoreCommunityPosts')?.addEventListener('click', async (event) => {
+        event.currentTarget.disabled = true;
+        event.currentTarget.textContent = 'Đang tải...';
+        await loadCommunityPosts({ append: true });
+    });
 
     // Hashtag Topic Buttons in Sidebar
     const topicBtns = document.querySelectorAll('.tag-topic');
@@ -746,6 +801,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         const post = event.target.closest('.community-post');
         if (!post) return;
         try {
+            if (event.target.closest('[data-edit-post]')) {
+                const postId = post.dataset.postId;
+                const currentPost = allCommunityPosts.find((item) => String(item.id) === String(postId));
+                if (!currentPost) return;
+                const title = window.prompt('Tiêu đề bài viết:', currentPost.title);
+                if (title === null) return;
+                const content = window.prompt('Nội dung bài viết:', currentPost.content);
+                if (content === null) return;
+                const response = await fetch(`${COMMUNITY_API}/community/posts/${postId}`, {
+                    method: 'PUT',
+                    headers: { ...communityHeaders(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: title.trim(), content: content.trim() })
+                });
+                if (!response.ok) {
+                    const err = await response.json().catch(() => ({}));
+                    throw new Error(err.detail || 'Không thể cập nhật bài viết.');
+                }
+                const updatedPost = await response.json();
+                allCommunityPosts = allCommunityPosts.map((item) => (
+                    String(item.id) === String(postId) ? updatedPost : item
+                ));
+                renderFilteredPosts();
+                return;
+            }
+
             // Xóa bài viết
             if (event.target.closest('[data-delete-post]')) {
                 if (!confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) return;

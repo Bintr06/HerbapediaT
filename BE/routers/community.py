@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timezone
 
 import cloudinary
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from fastapi.security import HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from pydantic import BaseModel, Field
@@ -217,13 +217,15 @@ def get_user_community_profile(
 @router.get("/posts")
 def list_posts(
     user_id: int | None = None,
+    limit: int = Query(default=20, ge=1, le=50),
+    offset: int = Query(default=0, ge=0),
     db: Session = Depends(get_db),
     current_user: User | None = Depends(get_optional_current_user),
 ):
     query = db.query(CommunityPost)
     if user_id is not None:
         query = query.filter(CommunityPost.user_id == user_id)
-    posts = query.order_by(CommunityPost.created_at.desc()).limit(100).all()
+    posts = query.order_by(CommunityPost.created_at.desc()).offset(offset).limit(limit).all()
     viewer_id = current_user.id if current_user else None
     is_admin = current_user is not None and current_user.role == "admin"
     return [post_response(post, db, viewer_id, is_admin) for post in posts]

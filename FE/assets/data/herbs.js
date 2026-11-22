@@ -1,8 +1,8 @@
 (function () {
-    const defaultImage = 'https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=900&q=80';
-    const leafImage = 'https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80';
-    const flowerImage = 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80';
-    const fruitImage = 'https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80';
+    const defaultImage = 'assets/images/logo.png';
+    const leafImage = 'assets/images/logo.png';
+    const flowerImage = 'assets/images/logo.png';
+    const fruitImage = 'assets/images/logo.png';
 
     window.HerbaPediaHerbs = [
         { id: 'aloevera', datasetName: 'Aloevera', name: 'Lô hội (Nha đam)', scientific: 'Aloe vera (L.) Burm.f.', image: leafImage, tags: ['thanh nhiệt', 'làm đẹp'], usage: 'Làm dịu da và hỗ trợ chăm sóc da bên ngoài.', parts: 'Gel trong lá', identification: 'Cây mọng nước, lá dài hình mũi mác, mép có răng cưa nhỏ.', remedies: ['Gel nha đam dùng ngoài da sau khi đã sơ chế sạch.'], safety: 'Không bôi gel chưa sơ chế lên vết thương hở; không tự ý dùng đường uống liều cao.' },
@@ -827,8 +827,8 @@ if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
 
 // === CẬP NHẬT ẢNH CHUYÊN BIỆT VỀ 1 CHIẾC LÁ ĐƠN LẺ CHO TỪ ĐIỂN TRA CỨU ===
 const ISOLATED_LEAF_IMAGES = {
-    "guava": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=800&q=80",
-    "mango": "https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=800&q=80",
+    "guava": "assets/images/logo.png",
+    "mango": "assets/images/Mango.jpg",
     "jackfruit": "assets/images/jackfruit.jpg",
     "papaya": "assets/images/papaya.jpg",
     "neem": "assets/images/Neem.jpg",
@@ -836,15 +836,43 @@ const ISOLATED_LEAF_IMAGES = {
     "coffee": "assets/images/coffe.jpg",
     "mint": "assets/images/Bacha.jpg",
     "betel": "assets/images/Betel.jpg",
-    "lemon": "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=800&q=80",
-    "orange": "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=800&q=80",
-    "tea": "https://images.unsplash.com/photo-1582793988951-9aed5509eb97?auto=format&fit=crop&w=800&q=80",
-    "centella-asiatica": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
-    "bitter-gourd": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80",
-    "grape": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80",
-    "tomato": "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=800&q=80",
-    "hibiscus": "https://images.unsplash.com/photo-1546842931-886c185b4c8c?auto=format&fit=crop&w=800&q=80",
-    "tulsi": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80"
+    "lemon": "assets/images/logo.png",
+    "orange": "assets/images/logo.png",
+    "tea": "assets/images/logo.png",
+    "centella-asiatica": "assets/images/logo.png",
+    "bitter-gourd": "assets/images/logo.png",
+    "grape": "assets/images/logo.png",
+    "tomato": "assets/images/logo.png",
+    "hibiscus": "assets/images/logo.png",
+    "tulsi": "assets/images/logo.png"
+};
+
+window.HerbaPediaImageOverrides = ISOLATED_LEAF_IMAGES;
+window.HerbaPediaGetLocalImage = function (herb, fallbackImage = 'assets/images/logo.png') {
+    const herbKey = herb && (herb.slug || herb.id);
+    const apiImages = herb ? [herb.image_url, herb.image].filter(Boolean) : [];
+    const overrideImage = herbKey && ISOLATED_LEAF_IMAGES[herbKey];
+    const isCloudinaryImage = (imageUrl) => {
+        if (typeof imageUrl !== 'string' || !/^(?:https?:)?\/\//i.test(imageUrl)) return false;
+        try {
+            const hostname = new URL(imageUrl).hostname.toLowerCase();
+            return hostname === 'cloudinary.com' || hostname.endsWith('.cloudinary.com');
+        } catch {
+            return false;
+        }
+    };
+
+    const cloudinaryImage = apiImages.find(isCloudinaryImage);
+    if (cloudinaryImage) return cloudinaryImage;
+
+    const localImage = overrideImage || apiImages.find((imageUrl) => (
+        typeof imageUrl === 'string' && !/^(?:https?:)?\/\//i.test(imageUrl)
+    )) || '';
+
+    if (typeof localImage !== 'string' || !localImage.trim()) return fallbackImage;
+    if (!/^(?:https?:)?\/\//i.test(localImage)) return localImage;
+
+    return fallbackImage;
 };
 
 if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {

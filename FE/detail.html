@@ -30,8 +30,6 @@
     <div class="fixed inset-0 z-0 pointer-events-none" style="background-image: linear-gradient(rgba(238, 247, 235, 0.88), rgba(210, 235, 205, 0.92)), url('assets/images/background-forest.jpg'); background-size: cover; background-position: center; transform: translateZ(0); will-change: transform;"></div>
 
     <!-- Background Shadows -->
-    <img src="https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -top-10 -left-32 w-[42rem] opacity-[0.035] pointer-events-none transform -rotate-12 grayscale z-0" style="transform: translateZ(0);">
-    <img src="https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=600&q=80" alt="Shadow" class="fixed -bottom-20 -right-20 w-[48rem] opacity-[0.03] pointer-events-none transform rotate-12 grayscale z-0" style="transform: translateZ(0);">
 
     <!-- Header / Navbar -->
     <header id="navbar" class="sticky top-0 w-full z-40 transition-all duration-300">
@@ -395,22 +393,22 @@
             'tiato': {
                 name: 'Tía tô',
                 sci: 'Perilla frutescens (L.) Britton',
-                img: 'https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=800&q=80'
+                img: 'assets/images/logo.png'
             },
             'tamsen': {
                 name: 'Tâm sen',
                 sci: 'Nelumbo nucifera Gaertn',
-                img: 'https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=800&q=80'
+                img: 'assets/images/logo.png'
             },
             'lactien': {
                 name: 'Lạc tiên',
                 sci: 'Passiflora foetida L.',
-                img: 'https://images.unsplash.com/photo-1463123081488-789f998ac9c4?auto=format&fit=crop&w=800&q=80'
+                img: 'assets/images/logo.png'
             },
             'diephachau': {
                 name: 'Diệp hạ châu',
                 sci: 'Phyllanthus urinaria L.',
-                img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80'
+                img: 'assets/images/logo.png'
             }
         };
 
@@ -444,7 +442,9 @@
                 if (title) title.innerText = historyItem.predicted_class;
                 if (breadcrumb) breadcrumb.innerText = historyItem.predicted_class;
                 if (image) {
-                    image.src = historyItem.image_url;
+                    image.src = window.HerbaPediaGetLocalImage
+                        ? window.HerbaPediaGetLocalImage({ image_url: historyItem.image_url })
+                        : 'assets/images/logo.png';
                     image.alt = historyItem.predicted_class;
                 }
                 const confidenceElement = document.querySelector('[data-history-confidence]');
@@ -484,12 +484,15 @@
                     document.getElementById('breadName').textContent = herb.name;
                 }
                 const headerImage = document.querySelector('.h-80.object-cover');
-                if (!selectedHistory) headerImage.src = herb.image;
+                const herbImage = window.HerbaPediaGetLocalImage
+                    ? window.HerbaPediaGetLocalImage(herb)
+                    : 'assets/images/logo.png';
+                if (!selectedHistory) headerImage.src = herbImage;
                 headerImage.alt = herb.name;
                 const gallery = document.getElementById('communityHistoryGallery');
-                if (gallery && herb.image) {
+                if (gallery && herbImage) {
                     gallery.innerHTML = Array.from({ length: 4 }, (_, index) => `
-                        <img src="${herb.image}" alt="${herb.name} - ảnh cộng đồng ${index + 1}" class="w-full h-20 object-cover rounded-xl shadow-sm" onerror="this.onerror=null;this.src='assets/images/logo.png'">
+                        <img src="${herbImage}" alt="${herb.name} - ảnh cộng đồng ${index + 1}" class="w-full h-20 object-cover rounded-xl shadow-sm" onerror="this.onerror=null;this.src='assets/images/logo.png'">
                     `).join('');
                 }
                 document.getElementById('herbSafety').textContent = herb.safety;
