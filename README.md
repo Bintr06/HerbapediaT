@@ -84,6 +84,65 @@ PBL4/
 | Thống kê | GROUP BY lượt nhận diện | [`get_top_recognized_herbs`](BE/routers/herbs.py#L117) | Xếp hạng dược liệu phổ biến theo số lượt quét. |
 | Cộng đồng | Phân trang offset/limit | [`list_posts`](BE/routers/community.py#L218) | Tải từng trang bài viết thay vì lấy toàn bộ feed một lần. |
 
+### Giải thích nguyên lý hoạt động
+
+#### 1. Tiền xử lý và kiểm tra chất lượng ảnh
+
+Ảnh đầu vào được kiểm tra kích thước, độ sáng và độ sắc nét trước khi đưa vào mô hình. Ảnh quá nhỏ, quá tối/sáng hoặc bị mờ sẽ bị từ chối sớm để tránh tạo dự đoán không đáng tin cậy.
+
+Sau đó, hệ thống đọc và xoay ảnh theo thông tin EXIF, chuyển ảnh về RGB, tăng tương phản bằng **CLAHE** trên kênh sáng `L` của không gian màu LAB. Ảnh được resize theo đúng tỷ lệ, thêm phần đệm (letterbox) để đạt kích thước `224x224`, rồi chuẩn hóa theo thống kê ImageNet. Cách này giữ hình dạng lá, không làm biến dạng ảnh khi kéo giãn.
+
+#### 2. Hai mô hình phân loại
+
+- **EfficientNet-B0** sử dụng các khối MBConv và cơ chế Squeeze-and-Excitation để tập trung vào đặc trưng quan trọng của lá. Mô hình trả về `logits` cho 16 lớp và vector embedding 1280 chiều.
+- **CustomLeafCNN** gồm 5 khối tích chập. Mỗi khối sử dụng Convolution, BatchNorm, ReLU và Pooling để học dần từ cạnh, gân lá đến hình thái tổng thể. `Dropout(p=0.5)` giảm hiện tượng học thuộc dữ liệu và giúp mô hình nhẹ hơn.
+
+`logits` là điểm số thô của từng lớp; lớp có điểm cao nhất là ứng viên ban đầu, nhưng chưa đủ để kết luận ảnh hợp lệ vì mô hình phân loại đóng luôn chọn một lớp kể cả khi ảnh không thuộc dữ liệu huấn luyện.
+
+#### 3. Softmax và MSP
+
+Softmax chuyển các `logits` thành phân phối xác suất:
+
+```text
+P(class_i) = exp(logit_i) / tổng(exp(logit_j))
+MSP = max(P(class_i))
+```
+
+**MSP (Maximum Softmax Probability)** là xác suất lớn nhất trong 16 lớp. Nếu MSP thấp, mô hình không đủ tự tin. Tuy nhiên, MSP cao một mình vẫn có thể sai khi gặp ảnh ngoài danh mục, nên hệ thống kết hợp thêm hai tiêu chí OSR khác.
+
+#### 4. Cosine Similarity với prototype
+
+Mỗi lớp đã biết có một **prototype** đại diện cho embedding trung tâm của lớp đó. Hệ thống tính độ tương đồng cosine giữa embedding ảnh mới và prototype của lớp dự đoán:
+
+```text
+cosine(a, b) = (a · b) / (||a|| × ||b||)
+```
+
+Giá trị càng gần `1` nghĩa là hướng đặc trưng của ảnh càng giống lớp đã biết. Nếu embedding nằm quá xa prototype, ảnh có khả năng là đối tượng lạ dù Softmax vẫn cho xác suất cao.
+
+#### 5. Euclidean Distance và Z-score
+
+Khoảng cách Euclidean đo độ lệch của embedding ảnh so với prototype. Các khoảng cách tham chiếu của từng lớp được dùng để tính Z-score:
+
+```text
+Z = (distance - mean_distance) / standard_deviation
+```
+
+Z-score lớn cho biết ảnh lệch nhiều so với phân bố mẫu hợp lệ của lớp. Tiêu chí này bổ sung cho cosine: cosine xét hướng vector, còn Euclidean xét độ xa trong không gian đặc trưng.
+
+#### 6. Quyết định Open-Set Recognition
+
+Mỗi tiêu chí `MSP`, `Cosine Similarity` và `Z-score` tạo một tín hiệu chấp nhận hoặc từ chối. Cơ chế **majority vote** chỉ xác nhận ảnh thuộc 16 lớp khi có ít nhất **2 trên 3 tiêu chí** đồng ý. Nếu không đủ phiếu, hệ thống trả về trạng thái ngoài danh mục thay vì ép ảnh vào một lớp gần nhất.
+
+#### 7. Các thuật toán nghiệp vụ khác
+
+- **Bcrypt** băm mật khẩu một chiều kèm salt ngẫu nhiên; hệ thống không lưu mật khẩu gốc.
+- **JWT HS256** tạo token có chữ ký và thời hạn. Mỗi API bảo vệ kiểm tra token trước khi cho phép truy cập.
+- **OTP bằng `secrets`** tạo mã 6 chữ số khó đoán, có thời hạn 15 phút và vô hiệu mã cũ khi tạo mã mới.
+- **Tìm kiếm ILIKE** tìm không phân biệt hoa thường trên nhiều trường như tên, tên khoa học, slug và công dụng, sau đó lọc thêm tag nếu có.
+- **GROUP BY** đếm số lượt nhận diện theo từng dược liệu để tạo danh sách phổ biến.
+- **Phân trang offset/limit** chỉ tải một phần bài viết mỗi lần, giảm dữ liệu trả về và thời gian hiển thị feed.
+
 ### Ghi chú đọc code
 
 - Pipeline AI chạy theo thứ tự: kiểm tra chất lượng → EXIF/RGB → CLAHE → giữ tỷ lệ và padding → normalize → model.
