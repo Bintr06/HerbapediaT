@@ -576,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <tr class="hover:bg-white transition-colors">
                                 <td class="py-3.5 px-4">
                                     <div class="flex items-center gap-3">
-                                        <img src="${escapeHtml(u.avatar_url || 'assets/images/logo.png')}" alt="" class="h-9 w-9 rounded-full object-cover border border-gray-200 bg-white" onerror="this.onerror=null;this.src='assets/images/logo.png'">
+                                        <img src="${escapeHtml(window.HerbaPediaNormalizeImage ? window.HerbaPediaNormalizeImage(u.avatar_url) : (u.avatar_url || 'assets/images/logo.png'))}" alt="" class="h-9 w-9 rounded-full object-cover border border-gray-200 bg-white" onerror="this.onerror=null;this.src='assets/images/logo.png'">
                                         <div>
                                             <div class="font-bold text-forest-900 flex items-center gap-1.5">
                                                 ${escapeHtml(safeDisplayName)}
@@ -939,7 +939,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
-                                    <img src="${escapeHtml(p.author?.avatar_url || 'assets/images/logo.png')}" alt="" class="w-6 h-6 rounded-full object-cover border border-gray-200" onerror="this.onerror=null;this.src='assets/images/logo.png'">
+                                    <img src="${escapeHtml(window.HerbaPediaNormalizeImage ? window.HerbaPediaNormalizeImage(p.author?.avatar_url) : (p.author?.avatar_url || 'assets/images/logo.png'))}" alt="" class="w-6 h-6 rounded-full object-cover border border-gray-200" onerror="this.onerror=null;this.src='assets/images/logo.png'">
                                     <span class="font-semibold text-gray-800 text-xs">${escapeHtml(p.author?.display_name || 'Người dùng')}</span>
                                     ${p.author?.role === 'admin' ? '<span class="text-[9px] font-bold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">Admin</span>' : ''}
                                 </div>
