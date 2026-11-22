@@ -169,7 +169,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const avatarInput = document.getElementById('avatarInput');
-    document.getElementById('changeAvatarButton').addEventListener('click', () => avatarInput.click());
+    const changeAvatarButton = document.getElementById('changeAvatarButton');
+    const avatarContainer = document.getElementById('avatarContainer');
+    const openAvatarPicker = () => avatarInput.click();
+    changeAvatarButton.addEventListener('click', openAvatarPicker);
+    avatarContainer.addEventListener('click', openAvatarPicker);
     avatarInput.addEventListener('change', async () => {
         const file = avatarInput.files[0];
         if (!file) return;
