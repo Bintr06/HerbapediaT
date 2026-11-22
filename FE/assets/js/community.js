@@ -1062,9 +1062,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         for (const file of selectedFiles) {
             formData.append('files', file);
         }
-        if (selectedFiles.length > 0) {
-            formData.append('file', selectedFiles[0]);
-        }
 
         const submitButton = document.getElementById('btnSubmitPost');
         submitButton.disabled = true;

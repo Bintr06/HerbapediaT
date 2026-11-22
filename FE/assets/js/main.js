@@ -128,6 +128,17 @@ function localImageOrFallback(imageUrl, fallback = 'assets/images/logo.png') {
     }
 }
 
+window.HerbaPediaNormalizeImage = localImageOrFallback;
+window.HerbaPediaApplyCurrentUserAvatar = function (imageUrl) {
+    const safeImageUrl = localImageOrFallback(imageUrl);
+    document.querySelectorAll(
+        '#navbarAvatar, #communityUserAvatar, #communityPostCreatorAvatar, #blogCreatorAvatar, .nav-links li.relative.group button img'
+    ).forEach((image) => {
+        image.src = safeImageUrl;
+    });
+    return safeImageUrl;
+};
+
 function notificationTime(value) {
     const date = new Date(value);
     const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -310,7 +321,7 @@ async function updateNavbarProfile() {
     }
 
     greeting.textContent = `Hi, ${navbarFirstName(displayName)}`;
-    avatar.src = avatarUrl;
+    window.HerbaPediaApplyCurrentUserAvatar(avatarUrl);
     avatar.alt = `Ảnh đại diện của ${displayName}`;
 
     const blogLink = document.querySelector('.nav-links a[href^="user-profile.html"]');

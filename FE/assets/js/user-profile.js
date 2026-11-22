@@ -70,9 +70,9 @@ function showBlogToast(message, isError = false) {
 
 function getAvatarUrl(user) {
     if (!user) return 'assets/images/logo.png';
-    if (user.avatar_url) return user.avatar_url;
-    const name = encodeURIComponent(user.display_name || user.username || 'User');
-    return 'assets/images/logo.png';
+    return window.HerbaPediaNormalizeImage
+        ? window.HerbaPediaNormalizeImage(user.avatar_url)
+        : (user.avatar_url || 'assets/images/logo.png');
 }
 
 // Lightbox gallery state
@@ -170,7 +170,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 currentUser = await meRes.json();
                 const navbarAvatar = document.getElementById('navbarAvatar');
                 const navGreeting = document.getElementById('navGreeting');
-                if (navbarAvatar && currentUser.avatar_url) navbarAvatar.src = currentUser.avatar_url;
+                if (currentUser.avatar_url) {
+                    const safeAvatarUrl = window.HerbaPediaApplyCurrentUserAvatar
+                        ? window.HerbaPediaApplyCurrentUserAvatar(currentUser.avatar_url)
+                        : currentUser.avatar_url;
+                    if (navbarAvatar) navbarAvatar.src = safeAvatarUrl;
+                }
                 if (navGreeting && (currentUser.display_name || currentUser.username)) {
                     navGreeting.textContent = (currentUser.display_name || currentUser.username).split(' ').slice(-1)[0];
                 }

@@ -69,8 +69,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             ? new Date(user.created_at).toLocaleDateString('vi-VN')
             : '--';
         if (user.avatar_url) {
-            document.getElementById('profileAvatar').src = user.avatar_url;
-            if (navbarAvatar) navbarAvatar.src = user.avatar_url;
+            const safeAvatarUrl = window.HerbaPediaApplyCurrentUserAvatar
+                ? window.HerbaPediaApplyCurrentUserAvatar(user.avatar_url)
+                : user.avatar_url;
+            document.getElementById('profileAvatar').src = safeAvatarUrl;
+            if (navbarAvatar) navbarAvatar.src = safeAvatarUrl;
+            localStorage.setItem('userAvatar', safeAvatarUrl);
         }
         if (navGreeting && displayName) {
             navGreeting.textContent = displayName.split(' ').slice(-1)[0];
@@ -176,7 +180,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 method: 'POST',
                 body: formData
             });
-            document.getElementById('profileAvatar').src = user.avatar_url;
+            const safeAvatarUrl = window.HerbaPediaApplyCurrentUserAvatar
+                ? window.HerbaPediaApplyCurrentUserAvatar(user.avatar_url)
+                : user.avatar_url;
+            document.getElementById('profileAvatar').src = safeAvatarUrl;
+            localStorage.setItem('userAvatar', safeAvatarUrl);
             showProfileMessage('Đã cập nhật ảnh đại diện.');
         } catch (error) {
             showProfileMessage(error.message, true);

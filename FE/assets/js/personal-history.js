@@ -277,7 +277,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (user) {
             const navbarAvatar = document.getElementById('navbarAvatar');
             const navGreeting = document.getElementById('navGreeting');
-            if (navbarAvatar && user.avatar_url) navbarAvatar.src = user.avatar_url;
+            if (user.avatar_url) {
+                const safeAvatarUrl = window.HerbaPediaApplyCurrentUserAvatar
+                    ? window.HerbaPediaApplyCurrentUserAvatar(user.avatar_url)
+                    : user.avatar_url;
+                if (navbarAvatar) navbarAvatar.src = safeAvatarUrl;
+            }
             if (navGreeting && (user.display_name || user.username)) {
                 navGreeting.textContent = (user.display_name || user.username).split(' ').slice(-1)[0];
             }

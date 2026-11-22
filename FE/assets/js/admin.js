@@ -73,8 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             const p = user.display_name.trim().split(/\s+/);
                             greeting.textContent = p[p.length - 1] || 'Admin';
                         }
-                        if (avatar && user.avatar_url) {
-                            avatar.src = user.avatar_url;
+                        if (user.avatar_url) {
+                            const safeAvatarUrl = window.HerbaPediaApplyCurrentUserAvatar
+                                ? window.HerbaPediaApplyCurrentUserAvatar(user.avatar_url)
+                                : user.avatar_url;
+                            if (avatar) avatar.src = safeAvatarUrl;
                         }
                     }
                 })

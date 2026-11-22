@@ -248,11 +248,8 @@ async def create_post(
         raise HTTPException(status_code=422, detail="Tiêu đề và nội dung không được để trống.")
 
     # Thu thập tất cả các file ảnh gửi lên
-    upload_candidates: list[UploadFile] = []
-    if files:
-        upload_candidates.extend(files)
-    if file and file not in upload_candidates:
-        upload_candidates.append(file)
+    # Ưu tiên danh sách files; chỉ dùng field cũ `file` khi client không gửi danh sách.
+    upload_candidates: list[UploadFile] = files if files else ([file] if file else [])
 
     # Lọc các file hợp lệ có tên file
     valid_files = [f for f in upload_candidates if f and getattr(f, "filename", None)]
