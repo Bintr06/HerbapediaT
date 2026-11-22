@@ -1,7 +1,7 @@
 /**
  * HerbaPedia - Module Tra cứu & Từ điển Dược liệu Thảo mộc
  * Hỗ trợ tìm kiếm theo tên tiếng Việt, tên khoa học, công dụng, vị thuốc, bài thuốc;
- * Lọc theo nhóm công dụng và lọc riêng 20 loài AI nhận diện;
+ * Lọc theo nhóm công dụng và lọc riêng 16 loài AI nhận diện;
  * Sắp xếp đa dạng, tối ưu hiệu năng và đồng bộ API backend.
  */
 
@@ -18,10 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const statTotalHerbs = document.getElementById('statTotalHerbs');
 
     if (!resultsGrid) return;
+    // Danh sách chuẩn xác 16 loài lá dược liệu được mô hình LeafAI hỗ trợ nhận diện
     const AI_RECOGNIZED_CLASSES = new Set([
-        'aloe', 'aloevera', 'arabian-jasmine', 'jasmine', 'betel', 'bhrami', 'brahmi',
-        'coffee', 'eucalyptus', 'guava', 'hibiscus', 'jackfruit', 'lemon', 'mango',
-        'marigold', 'mint', 'neem', 'onion', 'papaya', 'pepper', 'rose', 'tomato', 'tulsi'
+        'aloe', 'aloevera', 'bitter-gourd', 'bitter gourd', 'centella-asiatica', 'centella asiatica',
+        'coffee', 'grape', 'guava', 'hibiscus', 'jackfruit', 'lemon', 'mango',
+        'neem', 'orange', 'papaya', 'tea', 'tomato', 'tulsi'
     ]);
 
     const params = new URLSearchParams(window.location.search);
@@ -154,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? "inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#8CC63F] bg-green-50 text-forest-900 transition-all font-bold shadow-sm"
                 : "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition-all font-semibold shadow-sm";
             if (aiFilterLabel) {
-                aiFilterLabel.textContent = isAiOnly ? "✓ Đang lọc 20 loài AI nhận diện" : "Chỉ hiện 20 loài AI nhận diện";
+                aiFilterLabel.textContent = isAiOnly ? "✓ Đang lọc 16 loài AI nhận diện" : "Chỉ hiện 16 loài AI nhận diện";
             }
         }
     }
