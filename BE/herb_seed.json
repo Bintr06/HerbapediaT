@@ -4,7 +4,7 @@
     "datasetName": "Aloevera",
     "name": "Nha đam (Lô hội)",
     "scientific": "Aloe vera",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/nhadam.jpg",
     "tags": [
       "thanh nhiệt",
       "nhuận tràng",
@@ -33,7 +33,7 @@
     "datasetName": "Betel",
     "name": "Trầu không",
     "scientific": "Piper betle L.",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/Betel.jpg",
     "tags": [
       "kháng viêm",
       "tiêu hóa"
@@ -223,7 +223,7 @@
     "datasetName": "Coffee",
     "name": "Cà phê",
     "scientific": "Coffea arabica",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/coffe.jpg",
     "tags": [
       "hưng phấn thần kinh",
       "lợi tiểu",
@@ -416,7 +416,7 @@
     "datasetName": "Guava",
     "name": "Ổi",
     "scientific": "Psidium guajava",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "sáp trường chỉ tả",
       "cầm tiêu chảy",
@@ -471,7 +471,7 @@
     "datasetName": "Hibiscus",
     "name": "Râm bụt (Dâm bụt)",
     "scientific": "Hibiscus rosa-sinensis",
-    "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1546842931-886c185b4c8c?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "giải độc",
@@ -500,7 +500,7 @@
     "datasetName": "Jackfruit",
     "name": "Mít",
     "scientific": "Artocarpus heterophyllus",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/jackfruit.jpg",
     "tags": [
       "thanh nhiệt",
       "tiêu viêm",
@@ -582,7 +582,7 @@
     "datasetName": "Lemon",
     "name": "Chanh vàng",
     "scientific": "Citrus limon",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "sinh tân chỉ khát",
@@ -667,7 +667,7 @@
     "datasetName": "Mango",
     "name": "Xoài",
     "scientific": "Mangifera indica",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "chống oxy hóa",
       "hạ đường huyết",
@@ -723,7 +723,7 @@
     "datasetName": "Mint",
     "name": "Bạc hà",
     "scientific": "Mentha × piperita L.",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/Bacha.jpg",
     "tags": [
       "tiêu hóa",
       "thanh nhiệt"
@@ -751,7 +751,7 @@
     "datasetName": "Neem",
     "name": "Neem (Sầu đâu)",
     "scientific": "Azadirachta indica",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/Neem.jpg",
     "tags": [
       "sát trùng",
       "kháng nấm",
@@ -864,7 +864,7 @@
     "datasetName": "Papaya",
     "name": "Đu đủ",
     "scientific": "Carica papaya",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "assets/images/papaya.jpg",
     "tags": [
       "tiêu thực",
       "nhuận tràng",
@@ -893,7 +893,7 @@
     "datasetName": "Tomato",
     "name": "Cà chua",
     "scientific": "Solanum lycopersicum",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "sinh tân chỉ khát",
       "bổ âm dưỡng huyết",
@@ -922,7 +922,7 @@
     "datasetName": "Tulsi",
     "name": "Hương nhu tía",
     "scientific": "Ocimum tenuiflorum",
-    "image": "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "phát hãn giải biểu",
       "kháng khuẩn",
@@ -1007,7 +1007,7 @@
     "datasetName": "Bitter Gourd",
     "name": "Khổ qua (Mướp đắng)",
     "scientific": "Momordica charantia",
-    "image": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "hạ đường huyết",
@@ -1036,7 +1036,7 @@
     "datasetName": "Centella asiatica",
     "name": "Rau má",
     "scientific": "Centella asiatica",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "giải độc",
@@ -1066,7 +1066,7 @@
     "datasetName": "Grape",
     "name": "Nho",
     "scientific": "Vitis vinifera",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "bổ khí huyết",
       "chống lão hóa",
@@ -1095,7 +1095,7 @@
     "datasetName": "Orange",
     "name": "Cam",
     "scientific": "Citrus sinensis",
-    "image": "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "tăng sức đề kháng",
@@ -1150,7 +1150,7 @@
     "datasetName": "Tea",
     "name": "Chè (Trà)",
     "scientific": "Camellia sinensis",
-    "image": "https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80",
+    "image": "https://images.unsplash.com/photo-1582793988951-9aed5509eb97?auto=format&fit=crop&w=800&q=80",
     "tags": [
       "thanh nhiệt",
       "chống oxy hóa",

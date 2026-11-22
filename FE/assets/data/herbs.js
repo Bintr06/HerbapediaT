@@ -823,3 +823,34 @@ if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
         }
     });
 }
+
+
+// === CẬP NHẬT ẢNH CHUYÊN BIỆT VỀ 1 CHIẾC LÁ ĐƠN LẺ CHO TỪ ĐIỂN TRA CỨU ===
+const ISOLATED_LEAF_IMAGES = {
+    "guava": "https://images.unsplash.com/photo-1596484552834-6a58f850e0a1?auto=format&fit=crop&w=800&q=80",
+    "mango": "https://images.unsplash.com/photo-1628155930542-3c7a64e2c848?auto=format&fit=crop&w=800&q=80",
+    "jackfruit": "assets/images/jackfruit.jpg",
+    "papaya": "assets/images/papaya.jpg",
+    "neem": "assets/images/Neem.jpg",
+    "aloevera": "assets/images/nhadam.jpg",
+    "coffee": "assets/images/coffe.jpg",
+    "mint": "assets/images/Bacha.jpg",
+    "betel": "assets/images/Betel.jpg",
+    "lemon": "https://images.unsplash.com/photo-1590502593747-42a996133562?auto=format&fit=crop&w=800&q=80",
+    "orange": "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=800&q=80",
+    "tea": "https://images.unsplash.com/photo-1582793988951-9aed5509eb97?auto=format&fit=crop&w=800&q=80",
+    "centella-asiatica": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "bitter-gourd": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80",
+    "grape": "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80",
+    "tomato": "https://images.unsplash.com/photo-1592417817098-8f3d6910985c?auto=format&fit=crop&w=800&q=80",
+    "hibiscus": "https://images.unsplash.com/photo-1546842931-886c185b4c8c?auto=format&fit=crop&w=800&q=80",
+    "tulsi": "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&w=800&q=80"
+};
+
+if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
+    window.HerbaPediaHerbs.forEach(herb => {
+        if (ISOLATED_LEAF_IMAGES[herb.id]) {
+            herb.image = ISOLATED_LEAF_IMAGES[herb.id];
+        }
+    });
+}
