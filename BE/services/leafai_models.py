@@ -1,30 +1,7 @@
-"""
-========================================================================================
-HERBAPEDIA AI CORE - TỔNG HỢP CÁC THUẬT TOÁN QUAN TRỌNG TRONG BACKEND (PBL4)
-========================================================================================
+"""AI models and open-set recognition utilities for medicinal leaf images.
 
-1. NHÓM THUẬT TOÁN TIỀN XỬ LÝ ẢNH (IMAGE PREPROCESSING):
-   - CLAHE (Contrast Limited Adaptive Histogram Equalization):
-     Cân bằng thích ứng biểu đồ độ sáng trên kênh L (không gian màu LAB) trước khi resize,
-     giúp làm rõ cấu trúc gân lá trong điều kiện thiếu sáng/ngược sáng ngoài vườn.
-   - Bicubic/Bilinear Resizing (224x224): Nội suy kích thước ảnh đầu vào cho mạng nơ-ron.
-   - ImageNet Normalization: Chuẩn hóa Z-Score theo mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225].
-
-2. NHÓM THUẬT TOÁN HỌC SÂU (DEEP LEARNING CLASSIFICATION):
-   - Model 1 - EfficientNet-B0 (Compound Scaling): Tích chập MBConv (Inverted Residuals + SE Block)
-     trích xuất vector đặc trưng 1280 chiều (Embeddings). Độ chính xác: 99.32%.
-   - Model 2 - CustomLeafCNN: Mạng CNN 5 khối tích chập sâu (Conv2D -> BatchNorm -> ReLU -> MaxPool2d),
-     kết hợp AdaptiveAvgPool2d và Dropout(0.4). Độ chính xác: 97.76%.
-   - Softmax Function: Chuyển logits thô thành phân phối xác suất P(y_i|x).
-
-3. NHÓM THUẬT TOÁN NHẬN DIỆN TẬP MỞ (OPEN-SET RECOGNITION - OSR):
-   - MSP (Maximum Softmax Probability): Đánh giá độ tự tin lớn nhất qua hàm Softmax.
-   - Cosine Similarity: Đo góc cosin giữa vector đặc trưng ảnh đầu vào với vector tâm lớp (Prototypes).
-   - Euclidean Distance & Z-Score Anomaly Detection: Đo khoảng cách không gian L2 và độ lệch chuẩn
-     thống kê Z-score để phát hiện điểm dị biệt (Outliers/Unknowns).
-   - Multi-criteria Voting & Override: Biểu quyết đa tiêu chí (MSP, Cosine, Z-score) kết hợp ngưỡng
-     bảo vệ MSP >= 98% để quyết định mẫu lá thuộc 16 loài hay ngoài danh mục.
-========================================================================================
+The preprocessing and OSR pipeline is documented in README.md and next to
+the corresponding implementation below.
 """
 
 from pathlib import Path
