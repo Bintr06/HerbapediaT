@@ -827,7 +827,7 @@ if (window.HerbaPediaHerbs && Array.isArray(window.HerbaPediaHerbs)) {
 
 // === CẬP NHẬT ẢNH CHUYÊN BIỆT VỀ 1 CHIẾC LÁ ĐƠN LẺ CHO TỪ ĐIỂN TRA CỨU ===
 const ISOLATED_LEAF_IMAGES = {
-    "guava": "assets/images/logo.png",
+    "guava": "assets/images/Guava.jpg",
     "mango": "assets/images/Mango.jpg",
     "jackfruit": "assets/images/jackfruit.jpg",
     "papaya": "assets/images/papaya.jpg",
@@ -836,15 +836,15 @@ const ISOLATED_LEAF_IMAGES = {
     "coffee": "assets/images/coffe.jpg",
     "mint": "assets/images/Bacha.jpg",
     "betel": "assets/images/Betel.jpg",
-    "lemon": "assets/images/logo.png",
-    "orange": "assets/images/logo.png",
-    "tea": "assets/images/logo.png",
-    "centella-asiatica": "assets/images/logo.png",
-    "bitter-gourd": "assets/images/logo.png",
-    "grape": "assets/images/logo.png",
-    "tomato": "assets/images/logo.png",
-    "hibiscus": "assets/images/logo.png",
-    "tulsi": "assets/images/logo.png"
+    "lemon": "assets/images/lemon.jpg",
+    "orange": "assets/images/orange.jpg",
+    "tea": "assets/images/tea.jpg",
+    "centella-asiatica": "assets/images/Rauma.jpg",
+    "bitter-gourd": "assets/images/BitterGourd.jpg",
+    "grape": "assets/images/Grape.jpg",
+    "tomato": "assets/images/tomato.jpg",
+    "hibiscus": "assets/images/hibiscus.jpg",
+    "tulsi": "assets/images/tulsi.jpg"
 };
 
 window.HerbaPediaImageOverrides = ISOLATED_LEAF_IMAGES;
