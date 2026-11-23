@@ -82,7 +82,7 @@ def _load_preprocessing_config() -> dict[str, Any]:
 def _load_model1_thresholds() -> dict[str, float]:
     data = _read_json(CONFIGS_DIR / "model1_thresholds.json")
     return {
-        "msp_thresh": float(data.get("msp_thresh", 0.9)),
+        "msp_thresh": float(data.get("msp_thresh", 0.95)),
         "cos_thresh": float(data.get("cos_thresh", 0.6008)),
         "dist_z_thresh": float(data.get("dist_z_thresh", 2.5)),
     }
@@ -90,7 +90,7 @@ def _load_model1_thresholds() -> dict[str, float]:
 
 def _load_model2_threshold() -> float:
     data = _read_json(CONFIGS_DIR / "model2_thresholds.json")
-    return float(data.get("msp_thresh", 0.9))
+    return float(data.get("msp_thresh", 0.95))
 
 
 LEAFAI_CLASS_NAMES: list[str] = _load_class_names()

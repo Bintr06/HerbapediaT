@@ -62,7 +62,7 @@ class LeafAI_Model(nn.Module):
         self,
         x: torch.Tensor,
         thresholds: Optional[Dict[str, float]] = None,
-        msp_thresh: float = 0.9,
+        msp_thresh: float = 0.95,
         cos_thresh: float = 0.6008,
         dist_z_thresh: float = 2.0,
     ) -> Dict[str, torch.Tensor]:
