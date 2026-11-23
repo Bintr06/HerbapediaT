@@ -1,218 +1,255 @@
-# HerbaPedia 🌱 - Hệ Thống Nhận Diện & Tra Cứu Dược Liệu Thông Minh (PBL4)
+# HerbaPedia
 
-Hệ thống ứng dụng **Trí tuệ nhân tạo (AI Deep Learning)** kết hợp thiết bị **IoT (Raspberry Pi Camera)** hỗ trợ nhận diện nhanh, chính xác 16 loài lá dược liệu với cơ chế **Nhận diện tập mở (Open-Set Recognition - OSR)** và tra cứu từ điển cây thuốc chuẩn y học cổ truyền Việt Nam.
+HerbaPedia là đồ án PBL4 về nhận diện lá dược liệu bằng deep learning, tra cứu thông tin dược liệu, lưu lịch sử nhận diện và chia sẻ kinh nghiệm trong cộng đồng. Frontend là HTML/CSS/Vanilla JavaScript; Backend sử dụng FastAPI, SQLAlchemy và MySQL/SQLite theo cấu hình.
 
----
+Hệ thống hỗ trợ hai mô hình PyTorch cho **16 loài trong tập mô hình** và cơ chế Open-Set Recognition để hạn chế dự đoán sai với ảnh không thuộc danh mục.
 
-## 🌟 Tính Năng Nổi Bật
+## Nội dung
 
-- 🌿 **Dual AI Models (Phân loại 16 loài lá dược liệu)**:
-  - **Model 1: EfficientNet-B0 (Độ chính xác 99.32%)**: Kiến trúc mạng hiện đại kết hợp cơ chế chú ý Squeeze-and-Excitation và trích xuất vector đặc trưng $1280$ chiều.
-  - **Model 2: CustomLeafCNN (Độ chính xác 97.76%)**: Mạng CNN sâu 5 khối tích chập do nhóm tự thiết kế, siêu nhẹ và tối ưu hóa tài nguyên phần cứng.
-- 🛡️ **Cơ Chế Nhận Diện Tập Mở (Open-Set Recognition - OSR)**:
-  - Phát hiện và từ chối các đối tượng lạ, ảnh không thuộc tập 16 loài dược liệu (ngăn chặn hiện tượng nhận diện sai lệch/đoán bừa của mô hình Deep Learning truyền thống).
-  - Kết hợp 3 thước đo: **MSP (Maximum Softmax Probability)**, **Cosine Similarity** với tâm lớp nguyên mẫu (Prototypes) và **Phân tích khoảng cách dị biệt Z-score**.
-- 📸 **Thu Nhận Hình Ảnh Linh Hoạt**:
-  - Hỗ trợ trực tiếp từ **Webcam / Camera điện thoại**, **Tải tệp ảnh lên** và luồng video streaming từ **Raspberry Pi Camera** qua mạng nội bộ.
-- 📚 **Dữ Liệu Dược Học & Hình Thái Chuẩn Xác**:
-  - Cung cấp đầy đủ thông tin: *Đặc điểm nhận diện hình thái lá, Hoạt tính sinh học, Môi trường sống, Cách sơ chế & chế biến, Kinh nghiệm dân gian và Cảnh báo an toàn y khoa*.
-- 👥 **Mạng Xã Hội Thảo Dược & Cộng Đồng**:
-  - Đăng bài chia sẻ kinh nghiệm sử dụng dược liệu, bình luận tương tác, đánh giá độ tin cậy cộng đồng cho từng loài cây.
-- ⚙️ **Cổng Quản Trị Viên (Admin Portal)**:
-  - Giám sát trạng thái hoạt động hệ thống, quản lý cơ sở dữ liệu cây thuốc và người dùng.
+- [Chức năng](#chức-năng)
+- [Kiến trúc](#kiến-trúc)
+- [Công nghệ](#công-nghệ)
+- [Luồng nhận diện](#luồng-nhận-diện)
+- [Thuật toán chính](#thuật-toán-chính)
+- [Chạy dự án local](#chạy-dự-án-local)
+- [Biến môi trường](#biến-môi-trường)
+- [Các nhóm API chính](#các-nhóm-api-chính)
+- [Quy tắc hình ảnh](#quy-tắc-hình-ảnh)
+- [Kiểm tra](#kiểm-tra)
 
----
+## Chức năng
 
-## 🏛️ Kiến Trúc Hệ Thống (Monorepo Architecture)
+- Nhận diện lá bằng hai mô hình: EfficientNet-B0 hoặc CustomLeafCNN.
+- Tải ảnh, dùng webcam hoặc nhận ảnh do camera thiết bị gửi lên.
+- Kiểm tra chất lượng ảnh trước khi suy luận.
+- Hỗ trợ từ chối ảnh ngoài 16 lớp bằng Open-Set Recognition.
+- Tra cứu tên, tên khoa học, công dụng, cách dùng, hoạt chất và cảnh báo an toàn.
+- Lưu lịch sử nhận diện cho người đã đăng nhập.
+- Đăng ký, đăng nhập, Google OAuth, JWT, OTP khôi phục mật khẩu và đổi mật khẩu.
+- Quản lý hồ sơ, avatar, bài viết cộng đồng, bình luận, lượt thích và thông báo.
+- Quản trị người dùng, cây thuốc, bài viết cộng đồng và ảnh dược liệu.
+- Phân trang cộng đồng và thống kê dược liệu được nhận diện nhiều nhất.
+
+## Kiến trúc
 
 ```text
 PBL4/
-├── BE/                               # BACKEND (FastAPI - Python)
-│   ├── main.py                       # Ứng dụng chính FastAPI, cấu hình CORS & Lifespan nạp mô hình AI
-│   ├── database.py                   # Cấu hình SQLAlchemy ORM, kết nối MySQL & định nghĩa Models
-│   ├── herb_seed.json                # Bộ dữ liệu hạt giống chuẩn hóa thông tin dược liệu
-│   ├── requirements.txt              # Danh sách thư viện phụ thuộc (PyTorch, Torchvision, OpenCV...)
-│   ├── .env                          # Biến môi trường hệ thống (Database, JWT, Cloudinary, ENABLE_OSR)
-│   ├── routers/                      # Các Router API nghiệp vụ
-│   │   ├── auth.py                   # Đăng ký, đăng nhập JWT, đổi mật khẩu, xác thực người dùng
-│   │   ├── herbs.py                  # API tra cứu danh mục, tìm kiếm và chi tiết dược liệu
-│   │   └── community.py              # Đăng bài viết cộng đồng, bình luận, tương tác thời gian thực
-│   ├── services/                     # Business Logic Services
-│   │   ├── leafai_models.py          # Kiến trúc PyTorch EfficientNet-B0, CustomLeafCNN, OSR & CLAHE
-│   │   ├── model_service.py          # Quản lý vòng đời mô hình AI, tiền xử lý và suy luận dự đoán
-│   │   ├── cloudinary_service.py     # Tải ảnh lưu trữ đám mây Cloudinary CDN
-│   │   └── email_service.py          # Gửi mã OTP xác thực qua email SMTP
-│   └── models/                       # Trọng số mô hình & Cấu hình AI
-│       ├── configs/                  # class_mapping.json, preprocessing_config.json, thresholds
-│       └── models/                   # Trọng số PyTorch (model1_best.pth, model2_best.pth)
-│
-└── FE/                               # FRONTEND (HTML5, TailwindCSS, Vanilla JS)
-    ├── index.html                    # Trang chủ & Giao diện quét ảnh nhận diện (Webcam/IoT/File)
-    ├── result.html                   # Trang hiển thị kết quả phân loại AI & trạng thái xác thực OSR
-    ├── search.html                   # Tra cứu từ điển dược liệu theo tên, hoạt chất, công dụng
-    ├── detail.html                   # Trang chi tiết cây thuốc: hình thái, dược tính, lưu ý an toàn
-    ├── history.html                  # Diễn đàn cộng đồng chia sẻ kiến thức & thảo luận
-    ├── personal-history.html         # Nhật ký quét nhận diện cá nhân của người dùng
-    ├── user-profile.html             # Trang cá nhân & bài viết đã đăng
-    ├── auth.html                     # Giao diện Đăng nhập / Đăng ký tài khoản
-    ├── admin.html                    # Cổng thông tin Quản trị viên hệ thống
+├── BE/
+│   ├── main.py                 # Khởi tạo FastAPI, CORS, lifespan và API nhận diện
+│   ├── database.py             # SQLAlchemy models và kết nối cơ sở dữ liệu
+│   ├── herb_seed.json          # Dữ liệu khởi tạo cây thuốc
+│   ├── routers/
+│   │   ├── auth.py             # Tài khoản, JWT, OTP, avatar và lịch sử
+│   │   ├── herbs.py            # Tra cứu, thống kê, quản lý dược liệu
+│   │   └── community.py        # Bài viết, bình luận, thích và thông báo
+│   └── services/
+│       ├── leafai_models.py    # Kiến trúc mô hình và CLAHE
+│       ├── model_service.py    # Nạp mô hình, tiền xử lý và OSR
+│       ├── cloudinary_service.py
+│       └── email_service.py
+└── FE/
+    ├── index.html
+    ├── result.html
+    ├── search.html
+    ├── detail.html
+    ├── profile.html
+    ├── history.html
+    ├── personal-history.html
+    ├── user-profile.html
+    ├── auth.html
+    ├── admin.html
     └── assets/
-        ├── js/                       # Module JavaScript (camera.js, config.js, search.js, main.js...)
-        ├── data/                     # herbs.js (Dữ liệu cây thuốc ngoại tuyến dự phòng)
-        └── images/                   # Hình ảnh mẫu thử nhanh, ảnh nền và logo hệ thống
+        ├── js/
+        ├── css/
+        ├── data/herbs.js
+        └── images/
 ```
 
----
+## Công nghệ
 
-## 🔬 Các Thuật Toán Quan Trọng và Vị Trí Trong Code
+| Tầng | Công nghệ |
+|---|---|
+| Frontend | HTML5, TailwindCSS, Vanilla JavaScript |
+| Backend | Python 3.10-3.12, FastAPI, Uvicorn |
+| Cơ sở dữ liệu | MySQL mặc định local; SQLAlchemy hỗ trợ SQLite/MySQL/PostgreSQL |
+| AI | PyTorch, Torchvision, NumPy, OpenCV, Pillow |
+| Xác thực | JWT HS256, bcrypt, Google OAuth |
+| Lưu trữ ảnh | Cloudinary; ảnh local FE được dùng làm fallback |
+| Email | SMTP qua môi trường cấu hình |
 
-| Nhóm | Thuật toán | Vị trí triển khai | Vai trò |
+## Luồng nhận diện
+
+1. FE gửi ảnh và tùy chọn mã mô hình đến `POST /predict`.
+2. Backend kiểm tra MIME, kích thước file tối đa 10 MB và nội dung ảnh.
+3. Backend kiểm tra kích thước, độ sáng và độ sắc nét.
+4. Ảnh được đổi sang RGB, xử lý EXIF, áp dụng CLAHE và letterbox về `224x224`.
+5. Tensor đầu vào được chuẩn hóa theo mean/std của ImageNet.
+6. Mô hình được nạp vào RAM và chạy inference trong threadpool.
+7. EfficientNet-B0 có thể dùng ba tiêu chí OSR; CustomLeafCNN hiện dùng ngưỡng MSP.
+8. Nếu ảnh thuộc tập đã biết, hệ thống trả kết quả và lưu lịch sử nền cho người dùng đã đăng nhập.
+
+## Thuật toán chính
+
+| Nhóm | Thuật toán | Triển khai | Vai trò |
 |---|---|---|---|
-| Tiền xử lý | CLAHE trên kênh L của LAB | [`apply_clahe_preprocessing`](BE/services/leafai_models.py#L262) | Tăng tương phản cục bộ nhưng giữ màu lá. |
-| Tiền xử lý | EXIF, letterbox bicubic, ImageNet normalization | [`preprocess_leafai_image`](BE/services/model_service.py#L323) | Đưa ảnh về tensor `(1, 3, 224, 224)` mà không kéo méo tỷ lệ. |
-| Tiền kiểm tra | Brightness, kích thước, Laplacian variance | [`validate_image_quality`](BE/services/model_service.py#L341) | Từ chối ảnh quá nhỏ, tối/sáng hoặc mờ trước inference. |
-| Phân loại | EfficientNet-B0 + MBConv/SE | [`LeafAI_Model`](BE/services/leafai_models.py#L49) | Trích xuất embedding 1280 chiều và logits cho 16 lớp. |
-| Phân loại | CustomLeafCNN 5 khối | [`CustomLeafCNN`](BE/services/leafai_models.py#L143) | Mô hình nhẹ hơn, dùng BatchNorm, ReLU, pooling và Dropout. |
-| Xác suất | Softmax và MSP | [`predict_open_set`](BE/services/leafai_models.py#L79) | Chuyển logits thành xác suất và lấy độ tin cậy lớn nhất. |
-| OSR | Cosine similarity với prototypes | [`predict_open_set`](BE/services/leafai_models.py#L96) | Kiểm tra embedding có gần tâm lớp đã biết hay không. |
-| OSR | Euclidean distance + Z-score | [`predict_open_set`](BE/services/leafai_models.py#L101) | Phát hiện mẫu lệch khỏi phân bố khoảng cách của lớp. |
-| OSR | Majority vote 2/3 tiêu chí | [`predict_open_set`](BE/services/leafai_models.py#L108) | Chỉ chấp nhận ảnh khi ít nhất hai tín hiệu đồng thuận. |
-| Bảo mật | Bcrypt password hashing | [`hash_password`](BE/routers/auth.py#L222) | Hash một chiều, salt ngẫu nhiên, không lưu mật khẩu gốc. |
-| Bảo mật | JWT HS256 | [`create_access_token`](BE/routers/auth.py#L241) | Ký token có `sub` và thời hạn để xác thực API. |
-| Bảo mật | OTP dùng `secrets` | [`forgot_password_send_otp`](BE/routers/auth.py#L579) | Sinh mã 6 số có thời hạn 15 phút và vô hiệu OTP cũ. |
-| Tra cứu | ILIKE đa trường + lọc tag | [`list_herbs`](BE/routers/herbs.py#L91) | Tìm theo tên, tên khoa học, slug, công dụng và nhóm tác dụng. |
-| Thống kê | GROUP BY lượt nhận diện | [`get_top_recognized_herbs`](BE/routers/herbs.py#L117) | Xếp hạng dược liệu phổ biến theo số lượt quét. |
-| Cộng đồng | Phân trang offset/limit | [`list_posts`](BE/routers/community.py#L218) | Tải từng trang bài viết thay vì lấy toàn bộ feed một lần. |
+| Tiền xử lý | Kiểm tra kích thước/brightness/sharpness | [`validate_image_quality`](BE/services/model_service.py) | Từ chối ảnh không đủ điều kiện trước inference |
+| Tiền xử lý | EXIF, RGB, letterbox | [`preprocess_leafai_image`](BE/services/model_service.py) | Đưa ảnh về tensor `224x224` mà không kéo méo |
+| Tiền xử lý | CLAHE trong không gian LAB | [`apply_clahe_preprocessing`](BE/services/leafai_models.py) | Tăng tương phản cục bộ trên kênh sáng |
+| Phân loại | EfficientNet-B0 + MBConv/SE | [`LeafAI_Model`](BE/services/leafai_models.py) | Trích embedding 1280 chiều và logits cho 16 lớp |
+| Phân loại | CustomLeafCNN 5 khối | [`CustomLeafCNN`](BE/services/leafai_models.py) | Mô hình nhẹ hơn, `Dropout(p=0.5)` |
+| Xác suất | Softmax và MSP | [`predict_open_set`](BE/services/leafai_models.py) | Chuyển logits thành xác suất và lấy độ tin cậy lớn nhất |
+| OSR | Cosine với prototype | [`predict_open_set`](BE/services/leafai_models.py) | So sánh hướng embedding với tâm lớp đã biết |
+| OSR | Euclidean + Z-score | [`predict_open_set`](BE/services/leafai_models.py) | Đo độ lệch embedding so với phân bố lớp |
+| OSR | Majority vote 2/3 | [`predict_open_set`](BE/services/leafai_models.py) | Chấp nhận mẫu khi ít nhất 2 trong 3 tiêu chí đồng ý |
+| Bảo mật | bcrypt | [`hash_password`](BE/routers/auth.py) | Băm mật khẩu một chiều kèm salt ngẫu nhiên |
+| Bảo mật | JWT HS256 | [`create_access_token`](BE/routers/auth.py) | Ký và giới hạn thời hạn phiên đăng nhập |
+| Bảo mật | OTP `secrets` | [`forgot_password_send_otp`](BE/routers/auth.py) | Tạo mã 6 số ngẫu nhiên có thời hạn |
+| Tra cứu | Tìm kiếm ILIKE | [`list_herbs`](BE/routers/herbs.py) | Tìm theo tên, khoa học, slug, công dụng |
+| Thống kê | GROUP BY | [`get_top_recognized_herbs`](BE/routers/herbs.py) | Xếp hạng dược liệu theo lịch sử nhận diện |
+| Cộng đồng | Offset/limit | [`list_posts`](BE/routers/community.py) | Tải feed theo trang |
 
-### Giải thích nguyên lý hoạt động
+### Giải thích mô hình và OSR
 
-#### 1. Tiền xử lý và kiểm tra chất lượng ảnh
-
-Ảnh đầu vào được kiểm tra kích thước, độ sáng và độ sắc nét trước khi đưa vào mô hình. Ảnh quá nhỏ, quá tối/sáng hoặc bị mờ sẽ bị từ chối sớm để tránh tạo dự đoán không đáng tin cậy.
-
-Sau đó, hệ thống đọc và xoay ảnh theo thông tin EXIF, chuyển ảnh về RGB, tăng tương phản bằng **CLAHE** trên kênh sáng `L` của không gian màu LAB. Ảnh được resize theo đúng tỷ lệ, thêm phần đệm (letterbox) để đạt kích thước `224x224`, rồi chuẩn hóa theo thống kê ImageNet. Cách này giữ hình dạng lá, không làm biến dạng ảnh khi kéo giãn.
-
-#### 2. Hai mô hình phân loại
-
-- **EfficientNet-B0** sử dụng các khối MBConv và cơ chế Squeeze-and-Excitation để tập trung vào đặc trưng quan trọng của lá. Mô hình trả về `logits` cho 16 lớp và vector embedding 1280 chiều.
-- **CustomLeafCNN** gồm 5 khối tích chập. Mỗi khối sử dụng Convolution, BatchNorm, ReLU và Pooling để học dần từ cạnh, gân lá đến hình thái tổng thể. `Dropout(p=0.5)` giảm hiện tượng học thuộc dữ liệu và giúp mô hình nhẹ hơn.
-
-`logits` là điểm số thô của từng lớp; lớp có điểm cao nhất là ứng viên ban đầu, nhưng chưa đủ để kết luận ảnh hợp lệ vì mô hình phân loại đóng luôn chọn một lớp kể cả khi ảnh không thuộc dữ liệu huấn luyện.
-
-#### 3. Softmax và MSP
-
-Softmax chuyển các `logits` thành phân phối xác suất:
+EfficientNet-B0 trả về vector embedding 1280 chiều và logits của 16 lớp. Softmax chuyển logits thành xác suất:
 
 ```text
-P(class_i) = exp(logit_i) / tổng(exp(logit_j))
+P(class_i) = exp(logit_i) / sum(exp(logit_j))
 MSP = max(P(class_i))
 ```
 
-**MSP (Maximum Softmax Probability)** là xác suất lớn nhất trong 16 lớp. Nếu MSP thấp, mô hình không đủ tự tin. Tuy nhiên, MSP cao một mình vẫn có thể sai khi gặp ảnh ngoài danh mục, nên hệ thống kết hợp thêm hai tiêu chí OSR khác.
+MSP cao không bảo đảm ảnh thuộc danh mục. EfficientNet-B0 kết hợp ba tiêu chí:
 
-#### 4. Cosine Similarity với prototype
+- MSP phải đạt ngưỡng cấu hình.
+- Cosine similarity giữa embedding ảnh và prototype phải đạt ngưỡng.
+- Z-score khoảng cách Euclidean không vượt ngưỡng dị biệt.
 
-Mỗi lớp đã biết có một **prototype** đại diện cho embedding trung tâm của lớp đó. Hệ thống tính độ tương đồng cosine giữa embedding ảnh mới và prototype của lớp dự đoán:
+Một mẫu được chấp nhận nếu ít nhất hai trong ba tiêu chí đồng ý. Nếu không đạt, kết quả là `UNKNOWN/-1` thay vì ép ảnh vào lớp gần nhất. CustomLeafCNN hiện sử dụng ngưỡng MSP riêng.
 
-```text
-cosine(a, b) = (a · b) / (||a|| × ||b||)
-```
+### Chú ý về thông số
 
-Giá trị càng gần `1` nghĩa là hướng đặc trưng của ảnh càng giống lớp đã biết. Nếu embedding nằm quá xa prototype, ảnh có khả năng là đối tượng lạ dù Softmax vẫn cho xác suất cao.
+Các giá trị accuracy trong cấu hình mô hình là kết quả huấn luyện/đánh giá được lưu trong dự án. Khi chạy demo, kết quả thực tế có thể khác tùy bộ dữ liệu, ảnh đầu vào và cấu hình OSR.
 
-#### 5. Euclidean Distance và Z-score
+## Chạy dự án local
 
-Khoảng cách Euclidean đo độ lệch của embedding ảnh so với prototype. Các khoảng cách tham chiếu của từng lớp được dùng để tính Z-score:
+### Yêu cầu
 
-```text
-Z = (distance - mean_distance) / standard_deviation
-```
+- Python 3.10-3.12
+- MySQL Server nếu dùng cấu hình mặc định
+- Trình duyệt có webcam hoặc điện thoại truy cập mạng nội bộ
+- VS Code Live Server hoặc Python HTTP server cho Frontend
 
-Z-score lớn cho biết ảnh lệch nhiều so với phân bố mẫu hợp lệ của lớp. Tiêu chí này bổ sung cho cosine: cosine xét hướng vector, còn Euclidean xét độ xa trong không gian đặc trưng.
+### Backend
 
-#### 6. Quyết định Open-Set Recognition
-
-Mỗi tiêu chí `MSP`, `Cosine Similarity` và `Z-score` tạo một tín hiệu chấp nhận hoặc từ chối. Cơ chế **majority vote** chỉ xác nhận ảnh thuộc 16 lớp khi có ít nhất **2 trên 3 tiêu chí** đồng ý. Nếu không đủ phiếu, hệ thống trả về trạng thái ngoài danh mục thay vì ép ảnh vào một lớp gần nhất.
-
-#### 7. Các thuật toán nghiệp vụ khác
-
-- **Bcrypt** băm mật khẩu một chiều kèm salt ngẫu nhiên; hệ thống không lưu mật khẩu gốc.
-- **JWT HS256** tạo token có chữ ký và thời hạn. Mỗi API bảo vệ kiểm tra token trước khi cho phép truy cập.
-- **OTP bằng `secrets`** tạo mã 6 chữ số khó đoán, có thời hạn 15 phút và vô hiệu mã cũ khi tạo mã mới.
-- **Tìm kiếm ILIKE** tìm không phân biệt hoa thường trên nhiều trường như tên, tên khoa học, slug và công dụng, sau đó lọc thêm tag nếu có.
-- **GROUP BY** đếm số lượt nhận diện theo từng dược liệu để tạo danh sách phổ biến.
-- **Phân trang offset/limit** chỉ tải một phần bài viết mỗi lần, giảm dữ liệu trả về và thời gian hiển thị feed.
-
-### Ghi chú đọc code
-
-- Pipeline AI chạy theo thứ tự: kiểm tra chất lượng → EXIF/RGB → CLAHE → giữ tỷ lệ và padding → normalize → model.
-- EfficientNet-B0 trả về `logits` và embedding; Softmax chỉ dùng để đo xác suất, còn OSR quyết định ảnh thuộc tập đã biết.
-- OSR hiện **không** tự chấp nhận chỉ vì MSP cao. Ảnh cần đạt ít nhất 2/3 tiêu chí: MSP, cosine similarity và Z-score khoảng cách.
-- `CustomLeafCNN` hiện dùng `Dropout(p=0.5)` trong [`CustomLeafCNN`](BE/services/leafai_models.py#L182), không phải `0.4`.
-- Ảnh cộng đồng và ảnh đại diện được upload lên Cloudinary; FE chỉ hiển thị ảnh local hoặc URL Cloudinary hợp lệ, các nguồn ảnh khác dùng logo dự phòng.
-
----
-
-## 💻 Hướng Dẫn Cài Đặt & Chạy Ứng Dụng (Localhost)
-
-### 1. Khởi chạy Backend (FastAPI)
-Yêu cầu: **Python 3.10 - 3.12** và **MySQL Server**.
+Từ thư mục gốc:
 
 ```powershell
-# 1. Di chuyển vào thư mục Backend
 cd BE
-
-# 2. Tạo và kích hoạt môi trường ảo Python
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-
-# 3. Cài đặt các thư viện phụ thuộc
 pip install -r requirements.txt
-
-# 4. Cấu hình file môi trường .env (kiểm tra tài khoản MySQL và khóa bí mật)
-# Tham khảo file mẫu .env.example
-
-# 5. Khởi động máy chủ Backend
+Copy-Item .env.example .env
 python main.py
 ```
-- **API Server:** `http://127.0.0.1:8000`
-- **Tài liệu API tương tác (Swagger UI):** `http://127.0.0.1:8000/docs`
 
-### 2. Khởi chạy Frontend
-Yêu cầu: Bất kỳ Web Server tĩnh nào (ví dụ tiện ích **Live Server** trên VS Code hoặc Python HTTP Server).
+- API: `http://127.0.0.1:8000`
+- Swagger: `http://127.0.0.1:8000/docs`
+
+Trước khi chạy, cập nhật `DATABASE_URL` và các khóa trong `.env`.
+
+### Frontend
+
+Từ thư mục gốc:
 
 ```powershell
-# Di chuyển vào thư mục Frontend
 cd FE
-
-# Chạy server tĩnh nhanh qua Python:
 python -m http.server 5500
 ```
-- Truy cập giao diện ứng dụng tại: `http://127.0.0.1:5500` (hoặc cổng Live Server `5500` / `5501`).
 
----
+Mở `http://127.0.0.1:5500`.
 
-## 🌿 Danh Mục 16 Loài Cây Thuốc Trong Mô Hình
+Frontend mặc định gọi Backend tại `http://127.0.0.1:8000`. Cấu hình nằm tại `FE/assets/js/config.js`.
 
-| STT | Tên Tiếng Việt | Tên Khoa Học | Mã Loài (Class ID) |
-| :---: | :--- | :--- | :--- |
-| 1 | **Nha đam (Lô hội)** | *Aloe vera* | `Aloe` |
-| 2 | **Khổ qua (Mướp đắng)** | *Momordica charantia* | `Bitter Gourd` |
-| 3 | **Rau má** | *Centella asiatica* | `Centella asiatica` |
-| 4 | **Cà phê** | *Coffea arabica* | `Coffee` |
-| 5 | **Nho** | *Vitis vinifera* | `Grape` |
-| 6 | **Ổi** | *Psidium guajava* | `Guava` |
-| 7 | **Râm bụt (Dâm bụt)** | *Hibiscus rosa-sinensis* | `Hibiscus` |
-| 8 | **Mít** | *Artocarpus heterophyllus* | `Jackfruit` |
-| 9 | **Chanh vàng** | *Citrus limon* | `Lemon` |
-| 10 | **Xoài** | *Mangifera indica* | `Mango` |
-| 11 | **Neem (Sầu đâu)** | *Azadirachta indica* | `Neem` |
-| 12 | **Cam** | *Citrus sinensis* | `Orange` |
-| 13 | **Đu đủ** | *Carica papaya* | `Papaya` |
-| 14 | **Chè (Trà)** | *Camellia sinensis* | `Tea` |
-| 15 | **Cà chua** | *Solanum lycopersicum* | `Tomato` |
-| 16 | **Húng quế thánh (Tulsi)** | *Ocimum tenuiflorum* | `Tulsi` |
+## Biến môi trường
 
----
+Các biến quan trọng trong `BE/.env.example`:
 
-© 2026 HerbaPedia. Đồ án PBL4 - Khoa Công nghệ Thông tin, Đại học Bách khoa - Đại học Đà Nẵng.
+| Biến | Mục đích |
+|---|---|
+| `DATABASE_URL` | Chuỗi kết nối SQLAlchemy |
+| `JWT_SECRET_KEY` | Ký JWT; phải thay bằng giá trị bí mật riêng |
+| `ACCESS_TOKEN_EXPIRE_MINUTES` | Thời hạn access token |
+| `CORS_ORIGINS` | Danh sách origin được phép |
+| `ADMIN_USERNAMES` | Tài khoản được gán quyền admin |
+| `GOOGLE_CLIENT_ID` | Google OAuth |
+| `CLOUDINARY_*` | Upload avatar, bài viết và lịch sử |
+| `SMTP_*` | Gửi OTP khôi phục mật khẩu |
+| `ENABLE_OSR` | Bật/tắt OSR trong cấu hình inference |
+
+Không commit `.env`, mật khẩu database, JWT secret, khóa Cloudinary hoặc app password vào Git.
+
+## Các nhóm API chính
+
+| Nhóm | Endpoint chính | Chức năng |
+|---|---|---|
+| Nhận diện | `POST /predict` | Kiểm tra và nhận diện ảnh |
+| Mô hình | `GET /models`, `POST /models/select` | Liệt kê/chọn mô hình |
+| Tài khoản | `/auth/register`, `/auth/login`, `/auth/me` | Đăng ký, đăng nhập, hồ sơ |
+| OTP | `/auth/forgot-password/*` | Gửi và xác thực OTP |
+| Dược liệu | `/herbs`, `/herbs/{slug}`, `/herbs/top-recognized` | Tra cứu và thống kê |
+| Cộng đồng | `/community/posts`, `/community/comments` | Bài viết, bình luận, thích |
+| Quản trị | `/auth/users`, `/herbs/upload-image`, `/herbs/{slug}` | Quản lý tài khoản/dược liệu |
+
+## Quy tắc hình ảnh
+
+- Ảnh Cloudinary được ưu tiên.
+- Ảnh local trong `FE/assets/images/` được lấy theo mapping của `FE/assets/data/herbs.js`.
+- Ảnh không thuộc nguồn được phép sẽ dùng `assets/images/logo.png`.
+- Avatar và ảnh bài viết cộng đồng chấp nhận Cloudinary hoặc đường dẫn local hợp lệ.
+- Khi admin đổi ảnh dược liệu qua API, Frontend resolver sẽ đọc URL lưu trong dữ liệu backend trước khi dùng mapping local.
+- Tối đa 10 ảnh cho một bài cộng đồng.
+
+## Kiểm tra
+
+Kiểm tra cú pháp Python:
+
+```powershell
+cd BE
+python -m compileall -q .
+```
+
+Kiểm tra cú pháp JavaScript:
+
+```powershell
+Get-ChildItem FE\assets\js -Filter *.js | ForEach-Object {
+    node --check $_.FullName
+}
+```
+
+Kiểm tra Backend health:
+
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/"
+```
+
+Trước khi bàn giao nên kiểm tra thêm luồng đăng ký/đăng nhập, đổi avatar, nhận diện ảnh hợp lệ/không thuộc danh mục, upload bài cộng đồng, bình luận, phân trang và quyền admin.
+
+## Dữ liệu 16 loài mô hình
+
+| STT | Tên hiển thị | Tên khoa học | Class ID |
+|---:|---|---|---|
+| 1 | Nha đam | *Aloe vera* | `Aloe` |
+| 2 | Khổ qua | *Momordica charantia* | `Bitter Gourd` |
+| 3 | Rau má | *Centella asiatica* | `Centella asiatica` |
+| 4 | Cà phê | *Coffea arabica* | `Coffee` |
+| 5 | Nho | *Vitis vinifera* | `Grape` |
+| 6 | Ổi | *Psidium guajava* | `Guava` |
+| 7 | Dâm bụt | *Hibiscus rosa-sinensis* | `Hibiscus` |
+| 8 | Mít | *Artocarpus heterophyllus* | `Jackfruit` |
+| 9 | Chanh vàng | *Citrus limon* | `Lemon` |
+| 10 | Xoài | *Mangifera indica* | `Mango` |
+| 11 | Sầu đâu | *Azadirachta indica* | `Neem` |
+| 12 | Cam | *Citrus sinensis* | `Orange` |
+| 13 | Đu đủ | *Carica papaya* | `Papaya` |
+| 14 | Trà | *Camellia sinensis* | `Tea` |
+| 15 | Cà chua | *Solanum lycopersicum* | `Tomato` |
+| 16 | Húng quế thánh | *Ocimum tenuiflorum* | `Tulsi` |
