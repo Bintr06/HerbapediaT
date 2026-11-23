@@ -125,6 +125,8 @@ MSP cao không bảo đảm ảnh thuộc danh mục. EfficientNet-B0 kết hợ
 
 Một mẫu được chấp nhận nếu ít nhất hai trong ba tiêu chí đồng ý. Nếu không đạt, kết quả là `UNKNOWN/-1` thay vì ép ảnh vào lớp gần nhất. CustomLeafCNN hiện sử dụng ngưỡng MSP riêng.
 
+Ngưỡng MSP cấu hình hiện tại là `0.90`. Với EfficientNet-B0, ba tiêu chí còn phải cùng chỉ ra một lớp: một trường hợp cosine và MSP rơi vào hai lớp khác nhau không được cộng phiếu như một quyết định đồng thuận.
+
 ### Chú ý về thông số
 
 Các giá trị accuracy trong cấu hình mô hình là kết quả huấn luyện/đánh giá được lưu trong dự án. Khi chạy demo, kết quả thực tế có thể khác tùy bộ dữ liệu, ảnh đầu vào và cấu hình OSR.

@@ -62,7 +62,7 @@ class LeafAI_Model(nn.Module):
         self,
         x: torch.Tensor,
         thresholds: Optional[Dict[str, float]] = None,
-        msp_thresh: float = 0.95,
+        msp_thresh: float = 0.9,
         cos_thresh: float = 0.6008,
         dist_z_thresh: float = 2.0,
     ) -> Dict[str, torch.Tensor]:
@@ -97,10 +97,16 @@ class LeafAI_Model(nn.Module):
         ok_cos = cosine >= cos_thresh       # Tiêu chí 2: Góc vector đặc trưng gần tâm lớp
         ok_dist = z_score <= dist_z_thresh  # Tiêu chí 3: Khoảng cách nằm trong khoảng tin cậy thống kê
 
+        same_predicted_class = (
+            (pred_msp == pred_cos)
+            & (pred_msp == pred_dist)
+            & (pred_cos == pred_dist)
+        )
+
         votes = ok_msp.int() + ok_cos.int() + ok_dist.int()
-        # Quyết định OSR: cần ít nhất hai tiêu chí đồng ý, tránh để Softmax
-        # quá tự tin tự động chấp nhận ảnh nằm ngoài tập dữ liệu.
-        is_known = votes >= 2
+        # Ba tiêu chí phải đồng thuận về cùng một lớp; tránh cộng phiếu lệch lớp.
+        # Sau đó chỉ chấp nhận khi ít nhất hai trong ba tiêu chí đạt ngưỡng.
+        is_known = (votes >= 2) & same_predicted_class
 
         pred = pred_msp.clone()
         pred[~is_known] = -1

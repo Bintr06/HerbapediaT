@@ -33,10 +33,10 @@
 ---
 ## 3. Cấu hình Open-set Recognition đã chốt
 - **Model 1 (EfficientNet-B0 — MSP + Cosine + Distance Z-score):**
-  - Ngưỡng: `msp=0.95`, `cos=0.6008`, `dist_z=2.0`
+  - Ngưỡng: `msp=0.90`, `cos=0.6008`, `dist_z=2.5`
   - Tập Test (Known): Accept = **94.33%** | Acc sau lọc = **99.92%**
 - **Model 2 (CustomLeafCNN — MSP):**
-  - Ngưỡng: `msp=0.95`
+  - Ngưỡng: `msp=0.90`
   - Tập Test (Known): Accept = **93.03%** | Acc sau lọc = **99.72%**
 
 ---
